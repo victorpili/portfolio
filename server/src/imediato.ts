@@ -6,6 +6,7 @@ const IDS: AtributoId[] = ATRIBUTOS.map((a) => a.id);
 const rotuloDe = (id: AtributoId): string => ATRIBUTOS.find((a) => a.id === id)!.rotulo;
 const perguntaDe = (id: AtributoId): string => `Confirme: ${rotuloDe(id)}`;
 
+const RESERVADOS = new Set(['titulo', 'faq', 'resposta']);
 const MOTIVO_TRECHO_AUSENTE = 'a confirmar: trecho não encontrado';
 
 function idsDaPesquisa(p: Pesquisa): AtributoId[] {
@@ -70,6 +71,12 @@ export function conferirFicha(p: Pesquisa, n: FichaNova): Problema[] {
       if (!idsPesquisa.has(f)) problemas.push({ item, motivo: `fonte "${f}" não existe na pesquisa` });
     }
   };
+  const contagemIds = new Map<string, number>();
+  for (const id of [...n.secoes.map((s) => s.id), ...n.faq.map((f) => f.id)]) contagemIds.set(id, (contagemIds.get(id) ?? 0) + 1);
+  for (const [id, qtd] of contagemIds) {
+    if (RESERVADOS.has(id) || id.startsWith('atributo:')) problemas.push({ item: id, motivo: `${id} é um nome reservado` });
+    if (qtd > 1) problemas.push({ item: id, motivo: `${id} aparece mais de uma vez` });
+  }
   for (const s of n.secoes) fontesInvalidas(s.id, s.fontes);
   for (const f of n.faq) fontesInvalidas(f.id, f.fontes);
 
@@ -109,9 +116,9 @@ export function corrigirFicha(o: FichaOriginal, p: Pesquisa, n: FichaNova): { fi
   };
   const ficha: FichaNova = {
     titulo: n.titulo.length < 20 || n.titulo.length > 150 ? o.titulo : n.titulo,
-    secoes: n.secoes.map((s) => ({ ...s, fontes: s.fontes.filter((f) => idsPesquisa.has(f)) })),
+    secoes: n.secoes.map((s, i) => ({ ...s, id: `s${i + 1}`, fontes: s.fontes.filter((f) => idsPesquisa.has(f)) })),
     atributos: n.atributos.filter(valido),
-    faq: n.faq.slice(0, 6).map((f) => ({ ...f, fontes: f.fontes.filter((x) => idsPesquisa.has(x)) })),
+    faq: n.faq.slice(0, 6).map((f, i) => ({ ...f, id: `f${i + 1}`, fontes: f.fontes.filter((x) => idsPesquisa.has(x)) })),
     aConfirmar: paraAConfirmar(n, n.atributos.filter((a) => !valido(a)).map((a) => a.id)),
   };
   return { ficha, problemas };

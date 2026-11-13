@@ -114,3 +114,23 @@ describe('Imediato: atributo inventado listado em aConfirmar', () => {
     expect(ficha.aConfirmar.filter((a) => a.id === 'peso')).toHaveLength(1);
   });
 });
+
+describe('Imediato: ids de item repetidos ou reservados', () => {
+  it('FAQs com o mesmo id são acusadas', () => {
+    const n = { ...fichaNovaCaneca, faq: fichaNovaCaneca.faq.map((f) => ({ ...f, id: f.id === 'f3' ? 'f2' : f.id })) };
+    expect(conferirFicha(pesquisaBoa, n)).toContainEqual({ item: 'f2', motivo: 'f2 aparece mais de uma vez' });
+  });
+  it('seção com id reservado é acusada', () => {
+    const n = { ...fichaNovaCaneca, secoes: [{ ...fichaNovaCaneca.secoes[0], id: 'titulo' }, fichaNovaCaneca.secoes[1]] };
+    expect(conferirFicha(pesquisaBoa, n)).toContainEqual({ item: 'titulo', motivo: 'titulo é um nome reservado' });
+  });
+  it('corrigirFicha renumera e a ficha corrigida não acusa id repetido', () => {
+    const n = { ...fichaNovaCaneca,
+      secoes: [{ ...fichaNovaCaneca.secoes[0], id: 'f1' }, { ...fichaNovaCaneca.secoes[1], id: 'f1' }],
+      faq: fichaNovaCaneca.faq.map((f) => ({ ...f, id: 'f2' })) };
+    const { ficha } = corrigirFicha(originalCaneca, pesquisaBoa, n);
+    expect(ficha.secoes.map((s) => s.id)).toEqual(['s1', 's2']);
+    expect(ficha.faq.map((f) => f.id)).toEqual(['f1', 'f2', 'f3']);
+    expect(conferirFicha(pesquisaBoa, ficha)).toEqual([]);
+  });
+});
