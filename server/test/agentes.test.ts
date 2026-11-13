@@ -82,6 +82,22 @@ describe('agentes', () => {
     expect(JSON.parse(entre(c.mensagens[0].texto, 'pesquisa'))).toEqual(pesquisaBoa);
   });
 
+  it('o sinal de aborto chega à chamada nos três agentes', async () => {
+    const m = motorFalso({ pesquisador: [pesquisaBoa], redator: [fichaNovaCaneca], revisor: [revisaoQualquer] });
+    const sinal = new AbortController().signal;
+    await pesquisar(m, prompts, originalCaneca, undefined, sinal);
+    await redigir(m, prompts, originalCaneca, pesquisaBoa, undefined, sinal);
+    await revisar(m, prompts, originalCaneca, pesquisaBoa, fichaNovaCaneca, sinal);
+    expect(m.chamadas[0].sinal).toBe(sinal);
+    expect(m.chamadas.map((c) => c.sinal)).toEqual([sinal, sinal, sinal]);
+  });
+
+  it('sem sinal, a chamada vai sem sinal', async () => {
+    const m = motorFalso({ pesquisador: [pesquisaBoa] });
+    await pesquisar(m, prompts, originalCaneca);
+    expect(m.chamadas[0].sinal).toBeUndefined();
+  });
+
   it('revisar leva a ficha, a pesquisa, a ficha nova e os itens para revisar', async () => {
     const m = motorFalso({ revisor: [revisaoQualquer] });
     const r = await revisar(m, prompts, originalCaneca, pesquisaBoa, fichaNovaCaneca);

@@ -1,10 +1,14 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
+import { readFileSync, realpathSync } from 'node:fs';
+import { mkdtemp } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
 import { Pesquisa } from '@nave/shared';
 import { ErroMotor, ErroSchema, ErroSemCredito, type Chamada } from '../src/motores/motor';
 import { motorFalso } from '../src/motores/falso';
 import { custoUsd, motorApi, traduzirErroApi } from '../src/motores/api';
-import { ambienteSemChave, argsAssinatura, binarioClaude, lerResultado, transcrever } from '../src/motores/assinatura';
+import { ambienteSemChave, argsAssinatura, binarioClaude, lerResultado, rodarProcesso, transcrever } from '../src/motores/assinatura';
 import { pesquisaBoa } from './fixtures/respostas';
 
 const chamada = (sinal?: AbortSignal): Chamada<Pesquisa> => ({
@@ -91,6 +95,19 @@ describe('motor da API', () => {
     await expect(motorApi({ modelo: 'claude-sonnet-5-5', cliente }).chamar(chamada(AbortSignal.abort()))).rejects.toBeInstanceOf(ErroMotor);
     expect(pedidos).toHaveLength(0);
   });
+
+  it('abortar no meio da chamada cancela o pedido e vira ErroMotor', async () => {
+    const controle = new AbortController();
+    // O fetch só termina quando o sinal que o SDK repassa abortar; se o sinal não chegasse, o teste pararia no tempo limite.
+    const cliente = new Anthropic({
+      apiKey: 'chave-de-teste',
+      fetch: (_url, init) => new Promise<Response>((_, rejeitar) => {
+        init?.signal?.addEventListener('abort', () => rejeitar(init.signal!.reason));
+        controle.abort();
+      }),
+    });
+    await expect(motorApi({ modelo: 'claude-sonnet-5-5', cliente }).chamar(chamada(controle.signal))).rejects.toBeInstanceOf(ErroMotor);
+  });
 });
 
 describe('motor da assinatura', () => {
@@ -98,16 +115,39 @@ describe('motor da assinatura', () => {
 
   it('assinatura: sem ferramentas, com schema, sem chave no ambiente', () => {
     const args = argsAssinatura({ agente: 'pesquisador', sistema: 'S', mensagens: [], schema: Pesquisa }, 'sonnet');
-    expect(args).toEqual(expect.arrayContaining(['-p', '--tools', '', '--system-prompt', 'S']));
+    expect(args).toEqual(expect.arrayContaining(['-p', '--tools', '', '--strict-mcp-config', '--system-prompt', 'S']));
     expect(args[args.indexOf('--json-schema') + 1]).toContain('tipoProduto');
     expect(ambienteSemChave({ ANTHROPIC_API_KEY: 'k', PATH: 'p' })).toEqual({ PATH: 'p' });
   });
 
   it('argumentos completos e na ordem', () => {
     const args = argsAssinatura({ agente: 'pesquisador', sistema: 'S', mensagens: [], schema: Pesquisa }, 'sonnet');
-    expect(args.slice(0, 10)).toEqual(['-p', '--model', 'sonnet', '--tools', '', '--no-session-persistence', '--output-format', 'json', '--system-prompt', 'S']);
-    expect(args[10]).toBe('--json-schema');
-    expect(JSON.parse(args[11])).toMatchObject({ type: 'object', required: expect.arrayContaining(['tipoProduto', 'atributos']) });
+    expect(args.slice(0, 11)).toEqual([
+      '-p', '--model', 'sonnet', '--tools', '', '--strict-mcp-config', '--no-session-persistence',
+      '--output-format', 'json', '--system-prompt', 'S',
+    ]);
+    expect(args[11]).toBe('--json-schema');
+    expect(JSON.parse(args[12])).toMatchObject({ type: 'object', required: expect.arrayContaining(['tipoProduto', 'atributos']) });
+    expect(args).toHaveLength(13);
+  });
+
+  it('o processo filho roda na pasta temporária, sem a chave, e recebe o prompt pelo stdin', async () => {
+    vi.stubEnv('ANTHROPIC_API_KEY', 'chave-falsa');
+    const eco = "let s='';process.stdin.on('data',(d)=>s+=d).on('end',()=>process.stdout.write(JSON.stringify({cwd:process.cwd(),chave:'ANTHROPIC_API_KEY' in process.env,entrada:s})))";
+    const saida = JSON.parse(await rodarProcesso(process.execPath, ['-e', eco], 'prompt com acentuação'));
+    expect(realpathSync.native(saida.cwd).toLowerCase()).toBe(realpathSync.native(tmpdir()).toLowerCase());
+    expect(saida).toMatchObject({ chave: false, entrada: 'prompt com acentuação' });
+  });
+
+  it('abortar mata o processo filho e lança ErroMotor', async () => {
+    const arquivoPid = join(await mkdtemp(join(tmpdir(), 'filho-')), 'pid');
+    const preso = `require('fs').writeFileSync(${JSON.stringify(arquivoPid)}, String(process.pid)); setInterval(() => {}, 1000)`;
+    const controle = new AbortController();
+    const rodando = rodarProcesso(process.execPath, ['-e', preso], '', controle.signal);
+    const pid = await vi.waitFor(() => Number(readFileSync(arquivoPid, 'utf8')), { timeout: 4000, interval: 20 });
+    controle.abort();
+    await expect(rodando).rejects.toBeInstanceOf(ErroMotor);
+    await vi.waitFor(() => expect(() => process.kill(pid, 0)).toThrow(), { timeout: 4000, interval: 20 });
   });
 
   it('schema em draft-07: o Claude Code valida o --json-schema com Ajv padrão e ignora o 2020-12', () => {

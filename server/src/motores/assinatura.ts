@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { z } from 'zod';
 import { ErroMotor, ErroSchema, type Chamada, type Motor, type RespostaMotor } from './motor';
@@ -19,7 +20,8 @@ export function argsAssinatura<T>(c: Chamada<T>, modelo: string): string[] {
   // Com 2020-12 ele descarta o schema sem avisar e a resposta volta sem `structured_output`.
   const schema = z.toJSONSchema(c.schema, { target: 'draft-7' });
   return [
-    '-p', '--model', modelo, '--tools', '', '--no-session-persistence', '--output-format', 'json',
+    // --tools '' desliga as ferramentas internas; --strict-mcp-config sem --mcp-config desliga todo servidor MCP.
+    '-p', '--model', modelo, '--tools', '', '--strict-mcp-config', '--no-session-persistence', '--output-format', 'json',
     '--system-prompt', c.sistema, '--json-schema', JSON.stringify(schema),
   ];
 }
@@ -69,18 +71,27 @@ export function lerResultado<T>(saida: string, schema: z.ZodType<T>): { dados: T
   };
 }
 
-function rodarClaude(args: string[], entrada: string, sinal?: AbortSignal): Promise<string> {
+/**
+ * Roda o binário com o texto no stdin e devolve o stdout.
+ * Sem shell: os argumentos não passam por interpretação. Roda na pasta temporária, para não carregar CLAUDE.md
+ * nem MCP de projeto, e sem as credenciais da API. Se o sinal abortar, o `spawn` mata o filho e a promessa
+ * rejeita com `ErroMotor`.
+ */
+export function rodarProcesso(binario: string, args: string[], entrada: string, sinal?: AbortSignal): Promise<string> {
   return new Promise((resolve, reject) => {
-    // Sem shell: o binário é chamado direto e os argumentos não passam por interpretação.
-    const filho = spawn(binarioClaude(), args, { env: ambienteSemChave(process.env), signal: sinal, windowsHide: true });
+    const filho = spawn(binario, args, { cwd: tmpdir(), env: ambienteSemChave(process.env), signal: sinal, windowsHide: true });
     const saida: Buffer[] = [];
     const erros: Buffer[] = [];
     filho.stdout.on('data', (b: Buffer) => saida.push(b));
     filho.stderr.on('data', (b: Buffer) => erros.push(b));
-    filho.on('error', (e) => reject(new ErroMotor(`claude -p não rodou: ${e.message}`, { cause: e })));
+    filho.on('error', (e) => {
+      reject(new ErroMotor(sinal?.aborted ? 'claude -p cancelado' : `claude -p não rodou: ${e.message}`, { cause: e }));
+    });
     filho.on('close', (codigo) => {
       const texto = Buffer.concat(saida).toString('utf8');
-      if (codigo !== 0 && !texto.trim()) {
+      if (sinal?.aborted) {
+        reject(new ErroMotor('claude -p cancelado'));
+      } else if (codigo !== 0 && !texto.trim()) {
         reject(new ErroMotor(`claude -p saiu com código ${codigo}: ${Buffer.concat(erros).toString('utf8').slice(0, 300)}`));
       } else {
         resolve(texto);
@@ -98,7 +109,7 @@ export function motorAssinatura(modelo = 'sonnet'): Motor {
     modelo,
     async chamar<T>(c: Chamada<T>): Promise<RespostaMotor<T>> {
       const inicio = Date.now();
-      const saida = await rodarClaude(argsAssinatura(c, modelo), transcrever(c.mensagens), c.sinal);
+      const saida = await rodarProcesso(binarioClaude(), argsAssinatura(c, modelo), transcrever(c.mensagens), c.sinal);
       return { ...lerResultado(saida, c.schema), custoUsd: 0, ms: Date.now() - inicio };
     },
   };

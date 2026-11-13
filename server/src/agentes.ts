@@ -47,19 +47,23 @@ function conversa<T>(tarefa: string, dev?: Devolucao<T>): Chamada<T>['mensagens'
   ];
 }
 
-export function pesquisar(motor: Motor, prompts: Prompts, o: FichaOriginal, dev?: Devolucao<Pesquisa>): Promise<RespostaMotor<Pesquisa>> {
+export function pesquisar(
+  motor: Motor, prompts: Prompts, o: FichaOriginal, dev?: Devolucao<Pesquisa>, sinal?: AbortSignal,
+): Promise<RespostaMotor<Pesquisa>> {
   const tarefa = `${fichaParaPrompt(o)}\n\nPesquise os 8 atributos nesta ficha.`;
-  return motor.chamar({ agente: 'pesquisador', sistema: prompts.pesquisador, mensagens: conversa(tarefa, dev), schema: Pesquisa });
+  return motor.chamar({ agente: 'pesquisador', sistema: prompts.pesquisador, mensagens: conversa(tarefa, dev), schema: Pesquisa, sinal });
 }
 
 export function redigir(
-  motor: Motor, prompts: Prompts, o: FichaOriginal, p: Pesquisa, dev?: Devolucao<FichaNova>,
+  motor: Motor, prompts: Prompts, o: FichaOriginal, p: Pesquisa, dev?: Devolucao<FichaNova>, sinal?: AbortSignal,
 ): Promise<RespostaMotor<FichaNova>> {
   const tarefa = `${fichaParaPrompt(o)}\n\n${bloco('pesquisa', p)}\n\nEscreva a ficha nova com base nesta ficha e nesta pesquisa.`;
-  return motor.chamar({ agente: 'redator', sistema: prompts.redator, mensagens: conversa(tarefa, dev), schema: FichaNova });
+  return motor.chamar({ agente: 'redator', sistema: prompts.redator, mensagens: conversa(tarefa, dev), schema: FichaNova, sinal });
 }
 
-export function revisar(motor: Motor, prompts: Prompts, o: FichaOriginal, p: Pesquisa, n: FichaNova): Promise<RespostaMotor<Revisao>> {
+export function revisar(
+  motor: Motor, prompts: Prompts, o: FichaOriginal, p: Pesquisa, n: FichaNova, sinal?: AbortSignal,
+): Promise<RespostaMotor<Revisao>> {
   const tarefa = [
     fichaParaPrompt(o),
     bloco('pesquisa', p),
@@ -67,5 +71,5 @@ export function revisar(motor: Motor, prompts: Prompts, o: FichaOriginal, p: Pes
     `<itens_para_revisar>\n${itensDaFicha(n).join('\n')}\n</itens_para_revisar>`,
     'Julgue cada item de <itens_para_revisar> contra a ficha original.',
   ].join('\n\n');
-  return motor.chamar({ agente: 'revisor', sistema: prompts.revisor, mensagens: conversa(tarefa), schema: Revisao });
+  return motor.chamar({ agente: 'revisor', sistema: prompts.revisor, mensagens: conversa(tarefa), schema: Revisao, sinal });
 }
