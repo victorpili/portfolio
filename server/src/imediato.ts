@@ -73,9 +73,7 @@ export function conferirFicha(p: Pesquisa, n: FichaNova): Problema[] {
   for (const s of n.secoes) fontesInvalidas(s.id, s.fontes);
   for (const f of n.faq) fontesInvalidas(f.id, f.fontes);
 
-  const emAConfirmar = new Set(n.aConfirmar.map((a) => a.id));
   for (const a of n.atributos) {
-    if (emAConfirmar.has(a.id)) continue;
     const item = `atributo:${a.id}`;
     const da = p.atributos.find((x) => x.id === a.id);
     if (!da) problemas.push({ item, motivo: `${a.id} não foi encontrado pelo Pesquisador` });
@@ -105,9 +103,7 @@ function paraAConfirmar(n: FichaNova, ids: AtributoId[]): FichaNova['aConfirmar'
 export function corrigirFicha(o: FichaOriginal, p: Pesquisa, n: FichaNova): { ficha: FichaNova; problemas: Problema[] } {
   const problemas = conferirFicha(p, n);
   const idsPesquisa = new Set(p.atributos.map((a) => a.id));
-  const emAConfirmar = new Set(n.aConfirmar.map((a) => a.id));
   const valido = (a: FichaNova['atributos'][number]): boolean => {
-    if (emAConfirmar.has(a.id)) return true;
     const da = p.atributos.find((x) => x.id === a.id);
     return !!da && da.valor.trim() === a.valor.trim();
   };

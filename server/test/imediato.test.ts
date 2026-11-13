@@ -43,16 +43,15 @@ describe('Imediato', () => {
   it('ficha boa não gera problema', () => expect(conferirFicha(pesquisaBoa, fichaNovaCaneca)).toEqual([]));
   it('conferirFicha: fonte, valor, atributo novo, título e FAQ', () => {
     const n = { ...fichaNovaCaneca, titulo: 'Caneca curta', faq: fichaNovaCaneca.faq.slice(0, 2),
-      secoes: [{ ...fichaNovaCaneca.secoes[0], fontes: ['garantia' as const] }], atributos: [{ id: 'peso' as const, rotulo: 'Peso', valor: '300 g' }],
-      aConfirmar: fichaNovaCaneca.aConfirmar.filter((a) => a.id !== 'peso') };
+      secoes: [{ ...fichaNovaCaneca.secoes[0], fontes: ['garantia' as const] }], atributos: [{ id: 'peso' as const, rotulo: 'Peso', valor: '300 g' }] };
     const motivos = conferirFicha(pesquisaBoa, n).map((p) => p.motivo);
     expect(motivos).toEqual(expect.arrayContaining(['fonte "garantia" não existe na pesquisa', 'peso não foi encontrado pelo Pesquisador',
       'título com 12 caracteres (precisa de 20 a 150)', 'FAQ com 2 perguntas (precisa de 3 a 6)']));
   });
-  it('conferirFicha: valor diferente; atributo em aConfirmar não é problema', () => {
+  it('conferirFicha: valor diferente; atributo novo é problema mesmo listado em aConfirmar', () => {
     const n = { ...fichaNovaCaneca, atributos: [{ id: 'material' as const, rotulo: 'Material ou composição', valor: 'plástico' },
       { id: 'peso' as const, rotulo: 'Peso', valor: '300 g' }], aConfirmar: [{ id: 'peso' as const, pergunta: 'Confirme: Peso' }] };
-    expect(conferirFicha(pesquisaBoa, n).map((p) => p.motivo)).toEqual(['valor de material diferente da pesquisa']);
+    expect(conferirFicha(pesquisaBoa, n).map((p) => p.motivo)).toEqual(['valor de material diferente da pesquisa', 'peso não foi encontrado pelo Pesquisador']);
   });
   it('corrigirFicha corrige o que dá', () => {
     const faq = [...fichaNovaCaneca.faq, ...[4, 5, 6, 7].map((i) => ({ ...fichaNovaCaneca.faq[0], id: `f${i}` }))];
@@ -104,5 +103,14 @@ describe('Imediato', () => {
     expect(n.aConfirmar).toContainEqual({ id: 'material', pergunta: 'Confirme: Material ou composição' });
     expect(n.secoes).toHaveLength(fichaNovaCaneca.secoes.length - 1);
     expect(n.atributos.map((a) => a.id)).not.toContain('material');
+  });
+});
+
+describe('Imediato: atributo inventado listado em aConfirmar', () => {
+  it('corrigirFicha tira de atributos e não duplica em aConfirmar', () => {
+    const n = { ...fichaNovaCaneca, atributos: [...fichaNovaCaneca.atributos, { id: 'peso' as const, rotulo: 'Peso', valor: '300 g' }] };
+    const { ficha } = corrigirFicha(originalCaneca, pesquisaBoa, n);
+    expect(ficha.atributos.map((a) => a.id)).not.toContain('peso');
+    expect(ficha.aConfirmar.filter((a) => a.id === 'peso')).toHaveLength(1);
   });
 });
