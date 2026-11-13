@@ -7,7 +7,7 @@ import {
   removerReprovados,
 } from './imediato';
 import { montarAlts, montarJsonLd } from './jsonld';
-import { ErroSchema, ErroSemCredito, type Motor, type NomeAgente, type RespostaMotor } from './motores/motor';
+import { ErroMotor, ErroSchema, ErroSemCredito, type Motor, type NomeAgente, type RespostaMotor } from './motores/motor';
 import { calcularNota, entradaAntes, entradaDepois } from './nota';
 import { ErroEntrada, fichaDeTexto, lerProduto } from './shopify';
 
@@ -21,6 +21,8 @@ export interface DepsMissao {
   prazoMs?: number;
   /** Roda uma vez, logo antes da primeira chamada ao motor (o servidor confirma a cota aqui). */
   aoPrimeiraChamada?: () => void;
+  /** Recebe a causa dos erros inesperados (`api_fora` e falhas do `emitir`). Padrão: `console.error`. */
+  aoErro?: (e: unknown) => void;
 }
 
 const PRAZO_MS = 150_000;
@@ -251,7 +253,7 @@ class Missao {
   }
 }
 
-function eventoDeErro(e: unknown, prazoEstourou: boolean): EventoSemCarimbo {
+function eventoDeErro(e: unknown, prazoEstourou: boolean): Extract<EventoSemCarimbo, { tipo: 'erro' }> {
   if (prazoEstourou) {
     return { tipo: 'erro', codigo: 'tempo_esgotado', recuperavel: true, sugestao: SUGESTAO_TENTAR,
       mensagem: 'Capitã: a missão passou do tempo limite e parou.' };
@@ -265,9 +267,8 @@ function eventoDeErro(e: unknown, prazoEstourou: boolean): EventoSemCarimbo {
     return { tipo: 'erro', codigo: 'sem_credito', recuperavel: false, sugestao: 'Veja uma missão gravada.',
       mensagem: 'Capitã: a API do Claude está sem crédito. A missão parou.' };
   }
-  // ErroMotor e qualquer falha inesperada.
   return { tipo: 'erro', codigo: 'api_fora', recuperavel: true, sugestao: SUGESTAO_TENTAR,
-    mensagem: 'Capitã: a API do Claude não respondeu. A missão parou.' };
+    mensagem: e instanceof ErroMotor ? 'Capitã: a API do Claude não respondeu. A missão parou.' : 'Capitã: algo deu errado na missão.' };
 }
 
 /**
@@ -283,10 +284,18 @@ export async function executarMissao(
     return await missao.executar(entrada);
   } catch (e) {
     if (deps.sinal?.aborted) return null;
+    const registrar = (x: unknown) => {
+      try {
+        (deps.aoErro ?? ((y: unknown) => console.error('[capita]', y)))(x);
+      } catch { /* registrar não pode derrubar a missão */ }
+    };
+    const evento = eventoDeErro(e, missao.prazo.aborted);
+    // Entrada inválida, falta de crédito e abortos são resultados esperados; só o inesperado é registrado.
+    if (evento.codigo === 'api_fora') registrar(e);
     try {
-      missao.emit(eventoDeErro(e, missao.prazo.aborted));
-    } catch {
-      // Quem recebe os eventos falhou; não há mais a quem avisar.
+      missao.emit(evento);
+    } catch (falha) {
+      registrar(falha); // quem recebe os eventos falhou; não há mais a quem avisar
     }
     return null;
   }

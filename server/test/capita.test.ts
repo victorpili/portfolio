@@ -17,8 +17,9 @@ const lerFalso = async () => originalCaneca;
 async function rodar(roteiro: Partial<Record<NomeAgente, unknown[]>>, extra: Partial<DepsMissao> = {}) {
   const m = motorFalso(roteiro);
   const ev: Evento[] = [];
-  const r = await executarMissao(entrada, { motor: m, prompts, lerProduto: lerFalso, ...extra }, (e) => ev.push(e));
-  return { m, ev, r };
+  const aoErro = vi.fn();
+  const r = await executarMissao(entrada, { motor: m, prompts, lerProduto: lerFalso, aoErro, ...extra }, (e) => ev.push(e));
+  return { m, ev, r, aoErro };
 }
 
 /** `tipo:agente` de cada evento, para conferir a ordem da missão. */
@@ -58,7 +59,9 @@ describe('executarMissao', () => {
   it('caminho feliz: 3 chamadas, notas, conclusão', async () => {
     const m = motorFalso({ pesquisador: [pesquisaBoa], redator: [fichaNovaCaneca], revisor: [revisaoAprova] });
     const ev: Evento[] = [];
-    const r = await executarMissao({ url: 'https://l.com/products/x' }, { motor: m, prompts, lerProduto: lerFalso }, (e) => ev.push(e));
+    const aoErro = vi.fn();
+    const r = await executarMissao({ url: 'https://l.com/products/x' }, { motor: m, prompts, lerProduto: lerFalso, aoErro }, (e) => ev.push(e));
+    expect(aoErro).not.toHaveBeenCalled();
     expect(m.chamadas).toHaveLength(3);
     expect(ev.map((e) => e.tipo)).toEqual(expect.arrayContaining(['missao_iniciada', 'nota', 'missao_concluida']));
     expect(ev.map((e) => e.seq)).toEqual(ev.map((_, i) => i + 1));
@@ -104,7 +107,7 @@ describe('executarMissao', () => {
     let chamadasNaHora = -1;
     const m = motorFalso({ pesquisador: [pesquisaBoa], redator: [fichaNovaCaneca], revisor: [revisaoAprova] });
     const aoPrimeira = vi.fn(() => { chamadasNaHora = m.chamadas.length; });
-    await executarMissao(entrada, { motor: m, prompts, lerProduto: lerFalso, aoPrimeiraChamada: aoPrimeira }, () => {});
+    await executarMissao(entrada, { motor: m, prompts, lerProduto: lerFalso, aoPrimeiraChamada: aoPrimeira, aoErro: vi.fn() }, () => {});
     expect(aoPrimeira).toHaveBeenCalledTimes(1);
     expect(chamadasNaHora).toBe(0);
     expect(m.chamadas.every((c) => c.sinal instanceof AbortSignal && !c.sinal.aborted)).toBe(true);
@@ -113,7 +116,7 @@ describe('executarMissao', () => {
   it('devolve o Pesquisador uma vez', async () => {
     const m = motorFalso({ pesquisador: [pesquisaTrechoFalso, pesquisaBoa], redator: [fichaNovaCaneca], revisor: [revisaoAprova] });
     const ev: Evento[] = [];
-    const r = await executarMissao(entrada, { motor: comCusto(m), prompts, lerProduto: lerFalso }, (e) => ev.push(e));
+    const r = await executarMissao(entrada, { motor: comCusto(m), prompts, lerProduto: lerFalso, aoErro: vi.fn() }, (e) => ev.push(e));
     expect(m.chamadas.filter((c) => c.agente === 'pesquisador')).toHaveLength(2);
     expect(doTipo(ev, 'imediato_devolveu')).toEqual([expect.objectContaining({
       agente: 'pesquisador', problemas: [{ item: 'atributo:material', motivo: 'trecho "aço inox" não está no original' }],
@@ -214,25 +217,47 @@ describe('executarMissao', () => {
   });
 
   it('sem crédito: erro sem_credito e null', async () => {
-    const { ev, r } = await rodar({ pesquisador: [new ErroSemCredito('x')] });
+    const { ev, r, aoErro } = await rodar({ pesquisador: [new ErroSemCredito('x')] });
     expect(r).toBeNull();
     expect(ev.at(-1)).toMatchObject({ tipo: 'erro', codigo: 'sem_credito', recuperavel: false, sugestao: 'Veja uma missão gravada.' });
+    expect(aoErro).not.toHaveBeenCalled();
   });
 
-  it('API fora: erro api_fora e null', async () => {
-    const { ev, r } = await rodar({ pesquisador: [pesquisaBoa], redator: [new ErroMotor('caiu')] });
+  it('API fora: erro api_fora com a mensagem da API, e a causa vai para aoErro', async () => {
+    const caiu = new ErroMotor('claude -p saiu com código 1: x');
+    const { ev, r, aoErro } = await rodar({ pesquisador: [pesquisaBoa], redator: [caiu] });
     expect(r).toBeNull();
-    expect(ev.at(-1)).toMatchObject({ tipo: 'erro', codigo: 'api_fora', recuperavel: true });
+    expect(ev.at(-1)).toMatchObject({
+      tipo: 'erro', codigo: 'api_fora', recuperavel: true, mensagem: 'Capitã: a API do Claude não respondeu. A missão parou.',
+    });
     expect(ev.filter((e) => e.tipo === 'erro')).toHaveLength(1);
+    expect(aoErro.mock.calls).toEqual([[caiu]]);
+  });
+
+  it('erro inesperado: api_fora com mensagem genérica, e a causa vai para aoErro', async () => {
+    const bug = new TypeError('x');
+    const { ev, r, aoErro } = await rodar({}, { lerProduto: async () => { throw bug; } });
+    expect(r).toBeNull();
+    expect(ev.at(-1)).toMatchObject({ tipo: 'erro', codigo: 'api_fora', recuperavel: true, mensagem: 'Capitã: algo deu errado na missão.' });
+    expect(aoErro.mock.calls).toEqual([[bug]]);
+  });
+
+  it('emitir falhando: nunca lança, e as duas falhas vão para aoErro', async () => {
+    const quebrou = new Error('conexão fechada');
+    const aoErro = vi.fn();
+    const r = await executarMissao(entrada, { motor: motorFalso({}), prompts, lerProduto: lerFalso, aoErro }, () => { throw quebrou; });
+    expect(r).toBeNull();
+    expect(aoErro.mock.calls).toEqual([[quebrou], [quebrou]]);
   });
 
   it('loja bloqueou: erro recuperável, nenhuma chamada, cota não confirmada', async () => {
     const ev: Evento[] = [];
-    const aoPrimeira = vi.fn(); const m = motorFalso({});
-    await executarMissao({ url: 'https://l.com/products/x' }, { motor: m, prompts, aoPrimeiraChamada: aoPrimeira,
+    const aoPrimeira = vi.fn(); const m = motorFalso({}); const aoErro = vi.fn();
+    await executarMissao({ url: 'https://l.com/products/x' }, { motor: m, prompts, aoPrimeiraChamada: aoPrimeira, aoErro,
       lerProduto: async () => { throw new ErroEntrada('loja_bloqueou', 'x'); } }, (e) => ev.push(e));
     expect(ev.at(-1)).toMatchObject({ tipo: 'erro', codigo: 'loja_bloqueou', recuperavel: true, sugestao: 'Cole o texto da ficha.' });
     expect(m.chamadas).toHaveLength(0); expect(aoPrimeira).not.toHaveBeenCalled();
+    expect(aoErro).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -246,16 +271,19 @@ describe('executarMissao', () => {
 
   it('texto colado curto demais: texto_invalido', async () => {
     const ev: Evento[] = [];
-    const r = await executarMissao({ texto: 'curto' }, { motor: motorFalso({}), prompts }, (e) => ev.push(e));
+    const aoErro = vi.fn();
+    const r = await executarMissao({ texto: 'curto' }, { motor: motorFalso({}), prompts, aoErro }, (e) => ev.push(e));
     expect(r).toBeNull();
     expect(ev.at(-1)).toMatchObject({ tipo: 'erro', codigo: 'texto_invalido', recuperavel: true });
+    expect(aoErro).not.toHaveBeenCalled();
   });
 
   it('cliente saiu: para antes da próxima chamada', async () => {
     const ac = new AbortController();
     const m = motorFalso({ pesquisador: [pesquisaBoa], redator: [fichaNovaCaneca], revisor: [revisaoAprova] });
     const ev: Evento[] = [];
-    const r = await executarMissao(entrada, { motor: m, prompts, lerProduto: lerFalso, sinal: ac.signal }, (e) => {
+    const aoErro = vi.fn();
+    const r = await executarMissao(entrada, { motor: m, prompts, lerProduto: lerFalso, sinal: ac.signal, aoErro }, (e) => {
       ev.push(e);
       if (e.tipo === 'agente_entregou' && e.agente === 'pesquisador') ac.abort();
     });
@@ -263,23 +291,28 @@ describe('executarMissao', () => {
     expect(m.chamadas[0].sinal!.aborted).toBe(true);
     expect(r).toBeNull();
     expect(ev.some((e) => e.tipo === 'erro')).toBe(false);
+    expect(aoErro).not.toHaveBeenCalled();
   });
 
   it('cliente saiu durante a chamada: a chamada é interrompida, null e nenhum evento de erro', async () => {
     const ac = new AbortController();
     const m = motorPreso(() => queueMicrotask(() => ac.abort()));
     const ev: Evento[] = [];
-    const r = await executarMissao(entrada, { motor: m, prompts, lerProduto: lerFalso, sinal: ac.signal }, (e) => ev.push(e));
+    const aoErro = vi.fn();
+    const r = await executarMissao(entrada, { motor: m, prompts, lerProduto: lerFalso, sinal: ac.signal, aoErro }, (e) => ev.push(e));
     expect(r).toBeNull();
     expect(m.chamadas).toHaveLength(1);
     expect(ev.at(-1)).toMatchObject({ tipo: 'agente_trabalhando', agente: 'pesquisador' });
+    expect(aoErro).not.toHaveBeenCalled();
   });
 
   it('prazo estourado no meio da chamada: tempo_esgotado, não api_fora', async () => {
     const ev: Evento[] = [];
-    const r = await executarMissao(entrada, { motor: motorPreso(), prompts, lerProduto: lerFalso, prazoMs: 20 }, (e) => ev.push(e));
+    const aoErro = vi.fn();
+    const r = await executarMissao(entrada, { motor: motorPreso(), prompts, lerProduto: lerFalso, prazoMs: 20, aoErro }, (e) => ev.push(e));
     expect(r).toBeNull();
     expect(ev.at(-1)).toMatchObject({ tipo: 'erro', codigo: 'tempo_esgotado', recuperavel: true });
+    expect(aoErro).not.toHaveBeenCalled();
   });
 
   it('Redator fora do formato duas vezes: usa a ficha de reserva', async () => {
