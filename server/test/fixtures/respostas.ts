@@ -44,6 +44,12 @@ export const pesquisaBoa: Pesquisa = {
   naoSeAplica: [],
 };
 
+/** Pesquisa com o trecho de `material` trocado por uma citação que não existe no original. */
+export const pesquisaTrechoFalso: Pesquisa = {
+  ...pesquisaBoa,
+  atributos: pesquisaBoa.atributos.map((a) => (a.id === 'material' ? { ...a, trecho: 'aço inox' } : a)),
+};
+
 /** Ficha nova da caneca, escrita só com o que a pesquisa sustenta. */
 export const fichaNovaCaneca: FichaNova = {
   titulo: 'Caneca Barro 350 ml em cerâmica esmaltada, Casa Barro',
