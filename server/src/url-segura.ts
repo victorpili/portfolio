@@ -13,35 +13,23 @@ export class ErroBusca extends Error {
   }
 }
 
-const bloqueioV4 = new BlockList();
+const bloqueio = new BlockList();
 for (const [rede, bits] of [
   ['0.0.0.0', 8], ['10.0.0.0', 8], ['100.64.0.0', 10], ['127.0.0.0', 8],
   ['169.254.0.0', 16], ['172.16.0.0', 12], ['192.168.0.0', 16],
-] as const) bloqueioV4.addSubnet(rede, bits, 'ipv4');
+] as const) bloqueio.addSubnet(rede, bits, 'ipv4');
+bloqueio.addAddress('::1', 'ipv6');
+bloqueio.addAddress('::', 'ipv6');
+bloqueio.addSubnet('fc00::', 7, 'ipv6');
+bloqueio.addSubnet('fe80::', 10, 'ipv6');
 
-const bloqueioV6 = new BlockList();
-bloqueioV6.addAddress('::1', 'ipv6');
-bloqueioV6.addAddress('::', 'ipv6');
-bloqueioV6.addSubnet('fc00::', 7, 'ipv6');
-bloqueioV6.addSubnet('fe80::', 10, 'ipv6');
-
-/** true se o IP é privado/interno (ou se nem é um IP válido: na dúvida, bloqueia). */
+/** true se o IP e privado/interno (ou se nem e um IP valido: na duvida, bloqueia).
+ *  IPv4 mapeado em IPv6 (qualquer grafia) e conferido como IPv4 pelo proprio BlockList. */
 export function ipPrivado(ip: string): boolean {
   const limpo = ip.replace(/^\[|\]$/g, '');
   const versao = isIP(limpo);
-  if (versao === 4) return bloqueioV4.check(limpo, 'ipv4');
-  if (versao === 6) {
-    // IPv4 mapeado em IPv6, nas formas ::ffff:a.b.c.d e ::ffff:hhhh:hhhh
-    const pontilhado = limpo.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i);
-    if (pontilhado) return bloqueioV4.check(pontilhado[1]!, 'ipv4');
-    const hex = limpo.match(/^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i);
-    if (hex) {
-      const a = parseInt(hex[1]!, 16), b = parseInt(hex[2]!, 16);
-      return bloqueioV4.check(`${a >> 8}.${a & 255}.${b >> 8}.${b & 255}`, 'ipv4');
-    }
-    return bloqueioV6.check(limpo, 'ipv6');
-  }
-  return true;
+  if (versao === 0) return true;
+  return bloqueio.check(limpo, versao === 4 ? 'ipv4' : 'ipv6');
 }
 
 function hostValido(host: string): boolean {

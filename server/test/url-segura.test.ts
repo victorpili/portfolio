@@ -30,7 +30,7 @@ describe('validarUrlProduto', () => {
 describe('ipPrivado', () => {
   it.each([['10.1.2.3', true], ['172.20.0.1', true], ['192.168.0.10', true], ['127.0.0.1', true], ['169.254.169.254', true],
     ['100.64.0.1', true], ['0.0.0.0', true], ['8.8.8.8', false], ['172.32.0.1', false], ['::1', true], ['fe80::1', true], ['fd00::1', true],
-    ['::ffff:192.168.0.1', true], ['::ffff:8.8.8.8', false], ['2606:4700::1111', false],
+    ['::ffff:192.168.0.1', true], ['0:0:0:0:0:ffff:7f00:1', true], ['::0:ffff:10.0.0.1', true], ['::ffff:c0a8:1', true], ['::ffff:8.8.8.8', false], ['2606:4700::1111', false],
   ])('ipPrivado(%s)=%s', (ip, v) => expect(ipPrivado(ip)).toBe(v));
 });
 
