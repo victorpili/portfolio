@@ -1,4 +1,4 @@
-import type { FichaOriginal, Pesquisa, FichaNova } from '@nave/shared';
+import type { FichaOriginal, Pesquisa, FichaNova, Revisao } from '@nave/shared';
 import { htmlParaTexto } from '../../src/texto';
 
 const bodyHtml = '<p>Ideal para café coado.</p><ul><li>Material: cerâmica esmaltada</li><li>Capacidade: 350 ml</li></ul>';
@@ -74,4 +74,36 @@ export const fichaNovaCaneca: FichaNova = {
     { id: 'cuidados', pergunta: 'Pode ir à lava-louças e ao micro-ondas?' },
     { id: 'garantia', pergunta: 'Qual é a política de garantia ou troca?' },
   ],
+};
+
+/** Ficha nova com a seção 2 citando `garantia`, que é lacuna na pesquisa: o Imediato devolve. */
+export const fichaComFonteFalsa: FichaNova = {
+  ...fichaNovaCaneca,
+  secoes: fichaNovaCaneca.secoes.map((s) => (s.id === 's2' ? { ...s, fontes: [...s.fontes, 'garantia' as const] } : s)),
+};
+
+const sustentado = (item: string, evidencia: string): Revisao['vereditos'][number] =>
+  ({ item, veredito: 'sustentado', evidencia, comentario: 'confere com a ficha original' });
+
+/** Revisão da `fichaNovaCaneca`: todo item sustentado, com evidência literal de caneca.json. */
+export const revisaoAprova: Revisao = {
+  vereditos: [
+    sustentado('titulo', 'Caneca Barro 350 ml'),
+    sustentado('s1', 'Material: cerâmica esmaltada'),
+    sustentado('s2', 'Ideal para café coado'),
+    sustentado('f1', 'cerâmica esmaltada'),
+    sustentado('f2', 'Capacidade: 350 ml'),
+    sustentado('f3', 'Azul'),
+    sustentado('atributo:material', 'cerâmica esmaltada'),
+    sustentado('atributo:dimensoes', 'Capacidade: 350 ml'),
+    sustentado('atributo:variacoes', 'Verde'),
+    sustentado('atributo:uso', 'Ideal para café coado'),
+  ],
+};
+
+/** Igual à `revisaoAprova`, mas a seção 2 fica `sem_fonte`: a ficha não diz que as duas cores estão disponíveis. */
+export const revisaoReprovaSecao2: Revisao = {
+  vereditos: revisaoAprova.vereditos.map((v) => (v.item === 's2'
+    ? { item: 's2', veredito: 'sem_fonte', evidencia: null, comentario: 'a ficha não diz que as duas cores estão disponíveis' }
+    : v)),
 };
