@@ -130,7 +130,8 @@ export async function lerProduto(
 
   let resp = await buscarJson();
   if (resp.status === 429) {
-    const espera = Number(resp.cabecalhos.get('retry-after'));
+    const h = resp.cabecalhos.get('retry-after');
+    const espera = h === null || h.trim() === '' ? NaN : Number(h);
     if (!Number.isFinite(espera) || espera < 0 || espera > 3) throw bloqueou('A loja pediu para esperar.');
     await esperar(espera * 1000);
     resp = await buscarJson();

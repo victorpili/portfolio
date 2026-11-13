@@ -101,6 +101,13 @@ describe('lerProduto', () => {
       .rejects.toMatchObject({ codigo: 'loja_bloqueou' });
     expect(esperar2).not.toHaveBeenCalled();
   });
+  it.each([[undefined], ['']])('429 com Retry-After ausente ou vazio (%j) vira loja_bloqueou sem esperar', async (h) => {
+    const esperar = vi.fn(async () => {});
+    const cabecalhos = new Headers(h === undefined ? {} : { 'Retry-After': h });
+    await expect(lerProduto(URL_PRODUTO, { esperar, buscar: buscaFalsa([{ status: 429, cabecalhos }]) }))
+      .rejects.toMatchObject({ codigo: 'loja_bloqueou' });
+    expect(esperar).not.toHaveBeenCalled();
+  });
   it('só tenta de novo uma vez', async () => {
     const r429 = { status: 429, cabecalhos: new Headers({ 'Retry-After': '1' }) };
     await expect(lerProduto(URL_PRODUTO, { esperar: async () => {}, buscar: buscaFalsa([r429, r429]) })).rejects.toMatchObject({ codigo: 'loja_bloqueou' });
