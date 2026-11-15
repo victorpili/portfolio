@@ -59,16 +59,17 @@ export function lerResultado<T>(saida: string, schema: z.ZodType<T>): { dados: T
     throw new ErroMotor(`saída do claude -p não é JSON: ${saida.slice(0, 200)}`);
   }
   if (typeof r !== 'object' || r === null) throw new ErroMotor('saída do claude -p sem resultado');
-  if (r.subtype === 'error_max_structured_output_retries') throw new ErroSchema('claude -p não chegou ao formato pedido');
-  if (r.is_error) throw new ErroMotor(`claude -p falhou: ${(r.result ?? r.subtype ?? 'sem detalhe').slice(0, 300)}`);
-  const dados = schema.safeParse(r.structured_output);
-  if (!dados.success) throw new ErroSchema(`resposta fora do formato: ${dados.error.message}`);
   const u = r.usage ?? {};
-  return {
-    dados: dados.data,
+  const tokens = {
     tokensEntrada: (u.input_tokens ?? 0) + (u.cache_creation_input_tokens ?? 0) + (u.cache_read_input_tokens ?? 0),
     tokensSaida: u.output_tokens ?? 0,
   };
+  // Sem custoUsd: a assinatura não cobra por chamada (as respostas certas também saem com custo 0).
+  if (r.subtype === 'error_max_structured_output_retries') throw new ErroSchema('claude -p não chegou ao formato pedido', tokens);
+  if (r.is_error) throw new ErroMotor(`claude -p falhou: ${(r.result ?? r.subtype ?? 'sem detalhe').slice(0, 300)}`);
+  const dados = schema.safeParse(r.structured_output);
+  if (!dados.success) throw new ErroSchema(`resposta fora do formato: ${dados.error.message}`, tokens);
+  return { dados: dados.data, ...tokens };
 }
 
 /**

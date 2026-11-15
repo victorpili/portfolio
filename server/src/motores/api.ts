@@ -73,13 +73,13 @@ export function motorApi(o: { modelo: string; esforco?: 'low' | 'medium' | 'high
       } catch (e) {
         throw traduzirErroApi(e);
       }
-      if (r.stop_reason === 'refusal') throw new ErroSchema(`o ${c.agente} recusou a tarefa`);
-      if (r.parsed_output === null) throw new ErroSchema(`resposta do ${c.agente} fora do formato`);
+      // A recusa e a resposta fora do formato também foram cobradas: o erro leva o gasto, para a soma da missão.
+      const gasto = { tokensEntrada: r.usage.input_tokens, tokensSaida: r.usage.output_tokens, custoUsd: custoUsd(o.modelo, r.usage) };
+      if (r.stop_reason === 'refusal') throw new ErroSchema(`o ${c.agente} recusou a tarefa`, gasto);
+      if (r.parsed_output === null) throw new ErroSchema(`resposta do ${c.agente} fora do formato`, gasto);
       return {
         dados: r.parsed_output,
-        tokensEntrada: r.usage.input_tokens,
-        tokensSaida: r.usage.output_tokens,
-        custoUsd: custoUsd(o.modelo, r.usage),
+        ...gasto,
         ms: Date.now() - inicio,
       };
     },

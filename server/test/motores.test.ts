@@ -83,6 +83,17 @@ describe('motor da API', () => {
     }
   });
 
+  it('recusa e resposta fora do formato trazem o custo e os tokens da resposta', async () => {
+    for (const resposta of [mensagem(null, 'refusal'), mensagem('não é JSON')]) {
+      const { cliente } = clienteFalso(200, resposta);
+      const erro = await motorApi({ modelo: 'claude-sonnet-5-5', cliente }).chamar(chamada()).catch((e: unknown) => e);
+      expect(erro).toBeInstanceOf(ErroSchema);
+      expect(erro).toMatchObject({ tokensEntrada: 1000, tokensSaida: 500 });
+      // Sonnet 5.5: 1.000 × US$ 2/M + 500 × US$ 10/M
+      expect((erro as ErroSchema).custoUsd).toBeCloseTo(0.007);
+    }
+  });
+
   it('erros do SDK passam por traduzirErroApi', async () => {
     const saldo = { type: 'error', error: { type: 'invalid_request_error', message: 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.' } };
     const { cliente: semSaldo } = clienteFalso(400, saldo);
@@ -187,6 +198,22 @@ describe('motor da assinatura', () => {
     expect(() => lerResultado(saida({}), Pesquisa)).toThrow(ErroSchema);
     expect(() => lerResultado(saida({ is_error: true, result: 'limite atingido' }), Pesquisa)).toThrow(ErroMotor);
     expect(() => lerResultado('isto não é JSON', Pesquisa)).toThrow(ErroMotor);
+  });
+
+  it('lerResultado: resposta fora do formato traz os tokens, sem custo (a assinatura não cobra por chamada)', () => {
+    const saida = JSON.stringify({
+      type: 'result', is_error: false, total_cost_usd: 0.05, structured_output: { tipoProduto: 1 },
+      usage: { input_tokens: 10, cache_creation_input_tokens: 200, cache_read_input_tokens: 3000, output_tokens: 400 },
+    });
+    let erro: unknown;
+    try {
+      lerResultado(saida, Pesquisa);
+    } catch (e) {
+      erro = e;
+    }
+    expect(erro).toBeInstanceOf(ErroSchema);
+    expect(erro).toMatchObject({ tokensEntrada: 3210, tokensSaida: 400 });
+    expect((erro as ErroSchema).custoUsd).toBeUndefined();
   });
 });
 
