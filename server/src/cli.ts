@@ -14,6 +14,9 @@ import { motorAssinatura } from './motores/assinatura';
 const RAIZ = fileURLToPath(new URL('../..', import.meta.url));
 const PASTA_MISSOES = join(RAIZ, 'web', 'public', 'missoes');
 const USO = 'Uso: pnpm missao <url> | --texto <arquivo> [--motor api|assinatura] [--modelo <id>] [--gravar <nome>]';
+// O prazo de 150 s vale para a API. Pela assinatura, cada `claude -p` leva de 50 a 90 s, e ela só serve para
+// ajustar os prompts; com o prazo da API, nenhuma missão terminaria.
+const PRAZO_ASSINATURA_MS = 15 * 60_000;
 
 const relogio = (ms: number) => {
   const s = Math.floor(ms / 1000);
@@ -39,7 +42,8 @@ async function main(): Promise<number> {
 
   console.log(`Motor: ${motor.nome}, modelo ${motor.modelo}.`);
   const eventos: Evento[] = [];
-  const resultado = await executarMissao(entrada, { motor, prompts: carregarPrompts() }, (e) => {
+  const prazoMs = op.motor === 'assinatura' ? PRAZO_ASSINATURA_MS : undefined;
+  const resultado = await executarMissao(entrada, { motor, prompts: carregarPrompts(), prazoMs }, (e) => {
     eventos.push(e);
     console.log(`[${relogio(e.t)}] ${e.mensagem}`);
   });
