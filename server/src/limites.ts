@@ -48,8 +48,8 @@ export function criarCota(o: { porDia: number; porVisitante: number; maxSimultan
     reservar(visitante) {
       virarDia();
       if (usadasHoje >= o.porDia) return { ok: false, motivo: 'cota_dia' };
-      if (usadasHoje + pendentes >= o.porDia) return { ok: false, motivo: 'ocupado' };
       if ((porVisitante.get(visitante) ?? 0) >= o.porVisitante) return { ok: false, motivo: 'cota_visitante' };
+      if (usadasHoje + pendentes >= o.porDia) return { ok: false, motivo: 'ocupado' };
       if ((ativos.get(visitante) ?? 0) >= 1 || totalAtivas >= maxSimultaneas) return { ok: false, motivo: 'ocupado' };
 
       ativos.set(visitante, 1);

@@ -89,9 +89,7 @@ export function criarApp(d: DepsApp): Express {
       const escrever = (e: unknown) => {
         if (res.writableEnded || res.destroyed) return;
         try {
-          res.write(`data: ${JSON.stringify(e)}
-
-`);
+          res.write(`data: ${JSON.stringify(e)}\n\n`);
         } catch { /* o cliente já foi embora */ }
       };
       const abort = new AbortController();
