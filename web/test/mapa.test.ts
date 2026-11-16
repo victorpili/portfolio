@@ -71,8 +71,13 @@ describe('mapa', () => {
   });
 
   describe('planoDeMovimento', () => {
-    it('mesma sala: fica parado', () => {
-      expect(planoDeMovimento('redator', 'criacao', 'criacao', { andando: true, reduzido: false })).toEqual({ tipo: 'parado' });
+    it('mesma sala, sem caminhada em curso: fica parado', () => {
+      expect(planoDeMovimento('redator', 'criacao', 'criacao', { andando: false, reduzido: false })).toEqual({ tipo: 'parado' });
+    });
+
+    it('mesma sala com caminhada cortada (efeito rodou de novo sem troca de sala): salta ao posto', () => {
+      expect(planoDeMovimento('redator', 'criacao', 'criacao', { andando: true, reduzido: false }))
+        .toEqual({ tipo: 'saltar', posto: POSTOS.redator.criacao });
     });
 
     it('troca de sala com o agente parado: caminha pela rota', () => {

@@ -61,11 +61,13 @@ export type PlanoDeMovimento = { tipo: 'parado' } | { tipo: 'caminhar'; pontos: 
 /**
  * O que o agente faz quando a sala muda. Parado, caminha pela rota. Se a sala muda no meio de uma caminhada
  * (por exemplo, a missão recomeça) ou com movimento reduzido, salta direto ao posto novo, sem atravessar paredes.
+ * Se o efeito roda de novo sem troca de sala com uma caminhada cortada (Fast Refresh, esconder/mostrar),
+ * também salta ao posto, para o agente não ficar parado no meio do caminho.
  */
 export function planoDeMovimento(
   agente: Agente, de: Sala, para: Sala, o: { andando: boolean; reduzido: boolean },
 ): PlanoDeMovimento {
-  if (de === para) return { tipo: 'parado' };
+  if (de === para) return o.andando ? { tipo: 'saltar', posto: posto(agente, para) } : { tipo: 'parado' };
   if (o.andando || o.reduzido) return { tipo: 'saltar', posto: posto(agente, para) };
   return { tipo: 'caminhar', pontos: rota(agente, de, para) };
 }
