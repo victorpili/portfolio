@@ -76,9 +76,11 @@ export function Nave({ estado }: { estado: EstadoNave }) {
               style={{ ...caixa({ ...m, w: 1, h: 1 }), zIndex: 10 + m.y * 10 }}
             />
           ))}
-          {AGENTES.map((a) => (
-            <Agente key={a} agente={a} estado={estado.agentes[a]} />
-          ))}
+          <ul className="tripulacao" aria-label="Tripulação">
+            {AGENTES.map((a) => (
+              <Agente key={a} agente={a} estado={estado.agentes[a]} />
+            ))}
+          </ul>
         </div>
       </div>
       <div className="nave__bico" aria-hidden="true" />

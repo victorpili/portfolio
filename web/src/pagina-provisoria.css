@@ -1,0 +1,85 @@
+/* Página provisória da Task 13 (cabeçalho e linhas cruas do terminal). A Task 14 substitui este arquivo. */
+
+.pagina {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 16px 48px;
+}
+
+.topo {
+  margin-bottom: 20px;
+}
+
+.topo h1 {
+  margin: 0 0 12px;
+  font-family: var(--fonte-titulo);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--texto);
+  text-shadow: 3px 3px 0 var(--casco-escuro);
+}
+
+@media (min-width: 640px) {
+  .topo h1 {
+    font-size: 24px;
+  }
+}
+
+.topo p {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+
+.missao-atual {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.missao-atual strong {
+  color: var(--texto);
+  font-weight: 600;
+}
+
+.linhas-cruas {
+  margin-top: 24px;
+  border: 2px solid var(--casco);
+  background: #0c0e20;
+  padding: 14px 16px;
+}
+
+.linhas-cruas h2 {
+  margin: 0 0 12px;
+  font-family: var(--fonte-titulo);
+  font-size: 8px;
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+
+.linhas-cruas ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 240px;
+  overflow-y: auto;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 13px;
+}
+
+.linhas-cruas li {
+  padding: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.linhas-cruas li::before {
+  content: '> ';
+  color: var(--casco-claro);
+}
+
+.linha--alerta { color: #ff9aa3; }
+.linha--sucesso { color: var(--verde); }
+.linha--erro { color: var(--vermelho); }

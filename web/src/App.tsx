@@ -4,6 +4,7 @@ import { carregarGravada, carregarIndice } from './api';
 import { Nave } from './componentes/Nave';
 import { estadoInicial, reduzir } from './estado';
 import { criarFila } from './fila';
+import './pagina-provisoria.css';
 
 /** Pausa entre o fim da missão e o recomeço do loop. */
 const PAUSA_LOOP_MS = 5000;

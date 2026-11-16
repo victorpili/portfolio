@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { Agente as NomeAgente } from '@nave/shared';
 import type { Atividade, EstadoAgente } from '../estado';
-import { SALAS, posto, rota, type Ponto } from '../mapa';
+import { SALAS, planoDeMovimento, posto, type Ponto } from '../mapa';
 
 /** Duração da caminhada inteira, de posto a posto. */
 export const CAMINHADA_MS = 1300;
@@ -11,8 +11,17 @@ export const NOME_AGENTE: Record<NomeAgente, string> = {
 };
 
 const DESCRICAO: Record<Atividade, string> = {
-  dormindo: 'dormindo', andando: 'a postos', trabalhando: 'trabalhando', devolvido: 'trabalho devolvido', pronto: 'entregou',
+  dormindo: 'dormindo', andando: 'a postos', trabalhando: 'trabalhando', devolvido: 'trabalho devolvido',
+  pronto: 'trabalho entregue',
 };
+
+/** O que o leitor de tela ouve sobre o tripulante. O "!" do balão não é lido: "trabalho devolvido" já diz isso. */
+export function descreverAgente(agente: NomeAgente, estado: EstadoAgente, caminhando: boolean): string {
+  const sala = SALAS[estado.sala];
+  if (caminhando) return `${NOME_AGENTE[agente]}: a caminho ${sala.destino}`;
+  const balao = estado.balao && estado.atividade !== 'devolvido' ? ` (${estado.balao})` : '';
+  return `${NOME_AGENTE[agente]}: ${DESCRICAO[estado.atividade]} ${sala.local}${balao}`;
+}
 
 const distancia = (a: Ponto, b: Ponto) => Math.hypot(b.x - a.x, b.y - a.y);
 
@@ -29,25 +38,32 @@ export function Agente({ agente, estado }: { agente: NomeAgente; estado: EstadoA
   const [trechoMs, setTrechoMs] = useState(0);
   const [andando, setAndando] = useState(false);
   const salaAnterior = useRef(estado.sala);
+  // Se há uma caminhada em curso. Ref, e não estado, porque o efeito da sala nova precisa ler o valor na hora.
+  const caminhando = useRef(false);
 
   useEffect(() => {
     const de = salaAnterior.current;
     const para = estado.sala;
-    if (de === para) return;
     salaAnterior.current = para;
-    const pontos = rota(agente, de, para);
-    if (semMovimento()) {
+    const plano = planoDeMovimento(agente, de, para, { andando: caminhando.current, reduzido: semMovimento() });
+    if (plano.tipo === 'parado') return;
+    if (plano.tipo === 'saltar') {
+      // Sala nova no meio de uma caminhada (a cleanup já parou o timer) ou movimento reduzido:
+      // salta direto ao posto, sem transição, em vez de cortar caminho pelas paredes.
+      caminhando.current = false;
+      setAndando(false);
       setTrechoMs(0);
-      setPos(pontos[pontos.length - 1]);
+      setPos(plano.posto);
       return;
     }
-    // Começa do ponto onde o sprite está (se a caminhada anterior foi interrompida, ele segue dali).
+    const { pontos } = plano;
     const trechos = pontos.slice(1).map((p, i) => distancia(pontos[i], p));
     const total = trechos.reduce((s, d) => s + d, 0) || 1;
     let i = 0;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const proximo = () => {
       if (i >= trechos.length) {
+        caminhando.current = false;
         setAndando(false);
         return;
       }
@@ -57,12 +73,11 @@ export function Agente({ agente, estado }: { agente: NomeAgente; estado: EstadoA
       i++;
       timer = setTimeout(proximo, ms);
     };
+    caminhando.current = true;
     setAndando(true);
     proximo();
-    return () => {
-      clearTimeout(timer);
-      setAndando(false);
-    };
+    // Só para o timer: `caminhando` continua verdadeiro para o próximo efeito saber que interrompeu uma caminhada.
+    return () => clearTimeout(timer);
   }, [agente, estado.sala]);
 
   // Na caminhada de volta, o estado já diz "dormindo": deita só ao chegar na cama.
@@ -75,7 +90,7 @@ export function Agente({ agente, estado }: { agente: NomeAgente; estado: EstadoA
   const devolvido = estado.atividade === 'devolvido';
 
   return (
-    <div className={`agente agente--${agente} agente--${visual}`} style={estilo}>
+    <li className={`agente agente--${agente} agente--${visual}`} style={estilo}>
       <div className="agente__corpo" aria-hidden="true">
         <img className="agente__sprite" src={`/sprites/${agente}.png`} alt="" draggable={false} />
       </div>
@@ -90,10 +105,7 @@ export function Agente({ agente, estado }: { agente: NomeAgente; estado: EstadoA
         </span>
       )}
       <span className="agente__nome" aria-hidden="true">{NOME_AGENTE[agente]}</span>
-      <span className="so-leitor">
-        {NOME_AGENTE[agente]}: {andando ? `a caminho de ${SALAS[estado.sala].nome}` : `${DESCRICAO[estado.atividade]} em ${SALAS[estado.sala].nome}`}
-        {estado.balao ? ` (${estado.balao})` : ''}
-      </span>
-    </div>
+      <span className="so-leitor">{descreverAgente(agente, estado, andando)}</span>
+    </li>
   );
 }

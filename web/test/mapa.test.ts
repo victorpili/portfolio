@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Agente, Sala } from '@nave/shared';
-import { CORREDOR, GRADE, POSTOS, SALAS, rota, type Ponto, type Retangulo } from '../src/mapa';
+import { CORREDOR, GRADE, POSTOS, SALAS, planoDeMovimento, rota, type Ponto, type Retangulo } from '../src/mapa';
 
 const dentro = (p: Ponto, r: Retangulo) => p.x >= r.x && p.x < r.x + r.w && p.y >= r.y && p.y < r.y + r.h;
 const ehPorta = (p: Ponto) => Object.values(SALAS).some((s) => s.porta.x === p.x && s.porta.y === p.y);
@@ -68,5 +68,32 @@ describe('mapa', () => {
     expect(r[1]).toEqual(SALAS.ponte.porta);
     expect(r.at(-2)).toEqual(SALAS.dormitorio.porta);
     for (const p of r.slice(2, -2)) expect(dentro(p, CORREDOR)).toBe(true);
+  });
+
+  describe('planoDeMovimento', () => {
+    it('mesma sala: fica parado', () => {
+      expect(planoDeMovimento('redator', 'criacao', 'criacao', { andando: true, reduzido: false })).toEqual({ tipo: 'parado' });
+    });
+
+    it('troca de sala com o agente parado: caminha pela rota', () => {
+      expect(planoDeMovimento('pesquisador', 'dormitorio', 'pesquisa', { andando: false, reduzido: false }))
+        .toEqual({ tipo: 'caminhar', pontos: rota('pesquisador', 'dormitorio', 'pesquisa') });
+    });
+
+    it('troca de sala no meio de uma caminhada: salta direto ao novo posto', () => {
+      expect(planoDeMovimento('pesquisador', 'pesquisa', 'dormitorio', { andando: true, reduzido: false }))
+        .toEqual({ tipo: 'saltar', posto: POSTOS.pesquisador.dormitorio });
+    });
+
+    it('movimento reduzido: salta direto ao novo posto', () => {
+      expect(planoDeMovimento('capita', 'dormitorio', 'ponte', { andando: false, reduzido: true }))
+        .toEqual({ tipo: 'saltar', posto: POSTOS.capita.ponte });
+    });
+  });
+
+  it('cada sala diz como se fala "na sala" e "a caminho da sala"', () => {
+    expect([SALAS.dormitorio.local, SALAS.dormitorio.destino]).toEqual(['no Dormitório', 'do Dormitório']);
+    expect([SALAS.ponte.local, SALAS.ponte.destino]).toEqual(['na Ponte', 'da Ponte']);
+    expect([SALAS.pesquisa.local, SALAS.criacao.local, SALAS.qualidade.local]).toEqual(['na Pesquisa', 'na Criação', 'na Qualidade']);
   });
 });
