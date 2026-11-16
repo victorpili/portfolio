@@ -1,13 +1,14 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
-import type { Agente, EntradaMissao, Evento, MissaoGravada } from '@nave/shared';
+import type { Agente, CodigoErro, EntradaMissao, Evento, MissaoGravada } from '@nave/shared';
 import { acordar, carregarGravada, carregarIndice, ErroApi, iniciarMissao, lerCota } from './api';
 import { API_URL } from './config';
-import { Entrada, type EstadoServidor, type OpcaoGravada } from './componentes/Entrada';
+import { Entrada } from './componentes/Entrada';
 import { Nave } from './componentes/Nave';
 import { Painel } from './componentes/Painel';
 import { Terminal } from './componentes/Terminal';
 import { estadoInicial, reduzir, type EstadoNave } from './estado';
 import { criarFila } from './fila';
+import { deveAcordarDeNovo, type EstadoServidor, type OpcaoGravada, type TipoMissao } from './interface-dados';
 import { eventoDeErro } from './textos';
 import './interface.css';
 
@@ -87,6 +88,9 @@ export function App() {
   const controle = useRef<AbortController | null>(null);
   /** Sobe a cada missão nova: o que chega de uma missão antiga é ignorado. */
   const geracao = useRef(0);
+  /** Sobe a cada vez que o App acorda o servidor: só a resposta da última vale. */
+  const despertar = useRef(0);
+  const montado = useRef(false);
   const naveRef = useRef<HTMLDivElement>(null);
 
   /** Para a missão em curso (fila e pedido ao vivo) e devolve o número da próxima. */
@@ -98,22 +102,27 @@ export function App() {
     return ++geracao.current;
   };
 
+  /** Acorda o servidor (o Render grátis dorme) e lê a cota; resposta depois de desmontar ou de outra tentativa não vale. */
+  const acordarServidor = (base: string): void => {
+    const vez = ++despertar.current;
+    const valendo = () => montado.current && vez === despertar.current;
+    setServidor('aquecendo');
+    acordar(base).then((ok) => {
+      if (!valendo()) return;
+      setServidor(ok ? 'pronto' : 'fora');
+      if (ok) lerCota(base).then((c) => valendo() && setCota(c));
+    });
+  };
+
   useEffect(() => {
-    let ativo = true;
+    montado.current = true;
     listarGravadas().then((g) => {
-      if (ativo) setGravadas(g);
+      if (montado.current) setGravadas(g);
     });
     // Sem API configurada, não acorda nem lê a cota: o estado fica "fora" e as gravadas funcionam.
-    if (API_URL) {
-      const base = API_URL;
-      acordar(base).then((ok) => {
-        if (!ativo) return;
-        setServidor(ok ? 'pronto' : 'fora');
-        if (ok) lerCota(base).then((c) => ativo && setCota(c));
-      });
-    }
+    if (API_URL) acordarServidor(API_URL);
     return () => {
-      ativo = false;
+      montado.current = false;
       encerrar();
     };
   }, []);
@@ -130,7 +139,7 @@ export function App() {
   }, [estado.fase]);
 
   const aoVivoEmCurso = pedidoAberto || (missao?.tipo === 'ao_vivo' && estado.fase === 'em_missao');
-  const emMissao = pedidoAberto || estado.fase === 'em_missao';
+  const emCurso: TipoMissao | null = aoVivoEmCurso ? 'ao_vivo' : estado.fase === 'em_missao' ? 'gravada' : null;
 
   async function assistir(nome: string) {
     // Durante a missão ao vivo, assistir fica desativado (a missão ao vivo gasta cota e não é cancelada).
@@ -143,8 +152,9 @@ export function App() {
       m = await buscarGravada(nome);
     } catch (err) {
       if (minha !== geracao.current) return;
+      // Arquivo que não abriu não é `ErroApi`: vira `api_fora`, como qualquer falha inesperada.
       console.error(err);
-      aplicar(eventoDeErro(new ErroApi('conexao_perdida', 'Não consegui carregar a missão gravada.'), Date.now()));
+      aplicar(eventoDeErro(err, Date.now()));
       return;
     }
     if (minha !== geracao.current) return;
@@ -155,7 +165,7 @@ export function App() {
   }
 
   async function iniciar(entrada: EntradaMissao) {
-    if (!API_URL || servidor !== 'pronto' || emMissao) return;
+    if (!API_URL || servidor !== 'pronto' || emCurso !== null) return;
     const base = API_URL;
     const minha = encerrar();
     aplicar(REINICIAR);
@@ -165,18 +175,29 @@ export function App() {
     fila.current = f;
     controle.current = c;
     setPedidoAberto(true);
+    // O código do erro que encerrou a missão, venha ele do servidor (evento) ou daqui (ErroApi).
+    let codigoFinal = null as CodigoErro | null;
     try {
-      await iniciarMissao(base, entrada, f.empurrar, c.signal);
+      await iniciarMissao(base, entrada, (e) => {
+        if (e.tipo === 'erro') codigoFinal = e.codigo;
+        f.empurrar(e);
+      }, c.signal);
     } catch (err) {
       // Abort feito por nós (outra missão ou a página fechando) não é erro.
       if (!c.signal.aborted) {
         if (!(err instanceof ErroApi)) console.error(err);
-        f.empurrar(eventoDeErro(err, Date.now()));
+        const evento = eventoDeErro(err, Date.now());
+        codigoFinal = evento.codigo;
+        f.empurrar(evento);
       }
     } finally {
       if (controle.current === c) controle.current = null;
       if (minha === geracao.current) setPedidoAberto(false);
-      if (!c.signal.aborted) lerCota(base).then(setCota);
+      if (!c.signal.aborted && montado.current) {
+        // A conexão caiu ou o servidor falhou: ele pode ter caído ou dormido. Acorda de novo (e lê a cota).
+        if (deveAcordarDeNovo(codigoFinal)) acordarServidor(base);
+        else lerCota(base).then((cotaNova) => montado.current && setCota(cotaNova));
+      }
     }
   }
 
@@ -185,11 +206,11 @@ export function App() {
   return (
     <main className="pagina">
       <header className="cabecalho">
-        <h1 className="cabecalho__titulo">Nave de Agentes</h1>
+        <h1 className="titulo-pixel cabecalho__titulo">Nave de Agentes</h1>
         <p className="cabecalho__texto">
           Uma tripulação de agentes de IA prepara a ficha de um produto de loja online para ser encontrada por assistentes
-          como ChatGPT e Gemini. Assista a uma missão gravada ou cole a URL de um produto Shopify e veja a nave trabalhar
-          ao vivo. No fim, o antes e o depois, com a nota de prontidão para IA.
+          de IA como ChatGPT, Claude e Gemini. Assista a uma missão gravada ou cole a URL de um produto Shopify e veja a
+          nave trabalhar ao vivo. No fim, o antes e o depois, com a nota de prontidão para IA.
         </p>
         <ul className="tripulantes" aria-label="Tripulação">
           {TRIPULACAO.map((t) => (
@@ -210,8 +231,7 @@ export function App() {
         </div>
         <Entrada
           servidor={servidor}
-          emMissao={emMissao}
-          aoVivoEmCurso={aoVivoEmCurso}
+          emCurso={emCurso}
           cota={cota}
           gravadas={gravadas}
           erro={erro}

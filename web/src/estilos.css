@@ -37,6 +37,13 @@
   --parcial: #ffb347;
   --confirmar: #7cc4ff;
   --erro-texto: #ffb3ba;
+  --faixa-clara: #ffd36b; /* botão amarelo sob o mouse */
+  --imediato-claro: #8cf0f3; /* botão "Assistir" sob o mouse */
+  --placeholder: #8b93c4;
+  --texto-sobre-alerta: #fff;
+  --relevo-sombra: rgba(0, 0, 0, 0.25); /* relevo em pixel dos botões */
+  --relevo-brilho: rgba(255, 255, 255, 0.35);
+  --relevo-brilho-leve: rgba(255, 255, 255, 0.12);
 
   --fonte-titulo: 'Press Start 2P', ui-monospace, monospace;
   --fonte-texto: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;

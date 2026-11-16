@@ -1,23 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import type { CodigoErro, EntradaMissao } from '@nave/shared';
+import { rotuloIniciar, type EstadoServidor, type OpcaoGravada, type TipoMissao } from '../interface-dados';
 import { textoDoErro } from '../textos';
 
-export type EstadoServidor = 'aquecendo' | 'pronto' | 'fora';
-export type OpcaoGravada = { nome: string; rotulo: string };
 type Modo = 'url' | 'texto';
 
 const TEXTO_MIN = 80;
 const TEXTO_MAX = 20_000;
 /** Erros em que colar o texto da ficha resolve. */
 const SUGERE_TEXTO: string[] = ['loja_bloqueou', 'produto_nao_encontrado'] satisfies CodigoErro[];
-
-/** O rótulo do botão da missão ao vivo. */
-export function rotuloIniciar(servidor: EstadoServidor, emMissao: boolean): string {
-  if (servidor === 'fora') return 'missão ao vivo indisponível agora';
-  if (servidor === 'aquecendo') return 'aquecendo os motores…';
-  if (emMissao) return 'missão em andamento…';
-  return 'Iniciar missão';
-}
 
 const AVISO_SERVIDOR: Record<Exclude<EstadoServidor, 'pronto'>, string> = {
   aquecendo: 'O servidor grátis dorme quando ninguém usa e leva até 1 minuto para acordar. As missões gravadas já funcionam.',
@@ -26,12 +17,14 @@ const AVISO_SERVIDOR: Record<Exclude<EstadoServidor, 'pronto'>, string> = {
 
 const numero = (n: number) => n.toLocaleString('pt-BR');
 
+function semMovimento(): boolean {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+}
+
 interface Props {
   servidor: EstadoServidor;
-  /** Alguma missão (ao vivo ou gravada) em andamento: desativa "Iniciar missão". */
-  emMissao: boolean;
-  /** Missão ao vivo em andamento: desativa "Assistir". */
-  aoVivoEmCurso: boolean;
+  /** A missão em curso: qualquer uma desativa "Iniciar missão"; a ao vivo também desativa "Assistir". */
+  emCurso: TipoMissao | null;
   cota: { restantes: number; porDia: number } | null;
   /** `null` enquanto o índice carrega. */
   gravadas: OpcaoGravada[] | null;
@@ -40,13 +33,14 @@ interface Props {
   aoAssistir(nome: string): void;
 }
 
-/** Os controles: missão ao vivo (URL ou texto colado), missão gravada, cota e a caixa de erro. */
+/** Os controles: missão ao vivo (URL ou texto colado), a caixa de erro logo abaixo dela, missão gravada e cota. */
 export function Entrada(p: Props) {
   const [modo, setModo] = useState<Modo>('url');
   const [url, setUrl] = useState('');
   const [texto, setTexto] = useState('');
   const [escolhida, setEscolhida] = useState('');
   const campoTexto = useRef<HTMLTextAreaElement>(null);
+  const caixaErro = useRef<HTMLDivElement>(null);
   const focarTexto = useRef(false);
 
   useEffect(() => {
@@ -54,10 +48,16 @@ export function Entrada(p: Props) {
     focarTexto.current = false;
   }, [modo]);
 
+  // A caixa de erro aparece perto do botão; se ficou fora da vista, entra nela (sem pular se já está visível).
+  useEffect(() => {
+    if (p.erro) caixaErro.current?.scrollIntoView({ block: 'nearest', behavior: semMovimento() ? 'auto' : 'smooth' });
+  }, [p.erro]);
+
   const gravadas = p.gravadas ?? [];
   const gravada = gravadas.some((g) => g.nome === escolhida) ? escolhida : (gravadas[0]?.nome ?? '');
   const valor = modo === 'url' ? url.trim() : texto.trim();
-  const podeIniciar = p.servidor === 'pronto' && !p.emMissao && valor.length > 0;
+  const podeIniciar = p.servidor === 'pronto' && p.emCurso === null && valor.length > 0;
+  const aoVivo = p.emCurso === 'ao_vivo';
   const aviso = p.servidor === 'pronto' ? null : AVISO_SERVIDOR[p.servidor];
   const tamanho = texto.trim().length;
 
@@ -77,9 +77,9 @@ export function Entrada(p: Props) {
   return (
     <section className="entrada" aria-label="Controles da missão">
       <div className="entrada__grade">
-        <form className="entrada__bloco" onSubmit={enviar} noValidate>
+        <form className="entrada__bloco entrada__bloco--ao-vivo" onSubmit={enviar} noValidate>
           <div className="entrada__cabeca">
-            <h2 className="entrada__titulo">Missão ao vivo</h2>
+            <h2 className="titulo-pixel entrada__titulo">Missão ao vivo</h2>
             {p.cota && (
               <p className="entrada__cota" title="Missões ao vivo que ainda dá para rodar hoje">
                 cota de hoje: {p.cota.restantes}/{p.cota.porDia}
@@ -132,7 +132,7 @@ export function Entrada(p: Props) {
               </>
             )}
             <button type="submit" className="botao" disabled={!podeIniciar} aria-describedby={aviso ? 'entrada-aviso' : undefined}>
-              {rotuloIniciar(p.servidor, p.emMissao)}
+              {rotuloIniciar(p.servidor, p.emCurso)}
             </button>
           </div>
 
@@ -155,8 +155,27 @@ export function Entrada(p: Props) {
           )}
         </form>
 
+        {erro && (
+          <div ref={caixaErro} className="caixa-erro" role="alert">
+            <p className="titulo-pixel caixa-erro__titulo">{erro.titulo}</p>
+            <p className="caixa-erro__sugestao">{erro.sugestao}</p>
+            <div className="caixa-erro__acoes">
+              {p.erro && SUGERE_TEXTO.includes(p.erro) && modo === 'url' && (
+                <button type="button" className="botao botao--leve" onClick={colarTexto}>
+                  Colar o texto da ficha
+                </button>
+              )}
+              {gravada && (
+                <button type="button" className="botao botao--assistir" disabled={aoVivo} onClick={() => p.aoAssistir(gravada)}>
+                  Assistir uma missão gravada
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="entrada__bloco entrada__bloco--gravada">
-          <h2 className="entrada__titulo">Missão gravada</h2>
+          <h2 className="titulo-pixel entrada__titulo">Missão gravada</h2>
           {p.gravadas === null ? (
             <p className="entrada__dica">Carregando as missões gravadas…</p>
           ) : gravadas.length === 0 ? (
@@ -175,40 +194,21 @@ export function Entrada(p: Props) {
                 <button
                   type="button"
                   className="botao botao--assistir"
-                  disabled={p.aoVivoEmCurso}
+                  disabled={aoVivo}
                   onClick={() => p.aoAssistir(gravada)}
-                  aria-describedby={p.aoVivoEmCurso ? 'entrada-espera' : undefined}
+                  aria-describedby={aoVivo ? 'entrada-espera' : undefined}
                 >
                   Assistir
                 </button>
               </div>
               <p id="entrada-espera" className="entrada__dica">
-                {p.aoVivoEmCurso
+                {aoVivo
                   ? 'Disponível quando a missão ao vivo terminar.'
                   : 'Gravada antes, com os mesmos agentes: abre na hora e não gasta nada.'}
               </p>
             </>
           )}
         </div>
-
-        {erro && (
-          <div className="caixa-erro" role="alert">
-            <p className="caixa-erro__titulo">{erro.titulo}</p>
-            <p className="caixa-erro__sugestao">{erro.sugestao}</p>
-            <div className="caixa-erro__acoes">
-              {p.erro && SUGERE_TEXTO.includes(p.erro) && modo === 'url' && (
-                <button type="button" className="botao botao--leve" onClick={colarTexto}>
-                  Colar o texto da ficha
-                </button>
-              )}
-              {gravada && (
-                <button type="button" className="botao botao--assistir" disabled={p.aoVivoEmCurso} onClick={() => p.aoAssistir(gravada)}>
-                  Assistir uma missão gravada
-                </button>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );

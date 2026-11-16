@@ -1,15 +1,8 @@
 import { useLayoutEffect, useRef } from 'react';
 import type { LinhaTerminal } from '../estado';
+import { estaNoFim } from '../interface-dados';
 
 const PREFIXO: Record<LinhaTerminal['tom'], string> = { normal: '>', alerta: '!', sucesso: '✓', erro: '✗' };
-
-/** Folga, em pixels, para ainda contar como "no fim" da rolagem. */
-const FOLGA_PX = 24;
-
-/** Se a rolagem está no fim (ou a poucos pixels dele). Conteúdo menor que a caixa conta como no fim. */
-export function estaNoFim(el: { scrollTop: number; scrollHeight: number; clientHeight: number }): boolean {
-  return el.scrollHeight - el.scrollTop - el.clientHeight <= FOLGA_PX;
-}
 
 /**
  * O terminal da nave: uma linha por evento, na cor de quem fala, com o estilo do tom.
@@ -32,7 +25,7 @@ export function Terminal({ linhas, missao }: { linhas: LinhaTerminal[]; missao: 
   return (
     <section className={`terminal${linhas.length === 0 ? ' terminal--vazio' : ''}`} aria-labelledby="terminal-titulo">
       <header className="terminal__topo">
-        <h2 id="terminal-titulo">Terminal da nave</h2>
+        <h2 id="terminal-titulo" className="titulo-pixel terminal__titulo">Terminal da nave</h2>
         {missao && <p className="terminal__missao">{missao}</p>}
       </header>
       <div className="terminal__corpo">
@@ -46,7 +39,8 @@ export function Terminal({ linhas, missao }: { linhas: LinhaTerminal[]; missao: 
           ref={lista}
           className="terminal__linhas"
           aria-live="polite"
-          aria-label="Mensagens da missão"
+          aria-label="Linhas do terminal"
+          tabIndex={0}
           onScroll={(e) => {
             noFim.current = estaNoFim(e.currentTarget);
           }}

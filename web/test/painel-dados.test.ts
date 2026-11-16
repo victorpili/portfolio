@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ItemNota, Nota, Resultado } from '@nave/shared';
-import { agruparChecklist, descreverBastidores, nomeDoArquivo, nomeDoModelo } from '../src/componentes/Painel';
+import { agruparChecklist, descreverBastidores, fraseAConfirmar, nomeDoArquivo, nomeDoModelo } from '../src/painel-dados';
 import missao from '../src/dev/missao-exemplo.json';
 
 const item = (p: Partial<ItemNota> & Pick<ItemNota, 'id' | 'grupo'>): ItemNota =>
@@ -79,22 +79,44 @@ describe('nomeDoModelo', () => {
 });
 
 describe('descreverBastidores', () => {
-  const base = { devolucoes: 1, chamadas: [{}, {}, {}, {}], duracaoMs: 25_260, custoUsd: 0, modelo: 'falso' };
+  const base = { motor: 'falso', devolucoes: 1, chamadas: [{}, {}, {}, {}], duracaoMs: 25_260, custoUsd: 0, modelo: 'falso' };
+  const bastidores = (r: object) => descreverBastidores(r as unknown as Resultado);
 
-  it('devoluções, chamadas, duração, custo e modelo', () => {
-    expect(descreverBastidores(base as unknown as Resultado)).toEqual([
-      '1 devolução do Imediato', '4 chamadas ao modelo', '25 s', 'US$ 0,00', 'motor falso',
+  it('motor falso: itens com rótulo e sem custo', () => {
+    expect(bastidores(base)).toEqual([
+      { rotulo: 'devoluções do Imediato', valor: '1' },
+      { rotulo: 'chamadas ao modelo', valor: '4' },
+      { rotulo: 'duração', valor: '25 s' },
+      { rotulo: 'motor', valor: 'falso (sem IA)' },
     ]);
   });
 
-  it('plural, minutos e custo pequeno', () => {
-    const r = { ...base, devolucoes: 0, chamadas: [{}], duracaoMs: 125_400, custoUsd: 0.004, modelo: 'claude-opus-5-5' };
-    expect(descreverBastidores(r as unknown as Resultado)).toEqual([
-      'nenhuma devolução', '1 chamada ao modelo', '2 min 05 s', 'menos de US$ 0,01', 'Claude Opus 5.5',
+  it('API: custo aproximado do modelo, com a dica de que não inclui as tentativas que falharam', () => {
+    const r = { ...base, motor: 'api', devolucoes: 0, chamadas: [{}], duracaoMs: 125_400, custoUsd: 0.3149, modelo: 'claude-opus-5-5' };
+    expect(bastidores(r)).toEqual([
+      { rotulo: 'devoluções do Imediato', valor: 'nenhuma' },
+      { rotulo: 'chamadas ao modelo', valor: '1' },
+      { rotulo: 'duração', valor: '2 min 05 s' },
+      { rotulo: 'custo do modelo', valor: '≈ US$ 0,31', dica: 'não inclui tentativas que falharam' },
+      { rotulo: 'modelo', valor: 'Claude Opus 5.5' },
     ]);
-    const r2 = { ...base, devolucoes: 2, custoUsd: 0.3149 };
-    expect(descreverBastidores(r2 as unknown as Resultado).slice(0, 4)).toEqual([
-      '2 devoluções do Imediato', '4 chamadas ao modelo', '25 s', 'US$ 0,31',
+    expect(bastidores({ ...r, custoUsd: 0.004 })[3]!.valor).toBe('≈ menos de US$ 0,01');
+  });
+
+  it('assinatura: custo coberto pela assinatura, não medido', () => {
+    const r = { ...base, motor: 'assinatura', devolucoes: 2, custoUsd: 0, modelo: 'sonnet' };
+    expect(bastidores(r).slice(3)).toEqual([
+      { rotulo: 'custo', valor: 'coberto pela assinatura (não medido)' },
+      { rotulo: 'modelo', valor: 'Claude Sonnet' },
     ]);
+    expect(bastidores(r)[0]).toEqual({ rotulo: 'devoluções do Imediato', valor: '2' });
+  });
+});
+
+describe('fraseAConfirmar', () => {
+  it('nenhum, um e vários itens a confirmar', () => {
+    expect(fraseAConfirmar(0)).toBe('.');
+    expect(fraseAConfirmar(1)).toBe(': o item a confirmar vale zero até o lojista responder.');
+    expect(fraseAConfirmar(4)).toBe(': os 4 itens a confirmar valem zero até o lojista responder.');
   });
 });
