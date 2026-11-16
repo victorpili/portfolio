@@ -31,6 +31,22 @@ describe('cotas', () => {
     expect(c.reservar('e')).toMatchObject({ ok: false, motivo: 'ocupado' });
   });
 
+  it('reservas em andamento ocupam a cota do dia: com 1 por dia, a segunda espera', () => {
+    const c = criarCota({ porDia: 1, porVisitante: 9 });
+    const a = c.reservar('a') as Reserva;
+    expect(c.reservar('b')).toMatchObject({ ok: false, motivo: 'ocupado' });
+    a.liberar();
+    expect(c.reservar('b').ok).toBe(true);
+  });
+
+  it('reserva confirmada esgota o dia: a seguinte vê cota_dia', () => {
+    const c = criarCota({ porDia: 1, porVisitante: 9 });
+    const a = c.reservar('a') as Reserva;
+    a.confirmar();
+    a.liberar();
+    expect(c.reservar('b')).toMatchObject({ ok: false, motivo: 'cota_dia' });
+  });
+
   it('confirmar duas vezes conta uma só', () => {
     const c = criarCota({ porDia: 5, porVisitante: 9 });
     const r = c.reservar('a') as Reserva;

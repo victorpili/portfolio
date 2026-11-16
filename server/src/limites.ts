@@ -25,6 +25,8 @@ export function criarCota(o: { porDia: number; porVisitante: number; maxSimultan
   const agora = o.agora ?? (() => new Date());
   let dia = diaEmBrasilia(agora());
   let usadasHoje = 0;
+  // Reservadas que ainda não foram confirmadas nem liberadas: já ocupam uma vaga do dia, para não estourar a cota.
+  let pendentes = 0;
   const porVisitante = new Map<string, number>();
   const ativos = new Map<string, number>();
   let totalAtivas = 0;
@@ -46,19 +48,22 @@ export function criarCota(o: { porDia: number; porVisitante: number; maxSimultan
     reservar(visitante) {
       virarDia();
       if (usadasHoje >= o.porDia) return { ok: false, motivo: 'cota_dia' };
+      if (usadasHoje + pendentes >= o.porDia) return { ok: false, motivo: 'ocupado' };
       if ((porVisitante.get(visitante) ?? 0) >= o.porVisitante) return { ok: false, motivo: 'cota_visitante' };
       if ((ativos.get(visitante) ?? 0) >= 1 || totalAtivas >= maxSimultaneas) return { ok: false, motivo: 'ocupado' };
 
       ativos.set(visitante, 1);
       totalAtivas++;
+      pendentes++;
       const diaDaReserva = dia;
       let confirmada = false;
       let liberada = false;
       return {
         ok: true,
         confirmar() {
-          if (confirmada) return;
+          if (confirmada || liberada) return;
           confirmada = true;
+          pendentes--;
           // Missão que atravessa a meia-noite conta no dia em que começou, que já foi zerado.
           if (diaDaReserva !== dia) return;
           usadasHoje++;
@@ -67,6 +72,7 @@ export function criarCota(o: { porDia: number; porVisitante: number; maxSimultan
         liberar() {
           if (liberada) return;
           liberada = true;
+          if (!confirmada) pendentes--;
           ativos.delete(visitante);
           totalAtivas--;
         },

@@ -2,11 +2,8 @@ import { afterEach, describe, it, expect, vi } from 'vitest';
 import { mkdtemp, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { Pesquisa, type IndiceMissoes, type MissaoGravada } from '@nave/shared';
+import { type IndiceMissoes, type MissaoGravada } from '@nave/shared';
 import { lerArgs, salvarMissao } from '../src/gravacao';
-import { motorFalso } from '../src/motores/falso';
-import { ErroMotor, ErroSchema, type Chamada, type Motor, type RespostaMotor } from '../src/motores/motor';
-import { pesquisaBoa } from './fixtures/respostas';
 
 const missao = (nome: string, titulo = 'Caneca Barro 350 ml'): MissaoGravada => ({
   nome, titulo, loja: 'l.com', gravadaEm: '2026-11-13T12:00:00.000Z', modelo: 'claude-opus-5-5',

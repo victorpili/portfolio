@@ -38,7 +38,7 @@ export class ErroMotor extends Error {}
 /**
  * Embrulha o motor para somar o custo de cada chamada que voltou, inclusive recusa e resposta fora do formato
  * (o `ErroSchema` traz o custo e é relançado igual). A Capitã só registra as chamadas certas; a linha de comando
- * precisa do total real, porque as regras de parada da gravação dependem dele.
+ * e o servidor precisam do total real: a gravação para por ele e o servidor o registra no log.
  */
 export function contarCusto(motor: Motor): { motor: Motor; custoUsd: () => number } {
   let total = 0;

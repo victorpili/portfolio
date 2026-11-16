@@ -31,10 +31,10 @@ export function criarApp(d: DepsApp): Express {
   app.disable('x-powered-by');
 
   app.use((req, res, next) => {
+    res.setHeader('Vary', 'Origin');
     const origem = req.headers.origin;
     if (origem !== undefined && d.origens.includes(origem)) {
       res.setHeader('Access-Control-Allow-Origin', origem);
-      res.setHeader('Vary', 'Origin');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
       res.setHeader('Access-Control-Allow-Headers', 'content-type');
     }
@@ -52,6 +52,9 @@ export function criarApp(d: DepsApp): Express {
   app.post('/api/missao', async (req, res) => {
     const corpo: { url?: unknown; texto?: unknown } = req.body ?? {};
     let entrada: EntradaMissao;
+    if (corpo.url !== undefined && corpo.texto !== undefined) {
+      return recusar(res, 400, 'entrada_invalida', 'Envie a URL ou o texto, não os dois.');
+    }
     if (typeof corpo.url === 'string') {
       const v = validarUrlProduto(corpo.url);
       if (!v.ok) return recusar(res, 400, 'url_invalida', v.motivo);
@@ -73,27 +76,33 @@ export function criarApp(d: DepsApp): Express {
       return recusar(res, 429, 'cota_esgotada', 'A cota de missões ao vivo acabou. Veja uma missão gravada.');
     }
 
-    res.status(200).set({
-      'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive', 'X-Accel-Buffering': 'no',
-    });
-    res.flushHeaders();
-
-    const inicio = Date.now();
-    // Depois do fechamento a Capitã ainda emite até a próxima checagem do sinal: escrever aqui tem de ser inofensivo.
-    const escrever = (e: unknown) => {
-      if (res.writableEnded || res.destroyed) return;
-      try {
-        res.write(`data: ${JSON.stringify(e)}\n\n`);
-      } catch { /* o cliente já foi embora */ }
-    };
-    const abort = new AbortController();
-    res.on('close', () => abort.abort());
-    const batimento = setInterval(() => {
-      escrever({ seq: 0, t: Date.now() - inicio, tipo: 'batimento', mensagem: 'Nave: batimento.' } satisfies Evento);
-    }, BATIMENTO_MS);
-
+    let batimento: NodeJS.Timeout | undefined;
     const contador = contarCusto(d.motor);
     try {
+      res.status(200).set({
+        'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive', 'X-Accel-Buffering': 'no',
+      });
+      res.flushHeaders();
+
+      const inicio = Date.now();
+      // Depois do fechamento a Capitã ainda emite até a próxima checagem do sinal: escrever aqui tem de ser inofensivo.
+      const escrever = (e: unknown) => {
+        if (res.writableEnded || res.destroyed) return;
+        try {
+          res.write(`data: ${JSON.stringify(e)}
+
+`);
+        } catch { /* o cliente já foi embora */ }
+      };
+      const abort = new AbortController();
+      batimento = setInterval(() => {
+        escrever({ seq: 0, t: Date.now() - inicio, tipo: 'batimento', mensagem: 'Nave: batimento.' } satisfies Evento);
+      }, BATIMENTO_MS);
+      res.on('close', () => {
+        clearInterval(batimento);
+        abort.abort();
+      });
+
       const resultado = await executarMissao(entrada, {
         motor: contador.motor, prompts: d.prompts, lerProduto: d.lerProduto, sinal: abort.signal, prazoMs: d.prazoMs,
         aoPrimeiraChamada: () => reserva.confirmar(),
@@ -115,6 +124,7 @@ export function criarApp(d: DepsApp): Express {
 
   // Corpo grande demais ou JSON quebrado.
   app.use((err: { status?: number }, _req: Request, res: Response, _next: NextFunction) => {
+    if (res.headersSent) return;
     if (err.status === 413) return recusar(res, 413, 'entrada_invalida', 'O corpo da requisição é grande demais.');
     if (err.status !== undefined && err.status < 500) return recusar(res, 400, 'entrada_invalida', 'Corpo da requisição inválido.');
     console.error('[rotas]', err);
