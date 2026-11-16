@@ -53,10 +53,11 @@ function camposEstruturados(f: FichaOriginal): string[] {
   ].map(normalizar);
 }
 
-export function contemTrecho(f: FichaOriginal, trecho: string): boolean {
+/** `{ tags: false }` ignora as tags: elas são etiquetas internas da loja e não sustentam atributo da pesquisa. */
+export function contemTrecho(f: FichaOriginal, trecho: string, opcoes: { tags?: boolean } = {}): boolean {
   const t = trechoLimpo(trecho);
   if (!t) return false;
-  const campos = [f.titulo, f.marca ?? '', f.tipo ?? '', ...f.tags,
+  const campos = [f.titulo, f.marca ?? '', f.tipo ?? '', ...(opcoes.tags === false ? [] : f.tags),
     ...f.opcoes.flatMap((o) => [o.nome, ...o.valores]),
     ...f.variantes.map((v) => v.titulo), f.descricaoTexto];
   return campos.some((c) => normalizar(c).includes(t));

@@ -8,17 +8,22 @@ const perguntaDe = (id: AtributoId): string => `Confirme: ${rotuloDe(id)}`;
 
 const RESERVADOS = new Set(['titulo', 'faq', 'resposta']);
 const MOTIVO_TRECHO_AUSENTE = 'a confirmar: trecho não encontrado';
+const MOTIVO_TRECHO_SO_TAG = 'a confirmar: trecho só aparece nas tags';
 
 function idsDaPesquisa(p: Pesquisa): AtributoId[] {
   return [...p.atributos.map((a) => a.id), ...p.lacunas.map((l) => l.id), ...p.naoSeAplica.map((n) => n.id)];
 }
 
+/** Trecho de atributo vale fora das tags: tag é etiqueta interna da loja e não sustenta atributo. */
+const trechoValido = (o: FichaOriginal, trecho: string) => contemTrecho(o, trecho, { tags: false });
+const soNasTags = (o: FichaOriginal, trecho: string) => !trechoValido(o, trecho) && contemTrecho(o, trecho);
+
 export function conferirPesquisa(o: FichaOriginal, p: Pesquisa): Problema[] {
   const problemas: Problema[] = [];
   for (const a of p.atributos) {
-    if (!contemTrecho(o, a.trecho)) {
-      problemas.push({ item: `atributo:${a.id}`, motivo: `trecho "${a.trecho}" não está no original` });
-    }
+    if (trechoValido(o, a.trecho)) continue;
+    const motivo = soNasTags(o, a.trecho) ? `trecho "${a.trecho}" só aparece nas tags` : `trecho "${a.trecho}" não está no original`;
+    problemas.push({ item: `atributo:${a.id}`, motivo });
   }
   const contagem = new Map<AtributoId, number>();
   for (const id of idsDaPesquisa(p)) contagem.set(id, (contagem.get(id) ?? 0) + 1);
@@ -52,10 +57,11 @@ export function corrigirPesquisa(o: FichaOriginal, p: Pesquisa): { pesquisa: Pes
   const lacunas = primeira(p.lacunas);
   const naoSeAplica = primeira(p.naoSeAplica);
 
-  const validos = atributos.filter((a) => contemTrecho(o, a.trecho));
+  const validos = atributos.filter((a) => trechoValido(o, a.trecho));
   const novasLacunas = [
     ...lacunas,
-    ...atributos.filter((a) => !validos.includes(a)).map((a) => ({ id: a.id, motivo: MOTIVO_TRECHO_AUSENTE })),
+    ...atributos.filter((a) => !validos.includes(a))
+      .map((a) => ({ id: a.id, motivo: soNasTags(o, a.trecho) ? MOTIVO_TRECHO_SO_TAG : MOTIVO_TRECHO_AUSENTE })),
   ];
   for (const id of IDS) {
     if (!vistos.has(id)) novasLacunas.push({ id, motivo: `a confirmar: ${id} não foi classificado` });

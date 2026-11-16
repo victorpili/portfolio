@@ -25,6 +25,22 @@ describe('Imediato', () => {
     expect(problemas).toHaveLength(1);
     expect(conferirPesquisa(originalCaneca, pesquisa)).toEqual([]);
   });
+  it('trecho que só aparece nas tags gera problema, e corrigirPesquisa leva o atributo para lacunas', () => {
+    const p: Pesquisa = {
+      ...pesquisaBoa,
+      atributos: pesquisaBoa.atributos.map((a) => (a.id === 'uso' ? { ...a, valor: 'uso na cozinha', trecho: 'cozinha' } : a)),
+    };
+    expect(conferirPesquisa(originalCaneca, p)).toEqual([{ item: 'atributo:uso', motivo: 'trecho "cozinha" só aparece nas tags' }]);
+    const { pesquisa, problemas } = corrigirPesquisa(originalCaneca, p);
+    expect(problemas).toHaveLength(1);
+    expect(pesquisa.atributos.map((a) => a.id)).not.toContain('uso');
+    expect(pesquisa.lacunas).toContainEqual({ id: 'uso', motivo: 'a confirmar: trecho só aparece nas tags' });
+    expect(conferirPesquisa(originalCaneca, pesquisa)).toEqual([]);
+  });
+  it('a evidência do Revisor continua aceitando tag (o tipo do produto pode vir dela)', () => {
+    const rev = { vereditos: itensDaFicha(fichaNovaCaneca).map((item) => ({ item, veredito: 'sustentado' as const, evidencia: 'cozinha', comentario: 'ok' })) };
+    expect(conferirRevisao(originalCaneca, fichaNovaCaneca, rev).reprovados).toEqual([]);
+  });
   it('corrigirPesquisa preenche id faltando, remove duplicata e não muta', () => {
     const p: Pesquisa = { ...pesquisaBoa, lacunas: [...pesquisaBoa.lacunas.filter((l) => l.id !== 'peso'), { id: 'material', motivo: 'dup' }] };
     const copia = structuredClone(p);

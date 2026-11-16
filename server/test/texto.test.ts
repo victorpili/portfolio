@@ -42,6 +42,13 @@ describe('contemTrecho', () => {
     expect(contemTrecho(originalCaneca, 'cozinha')).toBe(true);
     expect(contemTrecho(originalCaneca, 'Caneca Barro 350 ml')).toBe(true);
   });
+  it('com { tags: false }, trecho que só está nas tags não conta; o padrão continua aceitando', () => {
+    expect(contemTrecho(originalCaneca, 'cozinha')).toBe(true);
+    expect(contemTrecho(originalCaneca, 'cozinha', { tags: false })).toBe(false);
+    // "caneca" também é tag, mas está no título: continua valendo sem as tags.
+    expect(contemTrecho(originalCaneca, 'caneca', { tags: false })).toBe(true);
+    expect(contemTrecho(originalCaneca, 'cerâmica esmaltada', { tags: false })).toBe(true);
+  });
 });
 
 describe('ondeEsta', () => {
