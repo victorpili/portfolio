@@ -155,11 +155,16 @@ describe('motor da assinatura', () => {
     const preso = `require('fs').writeFileSync(${JSON.stringify(arquivoPid)}, String(process.pid)); setInterval(() => {}, 1000)`;
     const controle = new AbortController();
     const rodando = rodarProcesso(process.execPath, ['-e', preso], '', controle.signal);
-    const pid = await vi.waitFor(() => Number(readFileSync(arquivoPid, 'utf8')), { timeout: 4000, interval: 20 });
+    // O arquivo pode existir vazio no meio da escrita; Number('') daria 0 e o teste seguiria com um pid falso.
+    const pid = await vi.waitFor(() => {
+      const n = Number(readFileSync(arquivoPid, 'utf8'));
+      if (!Number.isInteger(n) || n <= 0) throw new Error('pid ainda não escrito');
+      return n;
+    }, { timeout: 6000, interval: 20 });
     controle.abort();
     await expect(rodando).rejects.toBeInstanceOf(ErroMotor);
-    await vi.waitFor(() => expect(() => process.kill(pid, 0)).toThrow(), { timeout: 4000, interval: 20 });
-  });
+    await vi.waitFor(() => expect(() => process.kill(pid, 0)).toThrow(), { timeout: 6000, interval: 20 });
+  }, 15_000);
 
   it('schema em draft-07: o Claude Code valida o --json-schema com Ajv padrão e ignora o 2020-12', () => {
     const args = argsAssinatura({ agente: 'pesquisador', sistema: 'S', mensagens: [], schema: Pesquisa }, 'sonnet');
