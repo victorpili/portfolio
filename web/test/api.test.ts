@@ -28,6 +28,107 @@ describe('lerEventosSse', () => {
   });
 });
 
+describe('lerEventosSse: bordas', () => {
+  it('CRLF partido entre \\r e \\n em duas leituras', async () => {
+    const e1 = ev({ tipo: 'aviso', seq: 1 });
+    const bruto = `data: ${JSON.stringify(e1)}\r\n\r\n`;
+    const corte = bruto.length - 3; // ...\r\n\r | \n
+    const recebidos: Evento[] = [];
+    await lerEventosSse(corpo([bruto.slice(0, corte), bruto.slice(corte)]), (e) => recebidos.push(e));
+    expect(recebidos).toEqual([e1]);
+  });
+
+  it('caractere UTF-8 de vários bytes partido entre pedaços', async () => {
+    const e1 = ev({ tipo: 'aviso', seq: 1, mensagem: 'Capitã: ação ✓' });
+    const bytes = enc.encode(quadro(e1));
+    const i = bytes.indexOf(0xc3) + 1; // no meio do "ã"
+    const stream = new ReadableStream<Uint8Array>({
+      start(c) { c.enqueue(bytes.slice(0, i)); c.enqueue(bytes.slice(i)); c.close(); },
+    });
+    const recebidos: Evento[] = [];
+    await lerEventosSse(stream, (e) => recebidos.push(e));
+    expect(recebidos).toEqual([e1]);
+  });
+
+  it('várias linhas data: no mesmo quadro viram um JSON só', async () => {
+    const e1 = ev({ tipo: 'aviso', seq: 1 });
+    const json = JSON.stringify(e1);
+    const meio = json.indexOf(',');
+    const recebidos: Evento[] = [];
+    await lerEventosSse(corpo([`data: ${json.slice(0, meio)}\ndata: ${json.slice(meio)}\n\n`]), (e) => recebidos.push(e));
+    expect(recebidos).toEqual([e1]);
+  });
+
+  it('JSON malformado rejeita e cancela o leitor', async () => {
+    const cancelar = vi.fn();
+    const stream = new ReadableStream<Uint8Array>({
+      start(c) { c.enqueue(enc.encode('data: {nao-json\n\n')); },
+      cancel: cancelar,
+    });
+    await expect(lerEventosSse(stream, () => {})).rejects.toBeInstanceOf(SyntaxError);
+    expect(cancelar).toHaveBeenCalled();
+  });
+
+  it('erro do consumidor propaga como está e cancela o leitor', async () => {
+    const cancelar = vi.fn();
+    const stream = new ReadableStream<Uint8Array>({
+      start(c) { c.enqueue(enc.encode(quadro(ev({ tipo: 'aviso', seq: 1 })))); },
+      cancel: cancelar,
+    });
+    const falha = new Error('consumidor');
+    await expect(lerEventosSse(stream, () => { throw falha; })).rejects.toBe(falha);
+    expect(cancelar).toHaveBeenCalled();
+  });
+});
+
+describe('iniciarMissao: abort', () => {
+  function fetchQueObedece() {
+    return vi.fn((_url: string, init: RequestInit) => new Promise<Response>((_res, rej) => {
+      init.signal!.addEventListener('abort', () => rej(init.signal!.reason));
+    }));
+  }
+  function streamQueObedece(sinal: AbortSignal, status = 200) {
+    const body = new ReadableStream<Uint8Array>({
+      start(c) { sinal.addEventListener('abort', () => c.error(sinal.reason)); },
+    });
+    return new Response(body, { status });
+  }
+
+  for (const [nome, razao] of [['abort() padrão', undefined], ['abort(new Error)', new Error('x')]] as const) {
+    it(`${nome} no fetch rejeita com sinal.reason`, async () => {
+      const ac = new AbortController();
+      vi.stubGlobal('fetch', fetchQueObedece());
+      const p = iniciarMissao('http://x', { texto: 't' }, () => {}, ac.signal);
+      ac.abort(razao);
+      await expect(p).rejects.toBe(ac.signal.reason);
+    });
+
+    it(`${nome} lendo o stream rejeita com sinal.reason`, async () => {
+      const ac = new AbortController();
+      vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => streamQueObedece(ac.signal)));
+      const p = iniciarMissao('http://x', { texto: 't' }, () => {}, ac.signal);
+      await new Promise((r) => setTimeout(r, 0));
+      ac.abort(razao);
+      await expect(p).rejects.toBe(ac.signal.reason);
+    });
+
+    it(`${nome} lendo o corpo de um não-200 rejeita com sinal.reason`, async () => {
+      const ac = new AbortController();
+      vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => streamQueObedece(ac.signal, 429)));
+      const p = iniciarMissao('http://x', { texto: 't' }, () => {}, ac.signal);
+      await new Promise((r) => setTimeout(r, 0));
+      ac.abort(razao);
+      await expect(p).rejects.toBe(ac.signal.reason);
+    });
+  }
+
+  it('erro do consumidor depois do evento final também propaga', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(corpo([quadro(ev({ tipo: 'erro', codigo: 'api_fora', recuperavel: true, sugestao: '' }))]), { status: 200 })));
+    const falha = new Error('consumidor');
+    await expect(iniciarMissao('http://x', { texto: 't' }, () => { throw falha; })).rejects.toBe(falha);
+  });
+});
+
 describe('iniciarMissao', () => {
   it('stream que termina sem conclusão → conexao_perdida', async () => {
     const f = vi.fn().mockResolvedValue(new Response(corpo([quadro(ev({ tipo: 'missao_iniciada', seq: 1 })), quadro(ev({ tipo: 'aviso', seq: 2 }))]), { status: 200 }));
@@ -77,6 +178,13 @@ describe('acordar', () => {
     const f = vi.fn().mockRejectedValueOnce(new Error()).mockRejectedValueOnce(new Error()).mockResolvedValue(new Response('{"ok":true}'));
     expect(await acordar('http://x', { fetch: f, intervaloMs: 0 })).toBe(true);
     expect(f).toHaveBeenCalledTimes(3);
+  });
+
+  it('503 conta como "ainda dormindo" e é tentado de novo, com timeout por tentativa', async () => {
+    const f = vi.fn().mockResolvedValueOnce(new Response('', { status: 503 })).mockResolvedValue(new Response('{"ok":true}'));
+    expect(await acordar('http://x', { fetch: f, intervaloMs: 5, tempoMs: 1000 })).toBe(true);
+    expect(f).toHaveBeenCalledTimes(2);
+    expect(f.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
   });
 
   it('desiste depois das tentativas', async () => {

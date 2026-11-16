@@ -26,6 +26,16 @@ describe('fila', () => {
     expect(esperaAntesDoProximo(a, b, 'replay')).toBe(2500);
   });
 
+  it('empurrar depois de parar não aplica', () => {
+    vi.useFakeTimers();
+    const aplicados: number[] = [];
+    const f = criarFila((e) => aplicados.push(e.seq), 'ao_vivo');
+    f.parar();
+    f.empurrar(ev({ tipo: 'aviso', seq: 1 }));
+    vi.runAllTimers();
+    expect(aplicados).toEqual([]);
+  });
+
   it('parar descarta o que sobrou', () => {
     vi.useFakeTimers();
     const aplicados: number[] = [];

@@ -46,8 +46,24 @@ function comAgente(s: EstadoNave, a: Agente, novo: EstadoAgente): EstadoNave {
   return { ...s, agentes: { ...s.agentes, [a]: novo } };
 }
 
+/** Quem fala na linha do terminal: o Imediato nas conferências, o agente no que ele mesmo diz, a Capitã no resto. */
+function quemFala(e: Evento): Agente {
+  switch (e.tipo) {
+    case 'imediato_conferindo':
+    case 'imediato_aprovou':
+    case 'imediato_devolveu':
+    case 'imediato_corrigiu':
+      return 'imediato';
+    case 'agente_trabalhando':
+    case 'agente_entregou':
+      return e.agente;
+    default:
+      return 'capita';
+  }
+}
+
 function comLinha(s: EstadoNave, e: Evento, tom: LinhaTerminal['tom']): EstadoNave {
-  const agente = 'agente' in e ? e.agente : null;
+  const agente = quemFala(e);
   return { ...s, linhas: [...s.linhas, { seq: e.seq, agente, texto: e.mensagem, tom }] };
 }
 
@@ -67,8 +83,13 @@ export function reduzir(s: EstadoNave, e: Evento): EstadoNave {
       return comLinha(comAgente(s, e.agente, { ...s.agentes[e.agente], atividade: 'pronto', balao: null }), e, 'normal');
     case 'imediato_conferindo':
       return comLinha(comAgente(s, 'imediato', { ...s.agentes.imediato, balao: 'conferindo…' }), e, 'normal');
-    case 'imediato_devolveu':
-      return comLinha(comAgente(s, e.agente, { ...s.agentes[e.agente], atividade: 'devolvido', balao: '!' }), e, 'alerta');
+    case 'imediato_aprovou':
+    case 'imediato_corrigiu':
+      return comLinha(comAgente(s, 'imediato', { ...s.agentes.imediato, balao: null }), e, 'normal');
+    case 'imediato_devolveu': {
+      const n = comAgente(s, e.agente, { ...s.agentes[e.agente], atividade: 'devolvido', balao: '!' });
+      return comLinha(comAgente(n, 'imediato', { ...n.agentes.imediato, balao: null }), e, 'alerta');
+    }
     case 'agente_dispensado': {
       const sala = s.agentes[e.agente].sala;
       const acende = sala !== 'ponte' && sala !== 'dormitorio' && !s.salasConcluidas.includes(sala);
@@ -85,8 +106,11 @@ export function reduzir(s: EstadoNave, e: Evento): EstadoNave {
         e,
         'erro',
       );
-    default:
-      // aviso, imediato_aprovou, imediato_corrigiu: só entram no terminal.
+    case 'aviso':
       return comLinha(s, e, 'normal');
+    default: {
+      const _exaustivo: never = e;
+      return _exaustivo;
+    }
   }
 }

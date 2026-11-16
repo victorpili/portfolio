@@ -80,6 +80,42 @@ describe('redutor', () => {
     expect(s.salasConcluidas).toEqual(['criacao']);
   });
 
+  it('o balão "conferindo…" do Imediato some em aprovou, corrigiu e devolveu', () => {
+    for (const tipo of ['imediato_aprovou', 'imediato_corrigiu', 'imediato_devolveu'] as const) {
+      let s = reduzir(estadoInicial(), ev({ tipo: 'agente_convocado', agente: 'redator', sala: 'criacao' }));
+      s = reduzir(s, ev({ tipo: 'imediato_conferindo', agente: 'redator' }));
+      expect(s.agentes.imediato.balao).toBe('conferindo…');
+      s = reduzir(s, ev({ tipo, agente: 'redator', problemas: [] }));
+      expect(s.agentes.imediato.balao).toBeNull();
+      if (tipo === 'imediato_devolveu') expect(s.agentes.redator.balao).toBe('!');
+    }
+  });
+
+  it('LinhaTerminal.agente é quem fala', () => {
+    const fala = (e: Parameters<typeof reduzir>[1]) => reduzir(estadoInicial(), e).linhas[0].agente;
+    expect(fala(ev({ tipo: 'imediato_conferindo', agente: 'pesquisador', mensagem: 'Imediato: conferindo a entrega do Pesquisador.' }))).toBe('imediato');
+    expect(fala(ev({ tipo: 'agente_dispensado', agente: 'redator', mensagem: 'Capitã: Redator dispensado.' }))).toBe('capita');
+    expect(fala(ev({ tipo: 'agente_trabalhando', agente: 'revisor', tentativa: 1 }))).toBe('revisor');
+    expect(fala(ev({ tipo: 'agente_entregou', agente: 'redator' }))).toBe('redator');
+    expect(fala(ev({ tipo: 'agente_convocado', agente: 'redator', sala: 'criacao' }))).toBe('capita');
+    expect(fala(ev({ tipo: 'aviso' }))).toBe('capita');
+  });
+
+  it('missao_iniciada zera salas, notas, resultado e erro', () => {
+    const nota = { valor: 1, obtidos: 1, possiveis: 2, itens: [] };
+    const sujo = {
+      ...estadoInicial(),
+      fase: 'erro' as const,
+      salasConcluidas: ['pesquisa' as const],
+      notaAntes: nota,
+      notaDepois: nota,
+      resultado: {} as never,
+      erro: { codigo: 'api_fora' as const, mensagem: 'm', sugestao: 's' },
+    };
+    const s = reduzir(sujo, ev({ tipo: 'missao_iniciada' }));
+    expect(s).toMatchObject({ fase: 'em_missao', salasConcluidas: [], notaAntes: null, notaDepois: null, resultado: null, erro: null });
+  });
+
   it('salasConcluidas: Capitã e Imediato não acendem a ponte; aprovou/corrigiu não mexem', () => {
     let s = reduzir(estadoInicial(), ev({ tipo: 'agente_convocado', agente: 'capita', sala: 'ponte' }));
     s = reduzir(s, ev({ tipo: 'imediato_aprovou', agente: 'redator' }));
