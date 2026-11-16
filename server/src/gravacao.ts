@@ -1,7 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { IndiceMissoes, MissaoGravada } from '@nave/shared';
-import { ErroSchema, type Chamada, type Motor, type RespostaMotor } from './motores/motor';
 
 export interface OpcoesCli { url?: string; arquivoTexto?: string; motor: 'api' | 'assinatura'; modelo: string; gravar?: string }
 
@@ -77,30 +76,4 @@ export async function salvarMissao(dir: string, m: MissaoGravada): Promise<strin
   else indice[i] = entrada;
   await writeFile(caminhoIndice, `${JSON.stringify(indice, null, 2)}\n`);
   return caminho;
-}
-
-/**
- * Embrulha o motor para somar o custo de cada chamada que voltou, inclusive recusa e resposta fora do formato
- * (o `ErroSchema` traz o custo e é relançado igual). A Capitã só registra as chamadas certas; a linha de comando
- * precisa do total real, porque as regras de parada da gravação dependem dele.
- */
-export function contarCusto(motor: Motor): { motor: Motor; custoUsd: () => number } {
-  let total = 0;
-  return {
-    motor: {
-      nome: motor.nome,
-      modelo: motor.modelo,
-      async chamar<T>(c: Chamada<T>): Promise<RespostaMotor<T>> {
-        try {
-          const r = await motor.chamar(c);
-          total += r.custoUsd;
-          return r;
-        } catch (e) {
-          if (e instanceof ErroSchema) total += e.custoUsd ?? 0;
-          throw e;
-        }
-      },
-    },
-    custoUsd: () => total,
-  };
 }

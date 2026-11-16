@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
 import { Pesquisa } from '@nave/shared';
-import { ErroMotor, ErroSchema, ErroSemCredito, type Chamada } from '../src/motores/motor';
+import { contarCusto, ErroMotor, ErroSchema, ErroSemCredito, type Chamada, type Motor, type RespostaMotor } from '../src/motores/motor';
 import { motorFalso } from '../src/motores/falso';
 import { custoUsd, motorApi, traduzirErroApi } from '../src/motores/api';
 import { ambienteSemChave, argsAssinatura, binarioClaude, lerResultado, rodarProcesso, transcrever } from '../src/motores/assinatura';
@@ -238,5 +238,38 @@ describe('motorFalso', () => {
     await expect(m.chamar({ ...chamada(), agente: 'redator' })).rejects.toThrow('roteiro acabou');
     await m.chamar(chamada());
     expect(roteiro.pesquisador).toHaveLength(1);
+  });
+});
+
+describe('contarCusto', () => {
+  const chamada: Chamada<Pesquisa> = { agente: 'pesquisador', sistema: 'S', mensagens: [{ papel: 'usuario', texto: 'oi' }], schema: Pesquisa };
+
+  it('soma as chamadas que voltaram, inclusive a fora do formato, e relança o mesmo erro', async () => {
+    const foraDoFormato = new ErroSchema('fora do formato', { custoUsd: 0.03, tokensEntrada: 100, tokensSaida: 50 });
+    const rede = new ErroMotor('a API caiu');
+    const fila: (number | Error)[] = [0.1, 0.25, foraDoFormato, rede];
+    const base: Motor = {
+      nome: 'api',
+      modelo: 'claude-opus-5-5',
+      async chamar<T>(): Promise<RespostaMotor<T>> {
+        const x = fila.shift()!;
+        if (x instanceof Error) throw x;
+        return { dados: {} as T, tokensEntrada: 0, tokensSaida: 0, custoUsd: x, ms: 0 };
+      },
+    };
+    const contador = contarCusto(base);
+    expect(contador.motor).toMatchObject({ nome: 'api', modelo: 'claude-opus-5-5' });
+    await contador.motor.chamar(chamada);
+    await contador.motor.chamar(chamada);
+    await expect(contador.motor.chamar(chamada)).rejects.toBe(foraDoFormato);
+    await expect(contador.motor.chamar(chamada)).rejects.toBe(rede);
+    expect(contador.custoUsd()).toBeCloseTo(0.38);
+  });
+
+  it('ErroSchema sem custo (o motor falso) soma zero', async () => {
+    const contador = contarCusto(motorFalso({ pesquisador: [pesquisaBoa, { tipoProduto: 1 }] }));
+    await contador.motor.chamar(chamada);
+    await expect(contador.motor.chamar(chamada)).rejects.toBeInstanceOf(ErroSchema);
+    expect(contador.custoUsd()).toBe(0);
   });
 });

@@ -5,18 +5,16 @@ import { fileURLToPath } from 'node:url';
 import type { EntradaMissao, Evento } from '@nave/shared';
 import { carregarPrompts } from './agentes';
 import { executarMissao } from './capita';
-import { contarCusto, lerArgs, salvarMissao } from './gravacao';
+import { lerArgs, salvarMissao } from './gravacao';
 import { motorApi } from './motores/api';
-import { motorAssinatura } from './motores/assinatura';
+import { motorAssinatura, PRAZO_ASSINATURA_MS } from './motores/assinatura';
+import { contarCusto } from './motores/motor';
 
 // Linha de comando: `pnpm missao <url>` ou `pnpm missao --texto <arquivo>`, com `--motor`, `--modelo` e `--gravar <nome>`.
 
 const RAIZ = fileURLToPath(new URL('../..', import.meta.url));
 const PASTA_MISSOES = join(RAIZ, 'web', 'public', 'missoes');
 const USO = 'Uso: pnpm missao <url> | --texto <arquivo> [--motor api|assinatura] [--modelo <id>] [--gravar <nome>]';
-// O prazo de 150 s vale para a API. Pela assinatura, cada `claude -p` leva de 50 a 90 s, e ela só serve para
-// ajustar os prompts; com o prazo da API, nenhuma missão terminaria.
-const PRAZO_ASSINATURA_MS = 15 * 60_000;
 
 const usd = (x: number) => `US$ ${x.toFixed(4)}`;
 

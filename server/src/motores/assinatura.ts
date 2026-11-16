@@ -7,6 +7,9 @@ import { ErroMotor, ErroSchema, type Chamada, type Motor, type RespostaMotor } f
 // Motor só para ajustar os prompts: manda os mesmos prompts ao Claude Code (`claude -p`) na assinatura do usuário,
 // sem gastar crédito da API. Não reproduz o formato forçado nem o custo; nunca grava missão nem atende o ao vivo.
 
+// Pela assinatura, cada `claude -p` leva de 50 a 90 s; o prazo de 150 s da API não fecharia nenhuma missão.
+export const PRAZO_ASSINATURA_MS = 15 * 60_000;
+
 export function binarioClaude(): string {
   if (process.env.CLAUDE_BIN) return process.env.CLAUDE_BIN;
   if (process.platform === 'win32') {
