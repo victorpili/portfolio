@@ -1,0 +1,610 @@
+/* Nave de Agentes: paleta, nave, salas, tripulação. */
+
+:root {
+  --espaco: #0a0b19;
+  --estrela: #c9d1ff;
+  --texto: #e9ecff;
+  --texto-suave: #a9b0d8;
+  --casco: #4b5488;
+  --casco-claro: #6d77b3;
+  --casco-escuro: #262b4d;
+  --piso-fundo: #141831;
+  --corredor: #0d1024;
+  --parede-borda: #8590c9;
+  --faixa: #f2c14e;
+  --verde: #4ade80;
+  --vermelho: #ff4f5e;
+  --balao: #f4f6ff;
+  --tinta: #13162b;
+
+  --cor-capita: #ffd166;
+  --cor-imediato: #5ce1e6;
+  --cor-pesquisador: #ff9f5a;
+  --cor-redator: #ff7ab8;
+  --cor-revisor: #b69cff;
+
+  --fonte-titulo: 'Press Start 2P', ui-monospace, monospace;
+  --fonte-texto: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--texto);
+  font-family: var(--fonte-texto);
+  line-height: 1.5;
+  background-color: var(--espaco);
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, var(--estrela) 99%, transparent),
+    radial-gradient(1px 1px at 67% 42%, var(--estrela) 99%, transparent),
+    radial-gradient(1px 1px at 38% 77%, #8f98d6 99%, transparent),
+    radial-gradient(2px 2px at 84% 12%, #fff 99%, transparent),
+    radial-gradient(1px 1px at 91% 66%, #8f98d6 99%, transparent),
+    radial-gradient(1px 1px at 4% 58%, var(--estrela) 99%, transparent);
+  background-size: 310px 290px, 410px 370px, 270px 330px, 530px 470px, 350px 410px, 460px 240px;
+}
+
+.so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Página provisória ---------- */
+
+.pagina {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 16px 48px;
+}
+
+.topo {
+  margin-bottom: 20px;
+}
+
+.topo h1 {
+  margin: 0 0 10px;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(16px, 3.2vw, 28px);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: var(--texto);
+  text-shadow: 3px 3px 0 var(--casco-escuro);
+}
+
+.topo p {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+
+.missao-atual {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--texto-suave);
+}
+
+.missao-atual strong {
+  color: var(--texto);
+  font-weight: 600;
+}
+
+.linhas-cruas {
+  margin-top: 24px;
+  border: 2px solid var(--casco);
+  background: #0c0e20;
+  padding: 14px 16px;
+}
+
+.linhas-cruas h2 {
+  margin: 0 0 10px;
+  font-family: var(--fonte-titulo);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+
+.linhas-cruas ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 240px;
+  overflow-y: auto;
+  font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  font-size: 13px;
+}
+
+.linhas-cruas li {
+  padding: 2px 0;
+  overflow-wrap: anywhere;
+}
+
+.linhas-cruas li::before {
+  content: '> ';
+  color: var(--casco-claro);
+}
+
+.linha--alerta { color: #ff9aa3; }
+.linha--sucesso { color: var(--verde); }
+.linha--erro { color: var(--vermelho); }
+
+/* ---------- A nave ---------- */
+
+.nave {
+  container: nave / inline-size;
+  --borda: clamp(2px, 0.45cqw, 5px);
+  --dente: clamp(4px, 1.1cqw, 12px);
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Motores, na popa (esquerda). */
+.nave__motor {
+  position: relative;
+  flex: 0 0 4cqw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30%;
+}
+
+/* Cada motor: bocal colado no casco e chama em 3 degraus de cor. */
+.nave__motor::before,
+.nave__motor::after {
+  content: '';
+  display: block;
+  height: 10%;
+  background:
+    linear-gradient(90deg, transparent 44%, #fff1b8 44% 62%, transparent 62%) center / 100% 34% no-repeat,
+    linear-gradient(90deg, transparent 24%, #ffb347 24% 62%, transparent 62%) center / 100% 66% no-repeat,
+    linear-gradient(90deg, transparent 6%, #ff5f3d 6% 62%, transparent 62%) center / 100% 100% no-repeat,
+    linear-gradient(90deg, transparent 62%, var(--casco-escuro) 62%) center / 100% 100% no-repeat;
+  transform-origin: 100% 50%;
+  animation: chama 360ms steps(1, end) infinite;
+}
+
+.nave__motor::after {
+  animation-delay: 190ms;
+}
+
+@keyframes chama {
+  0% { transform: none; }
+  50% { transform: scaleX(0.86); }
+}
+
+/* Bico, na proa (direita): degraus em pixel. */
+.nave__bico {
+  flex: 0 0 3.6cqw;
+  background: var(--casco);
+  clip-path: polygon(
+    0 10%, 34% 10%, 34% 22%, 67% 22%, 67% 38%, 100% 38%,
+    100% 62%, 67% 62%, 67% 78%, 34% 78%, 34% 90%, 0 90%
+  );
+}
+
+.nave__casco {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--dente);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(var(--dente) * 6), rgba(255, 255, 255, 0.06) 0 calc(var(--dente) * 6 + 2px)),
+    var(--casco);
+  clip-path: polygon(
+    var(--dente) 0, calc(100% - var(--dente)) 0, calc(100% - var(--dente)) var(--dente), 100% var(--dente),
+    100% calc(100% - var(--dente)), calc(100% - var(--dente)) calc(100% - var(--dente)), calc(100% - var(--dente)) 100%,
+    var(--dente) 100%, var(--dente) calc(100% - var(--dente)), 0 calc(100% - var(--dente)), 0 var(--dente), var(--dente) var(--dente)
+  );
+}
+
+.nave__grade {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--colunas) / var(--linhas);
+  background: var(--casco-escuro);
+}
+
+/* ---------- Salas ---------- */
+
+.sala {
+  position: absolute;
+  --tile-l: calc(100% / var(--colunas));
+  --tile-a: calc(100% / var(--linhas));
+  background-color: var(--piso-fundo);
+  background-image: url('/sprites/piso.png');
+  background-size: var(--tile-l) var(--tile-a);
+  image-rendering: pixelated;
+  box-shadow: inset 0 0 0 var(--borda) var(--parede-borda);
+  transition: box-shadow 600ms ease;
+}
+
+.sala::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: none;
+  transition: background-color 600ms ease;
+}
+
+.sala__parede {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--tile-a);
+  background-color: #252a4e;
+  background-image: url('/sprites/parede.png');
+  background-size: var(--tile-l) 100%;
+  border-bottom: max(2px, calc(var(--borda) * 0.6)) solid #0b0d1d;
+  box-shadow: inset 0 var(--borda) 0 var(--parede-borda);
+}
+
+.sala__nome {
+  position: absolute;
+  z-index: 2;
+  left: calc(var(--tile-l) * 0.35);
+  top: calc(var(--tile-a) * 0.5);
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 0.45em 0.6em 0.35em;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(7px, 1.15cqw, 12px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--texto);
+  background: rgba(10, 11, 25, 0.82);
+  box-shadow: 0 0 0 1px #0b0d1d;
+}
+
+/* Luz da sala: apagada até a sala concluir. */
+.sala__luz {
+  position: absolute;
+  z-index: 2;
+  right: calc(var(--tile-l) * 0.35);
+  top: calc(var(--tile-a) * 0.32);
+  height: calc(var(--tile-a) * 0.36);
+  aspect-ratio: 1;
+  background: #3a4068;
+  box-shadow: 0 0 0 1px #0b0d1d;
+  transition: background-color 600ms ease, box-shadow 600ms ease;
+}
+
+.sala--concluida {
+  box-shadow:
+    inset 0 0 0 var(--borda) var(--verde),
+    inset 0 0 calc(var(--borda) * 6) rgba(74, 222, 128, 0.55),
+    0 0 calc(var(--borda) * 4) rgba(74, 222, 128, 0.6);
+  z-index: 1;
+}
+
+.sala--concluida::after {
+  background: rgba(74, 222, 128, 0.09);
+}
+
+.sala--concluida .sala__luz {
+  background: var(--verde);
+  box-shadow: 0 0 0 1px #0b0d1d, 0 0 8px 2px rgba(74, 222, 128, 0.85);
+}
+
+.sala--concluida .sala__nome {
+  color: var(--verde);
+}
+
+/* Na Ponte, a porta fica no começo da parede: o nome vem depois dela. */
+.sala--ponte .sala__nome {
+  left: calc(var(--tile-l) * 2.3);
+}
+
+/* Janela da Ponte, no fundo: estrelas lá fora. */
+.sala--ponte .sala__parede::after {
+  content: '';
+  position: absolute;
+  left: calc(100% * 6 / 13);
+  width: calc(100% * 5 / 13);
+  top: 22%;
+  bottom: 18%;
+  background:
+    radial-gradient(1px 1px at 18% 40%, #fff 99%, transparent),
+    radial-gradient(1px 1px at 46% 70%, var(--estrela) 99%, transparent),
+    radial-gradient(1px 1px at 73% 30%, #fff 99%, transparent),
+    radial-gradient(1px 1px at 88% 64%, var(--estrela) 99%, transparent),
+    radial-gradient(circle at 84% 135%, #3c5bd6 0 22%, #2a3f9e 22% 30%, transparent 30%),
+    #05060f;
+  box-shadow: 0 0 0 max(2px, var(--borda)) #0b0d1d, 0 0 0 calc(max(2px, var(--borda)) * 2) var(--parede-borda);
+}
+
+/* ---------- Portas ---------- */
+
+.porta {
+  position: absolute;
+  z-index: 3;
+}
+
+/* Porta na borda de baixo (salas de cima): vão na parede, com batentes. */
+.porta--frente::before {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 0;
+  height: var(--borda);
+  background: var(--faixa);
+  box-shadow: calc(var(--borda) * -1) 0 0 #0b0d1d, var(--borda) 0 0 #0b0d1d;
+  opacity: 0.85;
+}
+
+/* Porta na parede do fundo (salas de baixo): vão escuro com moldura e soleira. */
+.porta--fundo {
+  background: linear-gradient(#05060f 55%, #161a33);
+  box-shadow:
+    inset max(2px, calc(var(--borda) * 0.8)) 0 0 var(--parede-borda),
+    inset calc(max(2px, calc(var(--borda) * 0.8)) * -1) 0 0 var(--parede-borda),
+    inset 0 calc(var(--borda) * -1) 0 var(--faixa);
+}
+
+/* ---------- Corredor ---------- */
+
+.corredor {
+  position: absolute;
+  background:
+    repeating-linear-gradient(90deg, var(--faixa) 0 1.2%, transparent 1.2% 2.4%) 0 50% / 100% max(2px, calc(var(--borda) * 0.6)) no-repeat,
+    url('/sprites/piso.png') 0 0 / calc(100% / var(--colunas)) calc(100% / var(--linhas)),
+    var(--corredor);
+  image-rendering: pixelated;
+  opacity: 0.95;
+}
+
+.corredor::before {
+  content: 'corredor';
+  position: absolute;
+  right: calc(100% / 48);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.3em 0.5em;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(5px, 0.8cqw, 9px);
+  text-transform: uppercase;
+  color: var(--texto-suave);
+  background: var(--corredor);
+}
+
+/* ---------- Móveis ---------- */
+
+.movel {
+  position: absolute;
+  display: block;
+  image-rendering: pixelated;
+  pointer-events: none;
+  user-select: none;
+}
+
+.movel--computador {
+  transform: translateY(-58%) scale(0.78);
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 0 3px rgba(169, 240, 255, 0.55));
+}
+
+/* ---------- Tripulação ---------- */
+
+.agente {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(100% / var(--colunas));
+  height: calc(100% / var(--linhas));
+  transition-property: transform;
+  transition-timing-function: linear;
+  will-change: transform;
+}
+
+.agente--capita { --cor: var(--cor-capita); }
+.agente--imediato { --cor: var(--cor-imediato); }
+.agente--pesquisador { --cor: var(--cor-pesquisador); }
+.agente--redator { --cor: var(--cor-redator); }
+.agente--revisor { --cor: var(--cor-revisor); }
+
+.agente__corpo {
+  position: absolute;
+  left: -12%;
+  bottom: 4%;
+  width: 124%;
+  height: 124%;
+  transform-origin: 50% 100%;
+}
+
+.agente__sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.55));
+  user-select: none;
+}
+
+/* Andando: 2 quadros de passo (o segundo espelhado e um pixel acima). */
+.agente--caminhando .agente__sprite {
+  animation: passo 280ms steps(1, end) infinite;
+}
+
+@keyframes passo {
+  0% { transform: none; }
+  50% { transform: translateY(-6%) scaleX(-1); }
+}
+
+/* Trabalhando: balanço leve. */
+.agente--trabalhando .agente__corpo,
+.agente--devolvido .agente__corpo {
+  animation: balanco 1.4s ease-in-out infinite;
+}
+
+@keyframes balanco {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
+/* Dormindo: deitado na cama, cabeça na cabeceira. A cama é escura; o contorno separa o tripulante dela. */
+.agente--dormindo .agente__corpo {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  transform: translate(6%, -16%) rotate(-90deg) scale(0.82);
+}
+
+.agente--dormindo .agente__sprite {
+  filter:
+    drop-shadow(1px 0 0 var(--tinta)) drop-shadow(-1px 0 0 var(--tinta))
+    drop-shadow(0 1px 0 var(--tinta)) drop-shadow(0 -1px 0 var(--tinta));
+}
+
+.agente__zzz {
+  position: absolute;
+  left: 55%;
+  bottom: 70%;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(6px, 0.9cqw, 10px);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--estrela);
+  pointer-events: none;
+}
+
+.agente__zzz span {
+  display: inline-block;
+  animation: zzz 2.4s ease-out infinite;
+  opacity: 0;
+}
+
+.agente__zzz span:nth-child(2) { animation-delay: 0.5s; }
+.agente__zzz span:nth-child(3) { animation-delay: 1s; }
+
+@keyframes zzz {
+  0% { opacity: 0; transform: translateY(40%); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-120%); }
+}
+
+.agente__nome {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  font-size: clamp(8px, 1cqw, 11px);
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--cor);
+  text-shadow: 0 1px 0 #000, 0 0 3px #000;
+  pointer-events: none;
+}
+
+.balao {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: calc(128% + 6px);
+  transform: translateX(-50%);
+  padding: 0.3em 0.55em;
+  font-size: clamp(9px, 1.1cqw, 13px);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--tinta);
+  background: var(--balao);
+  box-shadow: 0 -2px 0 var(--tinta), 0 2px 0 var(--tinta), -2px 0 0 var(--tinta), 2px 0 0 var(--tinta);
+  pointer-events: none;
+}
+
+.balao::after {
+  content: '';
+  position: absolute;
+  left: calc(50% - 3px);
+  top: 100%;
+  width: 6px;
+  height: 5px;
+  background: var(--balao);
+  box-shadow: -2px 0 0 var(--tinta), 2px 0 0 var(--tinta), 0 2px 0 var(--tinta);
+}
+
+.balao--alerta {
+  padding: 0.35em 0.7em;
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  font-size: clamp(10px, 1.5cqw, 16px);
+  color: #fff;
+  background: var(--vermelho);
+  animation: alerta 0.5s steps(1, end) infinite;
+}
+
+.balao--alerta::after {
+  background: var(--vermelho);
+}
+
+@keyframes alerta {
+  0% { transform: translateX(-50%); }
+  50% { transform: translate(-50%, -2px); }
+}
+
+/* Em tela estreita, sem nomes embaixo dos tripulantes (o leitor de tela continua lendo) e balões mais justos. */
+@container nave (max-width: 560px) {
+  .agente__nome,
+  .corredor::before {
+    display: none;
+  }
+
+  .balao {
+    bottom: calc(118% + 3px);
+    padding: 0.2em 0.4em;
+    font-size: 8px;
+  }
+
+  .balao--alerta {
+    padding: 0.25em 0.5em;
+    font-size: 9px;
+  }
+
+  .balao::after {
+    left: calc(50% - 2px);
+    width: 4px;
+    height: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agente {
+    transition: none !important;
+  }
+
+  .agente__sprite,
+  .agente__corpo,
+  .balao--alerta,
+  .nave__motor::before,
+  .nave__motor::after {
+    animation: none !important;
+  }
+
+  .agente__zzz span {
+    animation: none;
+    opacity: 1;
+  }
+}
