@@ -55,7 +55,8 @@ async function main(): Promise<number> {
   const total = contador.custoUsd();
   console.log('');
   if (resultado === null) {
-    console.log(`Custo até a falha: ${usd(total)}.`);
+    // Mínimo: uma chamada abortada no meio não devolve o `usage`, então o gasto dela não entra na soma.
+    console.log(`Custo até a falha (mínimo): ${usd(total)}.`);
     console.log(`Duração até a falha: ${((Date.now() - inicio) / 1000).toFixed(1)} s.`);
     return 1;
   }
