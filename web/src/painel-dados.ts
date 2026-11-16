@@ -40,7 +40,7 @@ export function rotuloAtributo(r: Resultado, id: string): string {
 export function nomeDoArquivo(titulo: string): string {
   const slug = titulo
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
@@ -64,7 +64,7 @@ function formatarDuracao(ms: number): string {
 }
 
 function formatarCusto(usd: number): string {
-  if (usd > 0 && usd < 0.005) return '≈ menos de US$ 0,01';
+  if (usd > 0 && usd < 0.005) return 'menos de US$ 0,01';
   return `≈ US$ ${usd.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
@@ -78,7 +78,7 @@ export interface ItemBastidor { rotulo: string; valor: string; dica?: string }
 export function descreverBastidores(r: Resultado): ItemBastidor[] {
   const itens: ItemBastidor[] = [
     { rotulo: 'devoluções do Imediato', valor: r.devolucoes === 0 ? 'nenhuma' : String(r.devolucoes) },
-    { rotulo: 'chamadas ao modelo', valor: String(r.chamadas.length) },
+    { rotulo: r.motor === 'falso' ? 'chamadas ao motor' : 'chamadas ao modelo', valor: String(r.chamadas.length) },
     { rotulo: 'duração', valor: formatarDuracao(r.duracaoMs) },
   ];
   if (r.motor === 'falso') return [...itens, { rotulo: 'motor', valor: 'falso (sem IA)' }];

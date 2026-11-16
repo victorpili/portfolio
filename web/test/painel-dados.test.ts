@@ -85,7 +85,7 @@ describe('descreverBastidores', () => {
   it('motor falso: itens com rótulo e sem custo', () => {
     expect(bastidores(base)).toEqual([
       { rotulo: 'devoluções do Imediato', valor: '1' },
-      { rotulo: 'chamadas ao modelo', valor: '4' },
+      { rotulo: 'chamadas ao motor', valor: '4' },
       { rotulo: 'duração', valor: '25 s' },
       { rotulo: 'motor', valor: 'falso (sem IA)' },
     ]);
@@ -100,7 +100,7 @@ describe('descreverBastidores', () => {
       { rotulo: 'custo do modelo', valor: '≈ US$ 0,31', dica: 'não inclui tentativas que falharam' },
       { rotulo: 'modelo', valor: 'Claude Opus 5.5' },
     ]);
-    expect(bastidores({ ...r, custoUsd: 0.004 })[3]!.valor).toBe('≈ menos de US$ 0,01');
+    expect(bastidores({ ...r, custoUsd: 0.004 })[3]!.valor).toBe('menos de US$ 0,01');
   });
 
   it('assinatura: custo coberto pela assinatura, não medido', () => {

@@ -65,6 +65,9 @@ export function Entrada(p: Props) {
     ev.preventDefault();
     if (!podeIniciar) return;
     p.aoIniciar(modo === 'url' ? { url: valor } : { texto: valor });
+    // Quem enviou com Enter fica com o foco no campo durante a missão inteira; sem o blur, o painel acharia que a
+    // pessoa está digitando e não rolaria até o resultado no fim.
+    (document.activeElement as HTMLElement | null)?.blur();
   };
 
   const colarTexto = () => {

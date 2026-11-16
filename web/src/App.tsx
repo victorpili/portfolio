@@ -14,7 +14,7 @@ import './interface.css';
 
 type Fila = ReturnType<typeof criarFila>;
 type Cota = { restantes: number; porDia: number };
-type Missao = { tipo: 'gravada' | 'ao_vivo'; descricao: string };
+type Missao = { tipo: TipoMissao; descricao: string };
 
 /** Além dos eventos, o App limpa a tela ao começar outra missão (o redutor só limpa no `missao_iniciada`). */
 type Acao = Evento | { tipo: 'reiniciar' };
