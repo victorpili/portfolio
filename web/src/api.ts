@@ -1,8 +1,8 @@
 import type { CodigoErro, EntradaMissao, Evento, IndiceMissoes, MissaoGravada } from '@nave/shared';
 
 export class ErroApi extends Error {
-  constructor(public codigo: CodigoErro, mensagem: string) {
-    super(mensagem);
+  constructor(public codigo: CodigoErro, mensagem: string, opcoes?: { cause?: unknown }) {
+    super(mensagem, opcoes);
     this.name = 'ErroApi';
   }
 }
@@ -35,7 +35,8 @@ export async function lerEventosSse(corpo: ReadableStream<Uint8Array>, aoEvento:
       try {
         leitura = await leitor.read();
       } catch (err) {
-        throw new ErroApi('conexao_perdida', `A conexão caiu no meio da missão (${err instanceof Error ? err.message : 'erro de leitura'}).`);
+        // O texto do navegador vem em inglês: fica só na causa, fora da mensagem que a tela mostra.
+        throw new ErroApi('conexao_perdida', 'A conexão caiu no meio da missão.', { cause: err });
       }
       if (leitura.done) break;
       resto = (resto + decodificador.decode(leitura.value, { stream: true })).replace(/\r\n/g, '\n');
@@ -96,25 +97,34 @@ export async function iniciarMissao(
     });
   } catch (err) {
     abortou();
+    // A missão já terminou na tela (e já contou na cota): a queda depois do último evento não a apaga.
+    if (terminou && err instanceof ErroApi && err.codigo === 'conexao_perdida') return;
     throw err;
   }
+  abortou();
   if (!terminou) throw new ErroApi('conexao_perdida', 'A conexão caiu no meio da missão.');
 }
 
 const dormir = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-/** O Render grátis dorme: insiste na saúde do servidor (12 x 5 s = 60 s) até ele responder. */
+/**
+ * O Render grátis dorme: insiste na saúde do servidor até ele responder, por no máximo `prazoMs` (60 s) no total.
+ * Cada tentativa tem seu tempo (`tempoMs`, 10 s), cortado pelo que resta do prazo.
+ */
 export async function acordar(
   base: string,
-  o: { tentativas?: number; intervaloMs?: number; tempoMs?: number; fetch?: typeof fetch } = {},
+  o: { tentativas?: number; intervaloMs?: number; tempoMs?: number; prazoMs?: number; fetch?: typeof fetch } = {},
 ): Promise<boolean> {
-  const { tentativas = 12, intervaloMs = 5000, fetch: buscar = fetch } = o;
+  const { tentativas = 12, intervaloMs = 5000, tempoMs = 10_000, prazoMs = 60_000, fetch: buscar = fetch } = o;
+  const limite = Date.now() + prazoMs;
   for (let i = 0; i < tentativas; i++) {
+    const resta = limite - Date.now();
+    if (resta <= 0) break;
     try {
-      const r = await buscar(`${base}/api/saude`, { signal: AbortSignal.timeout(o.tempoMs ?? 10_000) });
+      const r = await buscar(`${base}/api/saude`, { signal: AbortSignal.timeout(Math.min(tempoMs, resta)) });
       if (r.ok) return true;
     } catch { /* ainda dormindo */ }
-    if (i < tentativas - 1) await dormir(intervaloMs);
+    if (i < tentativas - 1) await dormir(Math.min(intervaloMs, Math.max(0, limite - Date.now())));
   }
   return false;
 }

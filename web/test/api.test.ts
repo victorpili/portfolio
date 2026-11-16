@@ -29,13 +29,15 @@ describe('lerEventosSse', () => {
 });
 
 describe('lerEventosSse: bordas', () => {
-  it('CRLF partido entre \\r e \\n em duas leituras', async () => {
+  it('CRLF partido entre o \\r e o \\n da linha em branco, com outro quadro depois', async () => {
     const e1 = ev({ tipo: 'aviso', seq: 1 });
-    const bruto = `data: ${JSON.stringify(e1)}\r\n\r\n`;
-    const corte = bruto.length - 3; // ...\r\n\r | \n
+    const e2 = ev({ tipo: 'aviso', seq: 2 });
+    const q1 = `data: ${JSON.stringify(e1)}\r\n\r\n`;
+    const tudo = q1 + `data: ${JSON.stringify(e2)}\r\n\r\n`;
+    const corte = q1.length - 1; // "…\r\n\r" | "\n" + segundo quadro
     const recebidos: Evento[] = [];
-    await lerEventosSse(corpo([bruto.slice(0, corte), bruto.slice(corte)]), (e) => recebidos.push(e));
-    expect(recebidos).toEqual([e1]);
+    await lerEventosSse(corpo([tudo.slice(0, corte), tudo.slice(corte)]), (e) => recebidos.push(e));
+    expect(recebidos).toEqual([e1, e2]);
   });
 
   it('caractere UTF-8 de vários bytes partido entre pedaços', async () => {
@@ -171,6 +173,37 @@ describe('iniciarMissao', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('fetch failed')));
     await expect(iniciarMissao('http://x', { texto: 't' }, () => {})).rejects.toMatchObject({ codigo: 'conexao_perdida' });
   });
+
+  it('erro de leitura no meio da missão vira conexao_perdida, em português e com a causa', async () => {
+    const queda = new TypeError('network error');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(new ReadableStream<Uint8Array>({ start(c) { c.error(queda); } }), { status: 200 })));
+    const p = iniciarMissao('http://x', { texto: 't' }, () => {});
+    await expect(p).rejects.toMatchObject({ name: 'ErroApi', codigo: 'conexao_perdida', message: 'A conexão caiu no meio da missão.' });
+    await expect(p).rejects.toHaveProperty('cause', queda);
+  });
+
+  it('queda da conexão depois do evento final não apaga a missão concluída', async () => {
+    const final = enc.encode(quadro(ev({ tipo: 'missao_concluida', resultado: {} as never })));
+    let enviado = false;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(c) {
+        if (!enviado) { enviado = true; c.enqueue(final); } else c.error(new TypeError('network error'));
+      },
+    });
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(stream, { status: 200 })));
+    const recebidos: string[] = [];
+    await expect(iniciarMissao('http://x', { texto: 't' }, (e) => recebidos.push(e.tipo))).resolves.toBeUndefined();
+    expect(recebidos).toEqual(['missao_concluida']);
+  });
+
+  it('abort depois do corpo inteiro, sem evento final, rejeita com o motivo do chamador', async () => {
+    const ac = new AbortController();
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(corpo([quadro(ev({ tipo: 'aviso', seq: 1 }))]), { status: 200 })));
+    const p = iniciarMissao('http://x', { texto: 't' }, () => ac.abort(), ac.signal);
+    const motivo = await p.then(() => null, (e: unknown) => e);
+    expect(ac.signal.aborted).toBe(true);
+    expect(motivo).toBe(ac.signal.reason);
+  });
 });
 
 describe('acordar', () => {
@@ -185,6 +218,21 @@ describe('acordar', () => {
     expect(await acordar('http://x', { fetch: f, intervaloMs: 5, tempoMs: 1000 })).toBe(true);
     expect(f).toHaveBeenCalledTimes(2);
     expect(f.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('corta a tentativa que trava no tempoMs', async () => {
+    const trava = vi.fn((_: unknown, init: RequestInit) =>
+      new Promise<Response>((_ok, falha) => init.signal!.addEventListener('abort', () => falha(init.signal!.reason))));
+    expect(await acordar('http://x', { fetch: trava as unknown as typeof fetch, intervaloMs: 0, tentativas: 2, tempoMs: 10 })).toBe(false);
+    expect(trava).toHaveBeenCalledTimes(2);
+  });
+
+  it('para no prazo total, mesmo com tentativas sobrando', async () => {
+    const f = vi.fn().mockRejectedValue(new Error());
+    const inicio = Date.now();
+    expect(await acordar('http://x', { fetch: f, intervaloMs: 40, tentativas: 12, prazoMs: 100 })).toBe(false);
+    expect(f.mock.calls.length).toBeLessThan(12);
+    expect(Date.now() - inicio).toBeLessThan(1000);
   });
 
   it('desiste depois das tentativas', async () => {
