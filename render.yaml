@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: nave-de-agentes-api
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && pnpm install --frozen-lockfile
+    startCommand: pnpm --filter @nave/server start
+    healthCheckPath: /api/saude
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: MODELO_AO_VIVO
+        value: claude-sonnet-5-5
+      - key: COTA_DIA
+        value: "5"
+      - key: COTA_VISITANTE
+        value: "3"
+      - key: ORIGEM_PERMITIDA
+        sync: false
+      - key: NODE_VERSION
+        value: "24"
