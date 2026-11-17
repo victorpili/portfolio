@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ItemNota, Nota, Resultado } from '@nave/shared';
-import { agruparChecklist, descreverBastidores, fraseAConfirmar, nomeDoArquivo, nomeDoModelo } from '../src/painel-dados';
+import { agruparChecklist, descreverBastidores, fraseAConfirmar, jsonLdParaCopiar, nomeDoArquivo, nomeDoModelo } from '../src/painel-dados';
 import missao from '../src/dev/missao-exemplo.json';
 
 const item = (p: Partial<ItemNota> & Pick<ItemNota, 'id' | 'grupo'>): ItemNota =>
@@ -118,5 +118,25 @@ describe('fraseAConfirmar', () => {
     expect(fraseAConfirmar(0)).toBe('.');
     expect(fraseAConfirmar(1)).toBe(': o item a confirmar vale zero até o lojista responder.');
     expect(fraseAConfirmar(4)).toBe(': os 4 itens a confirmar valem zero até o lojista responder.');
+  });
+});
+
+describe('jsonLdParaCopiar', () => {
+  /** Os seis caracteres do escape, não o "<". */
+  const ESCAPE = '\\u003c';
+
+  it('troca "<" pelo escape unicode: não fecha o <script> da página do lojista e continua sendo o mesmo JSON', () => {
+    const jsonld = { '@type': 'Product', name: 'Caneca </script><script>alert(1)</script>', description: 'a < b <!-- x -->' };
+    const texto = jsonLdParaCopiar(jsonld);
+    expect(ESCAPE).toHaveLength(6);
+    expect(texto).not.toContain('<');
+    expect(texto).toContain(`Caneca ${ESCAPE}/script>${ESCAPE}script>alert(1)${ESCAPE}/script>`);
+    expect(texto).toContain(`a ${ESCAPE} b ${ESCAPE}!-- x -->`);
+    expect(JSON.parse(texto)).toEqual(jsonld);
+  });
+
+  it('sem "<", é o JSON indentado de sempre', () => {
+    const jsonld = { '@type': 'Product', name: 'Caneca' };
+    expect(jsonLdParaCopiar(jsonld)).toBe(JSON.stringify(jsonld, null, 2));
   });
 });

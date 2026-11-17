@@ -49,6 +49,14 @@ export function nomeDoArquivo(titulo: string): string {
   return `nave-${slug || 'ficha'}.json`;
 }
 
+/**
+ * O JSON-LD que o painel mostra e copia. Todo "<" vira o escape unicode do JSON (o mesmo texto), para que
+ * um `</script>` vindo da loja não feche o `<script>` em que o lojista vai colar o bloco.
+ */
+export function jsonLdParaCopiar(jsonld: Record<string, unknown>): string {
+  return JSON.stringify(jsonld, null, 2).replaceAll('<', '\\u003c');
+}
+
 /** "claude-opus-5-5" → "Claude Opus 5.5"; o apelido da assinatura ("sonnet") → "Claude Sonnet". */
 export function nomeDoModelo(modelo: string): string {
   if (modelo === 'falso') return 'motor falso';

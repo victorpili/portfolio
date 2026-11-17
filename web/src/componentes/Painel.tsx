@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { ItemNota, Resultado } from '@nave/shared';
 import { editandoCampo } from '../interface-dados';
 import {
-  agruparChecklist, descreverBastidores, foraDaNota, fraseAConfirmar, nomeDoArquivo, rotuloAtributo,
+  agruparChecklist, descreverBastidores, foraDaNota, fraseAConfirmar, jsonLdParaCopiar, nomeDoArquivo, rotuloAtributo,
   type GrupoChecklist, type Pontos,
 } from '../painel-dados';
 import { SITUACAO } from '../textos';
@@ -161,7 +161,7 @@ export function Painel({ resultado: r }: { resultado: Resultado }) {
     areaJsonld.current?.select();
   }, [copia, falhas]);
 
-  const jsonld = JSON.stringify(r.jsonld, null, 2);
+  const jsonld = jsonLdParaCopiar(r.jsonld);
   const antes = r.notaAntes.valor;
   const depois = r.notaDepois.valor;
   const diferenca = depois - antes;
