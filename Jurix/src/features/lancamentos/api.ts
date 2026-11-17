@@ -66,6 +66,14 @@ const VALOR_TOTAL_SQL = `
   END
 `;
 
+/** Quanto já foi efetivamente pago: à vista conta só se pago; parcelado soma as parcelas pagas. */
+const VALOR_RECEBIDO_SQL = `
+  CASE WHEN l.status_pagamento = 'cancelado' THEN 0
+       WHEN l.forma_pagamento = 'avista' THEN CASE WHEN l.status_pagamento = 'pago' THEN l.valor ELSE 0 END
+       ELSE COALESCE((SELECT SUM(valor) FROM parcelas p WHERE p.lancamento_id = l.id AND p.status = 'pago'), 0)
+  END
+`;
+
 // ──────────────────────────────────────────────────────────────────────
 // Validation
 // ──────────────────────────────────────────────────────────────────────
@@ -401,7 +409,8 @@ export async function lancamentosList(
       c.nome AS cliente_nome,
       ct.codigo AS contrato_codigo,
       (${STATUS_EFETIVO_SQL}) AS status_efetivo,
-      (${VALOR_TOTAL_SQL}) AS valor_total
+      (${VALOR_TOTAL_SQL}) AS valor_total,
+      (${VALOR_RECEBIDO_SQL}) AS valor_recebido
     FROM lancamentos l
     JOIN clientes c ON c.id = l.cliente_id
     LEFT JOIN contratos ct ON ct.id = l.contrato_id

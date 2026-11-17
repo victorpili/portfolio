@@ -97,6 +97,8 @@ export interface LancamentoListRow extends Lancamento {
   status_efetivo: StatusPagamento;
   /** Sum of parcelas valor for parcelado; equals `valor` for avista. */
   valor_total: number;
+  /** Already paid: the avista value when pago, or the sum of paid parcelas. */
+  valor_recebido: number;
 }
 
 /** A lancamento plus its parcelas (parcelado) for the detail page. */

@@ -60,7 +60,8 @@ export function LancamentosListPage() {
       if (r.status_efetivo === "cancelado") continue;
       if (r.natureza === "entrada") {
         entradas += r.valor_total;
-        if (r.status_efetivo === "pago") recebido += r.valor_total;
+        // Parcelados parcialmente pagos também contam: soma só o que já entrou.
+        recebido += r.valor_recebido;
       } else {
         saidas += r.valor_total;
       }
