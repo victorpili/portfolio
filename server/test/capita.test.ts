@@ -342,7 +342,7 @@ describe('executarMissao', () => {
       { lerProduto: async () => ({ ...originalCaneca, truncada: true }) },
     );
     expect(doTipo(ev, 'aviso')).toEqual([expect.objectContaining({
-      mensagem: 'Capitã: ficha longa; usei os primeiros 20.000 caracteres e 30 variantes.',
+      mensagem: 'Capitã: ficha longa; cortei os campos que passavam do limite.',
     })]);
   });
 });

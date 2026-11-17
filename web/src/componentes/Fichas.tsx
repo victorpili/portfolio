@@ -67,7 +67,7 @@ export function FichaOriginal({ r }: { r: Resultado }) {
           <p className="ficha__vazio">A ficha original não tem descrição.</p>
         )}
         {o.truncada && (
-          <p className="ficha__nota">A ficha passava do limite (20.000 caracteres de descrição ou 30 variantes) e foi cortada.</p>
+          <p className="ficha__nota">A ficha passava do limite de tamanho, e os campos mais longos foram cortados.</p>
         )}
       </Bloco>
       <Bloco titulo="Dados da loja">
