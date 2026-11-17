@@ -35,7 +35,7 @@ flowchart TD
     I2 -- "não: devolve 1 vez" --> R
     I2 -- "sim" --> V["Revisor · Claude<br/>julga cada item"]
     V --> I3{"Imediato<br/>todos sustentados, com<br/>evidência no original?"}
-    I3 -- "não: volta ao Redator 1 vez" --> R
+    I3 -- "não: volta ao Redator,<br/>se ele ainda não foi devolvido" --> R
     I3 -- "sim" --> F["Nota depois e JSON-LD · código"]
     F --> T["Painel<br/>antes e depois, itens a confirmar"]
 ```
@@ -72,16 +72,16 @@ O orçamento é fixo: no máximo 2 chamadas por agente e 6 por missão (sem devo
 
 ### Citação literal como regra anti-alucinação
 
-Nenhum dado inventado pode aparecer como fato na ficha nova. A proteção vem em camadas:
+A regra é: nenhum dado inventado aparece como fato na ficha nova. A proteção vem em camadas:
 
 1. O Pesquisador cita um trecho literal do original para cada atributo. O Imediato procura esse trecho no original depois de normalizar os dois lados (sem HTML, em minúsculas, com espaços e aspas unificados). Um trecho que só aparece nas tags da loja não vale, porque tag é etiqueta interna, não informação ao cliente.
 2. O Redator só usa o que a pesquisa achou. O Imediato confere que cada fonte citada existe na pesquisa e que cada valor de atributo é igual ao da pesquisa.
 3. O Revisor julga cada item da ficha nova com uma evidência literal do original. Se a evidência não está no original, o item conta como "sem fonte".
-4. Um atributo sem fonte vai para "a confirmar", como uma pergunta ao lojista.
+4. O Redator transforma cada lacuna numa pergunta ao lojista ("a confirmar"), e o código move para "a confirmar" todo atributo que reprova.
 
 **Exceção assumida.** O tipo genérico do produto (por exemplo, "vela") pode vir de uma tag quando o título e a descrição não dizem o que o produto é. Material, cor, público e os outros atributos nunca vêm de tag. No trecho do Pesquisador, o Imediato recusa a tag. Nos textos da ficha nova, essa regra está no prompt do Revisor.
 
-**Limite do desenho.** A evidência do Revisor só precisa existir no original. O julgamento de que ela sustenta o item é do Revisor, que é um modelo. O código garante que a citação é real, mas não que ela prova o que o item diz.
+**Limite do desenho.** A evidência do Revisor só precisa existir no original. O julgamento de que ela sustenta o item é do Revisor, que é um modelo. O código garante que a citação é real, mas não que ela prova o que o item diz. O mesmo vale para o Pesquisador: o código confere que o trecho existe, não que o valor do atributo bate com ele; quem julga isso depois é o Revisor.
 
 **A ficha é dado, não instrução.** O conteúdo da loja vai delimitado no prompt (`<ficha_original>`, em JSON), os agentes não têm ferramentas e só respondem no formato pedido. Na tela, a ficha aparece como texto, nunca como HTML.
 
@@ -106,7 +106,7 @@ A nota é um checklist fixo de 100 pontos:
 
 ### JSON-LD montado por código
 
-O Redator não escreve JSON-LD. O código monta o `schema.org/Product` com o título e as seções da ficha nova, os atributos aprovados (`additionalProperty`) e os dados da loja: marca, SKU, GTIN, imagens e ofertas com preço e disponibilidade. Assim, ele é sempre válido e não tem como inventar um preço. O texto alternativo das imagens também sai do código, a partir do título novo.
+O Redator não escreve JSON-LD. O código monta o `schema.org/Product` com o título e as seções da ficha nova, os atributos aprovados (`additionalProperty`) e os dados da loja: marca, SKU, GTIN, imagens e ofertas com preço e disponibilidade. Assim, ele é sempre bem formado e não tem como inventar um preço. Se a loja não informa marca ou preço, o JSON-LD sai sem eles, e o item conta zero na nota. O texto alternativo das imagens também sai do código, a partir do título novo.
 
 ### Teto de gasto em três camadas
 
@@ -141,7 +141,7 @@ Esse motor não mede custo nem reproduz o formato forçado da API. Por isso, ele
 
 ## Construído com Claude Code
 
-Construído com Claude Code, de 13 a 16 de novembro de 2026. O método foi um plano escrito antes do código, uma tarefa por subagente e uma revisão de código a cada tarefa.
+Construído com Claude Code, de 13 a 17 de novembro de 2026. O método foi um plano escrito antes do código, uma tarefa por subagente e uma revisão de código a cada tarefa.
 
 ## Limites conhecidos e próximos passos
 
@@ -164,7 +164,7 @@ Precisa de Node 24 e pnpm 11.
 
 ```bash
 pnpm i
-cp .env.example .env   # preencha ANTHROPIC_API_KEY para a missão ao vivo
+cp .env.example .env   # libera o CORS para localhost:5173; preencha ANTHROPIC_API_KEY para a missão ao vivo
 pnpm dev               # servidor em http://localhost:8787 e nave em http://localhost:5173
 ```
 
@@ -185,7 +185,7 @@ Para testar a nave localmente pela assinatura, sem chave:
 MOTOR=assinatura pnpm dev
 ```
 
-No PowerShell, ponha `MOTOR=assinatura` no `.env`. Esse modo precisa do Claude Code instalado e logado; se o binário não estiver no lugar padrão, aponte `CLAUDE_BIN` para ele. Cada chamada pela assinatura leva de 50 a 90 s, e o prazo da missão sobe para 15 min.
+No PowerShell: `$env:MOTOR="assinatura"; pnpm dev`. Esse modo precisa do Claude Code instalado e logado; se o binário não estiver no lugar padrão, aponte `CLAUDE_BIN` para ele. Cada chamada pela assinatura leva de 50 a 90 s, e o prazo da missão sobe para 15 min.
 
 Testes e checagem de tipos:
 
@@ -194,7 +194,7 @@ pnpm test
 pnpm typecheck
 ```
 
-Variáveis do servidor (`.env`): `ANTHROPIC_API_KEY`, `MODELO_AO_VIVO` (padrão `claude-sonnet-5-5`), `COTA_DIA` (5), `COTA_VISITANTE` (3), `ORIGEM_PERMITIDA` (origens aceitas pelo CORS, separadas por vírgula), `PORT` (8787) e `MOTOR` (`api` ou `assinatura`). O front lê `VITE_API_URL` (veja [`web/.env.example`](web/.env.example)).
+Variáveis do servidor (`.env`): `ANTHROPIC_API_KEY`, `MODELO_AO_VIVO` (padrão `claude-sonnet-5-5`), `COTA_DIA` (5), `COTA_VISITANTE` (3), `ORIGEM_PERMITIDA` (origens aceitas pelo CORS, separadas por vírgula; sem ela, nenhuma), `PORT` (8787) e `MOTOR` (`api` ou `assinatura`). O front lê `VITE_API_URL` (veja [`web/.env.example`](web/.env.example)).
 
 ## Créditos
 
