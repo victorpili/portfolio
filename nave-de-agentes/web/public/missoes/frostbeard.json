@@ -1,0 +1,1127 @@
+{
+  "nome": "frostbeard",
+  "titulo": "Winter Witch",
+  "loja": "www.frostbeardstudio.com",
+  "gravadaEm": "2026-11-17T04:57:17.412Z",
+  "modelo": "claude-sonnet-5-5",
+  "eventos": [
+    {
+      "tipo": "missao_iniciada",
+      "mensagem": "Capitã: missão recebida.",
+      "seq": 1,
+      "t": 0
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "capita",
+      "sala": "ponte",
+      "mensagem": "Capitã: assumindo a Ponte.",
+      "seq": 2,
+      "t": 0
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "imediato",
+      "sala": "ponte",
+      "mensagem": "Capitã: Imediato, para a Ponte.",
+      "seq": 3,
+      "t": 0
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "pesquisador",
+      "sala": "pesquisa",
+      "mensagem": "Capitã: Pesquisador, para a sala de Pesquisa.",
+      "seq": 4,
+      "t": 711
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "pesquisador",
+      "tentativa": 1,
+      "mensagem": "Pesquisador: lendo a ficha original.",
+      "seq": 5,
+      "t": 711
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "pesquisador",
+      "mensagem": "Pesquisador: 3 atributos, 5 lacunas.",
+      "seq": 6,
+      "t": 4866
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "pesquisador",
+      "mensagem": "Imediato: conferindo a entrega do Pesquisador.",
+      "seq": 7,
+      "t": 4866
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "pesquisador",
+      "mensagem": "Imediato: todos os trechos estão no original. Aprovado.",
+      "seq": 8,
+      "t": 4867
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "pesquisador",
+      "mensagem": "Capitã: Pesquisador dispensado.",
+      "seq": 9,
+      "t": 4867
+    },
+    {
+      "tipo": "nota",
+      "qual": "antes",
+      "nota": {
+        "valor": 47,
+        "obtidos": 47,
+        "possiveis": 100,
+        "itens": [
+          {
+            "id": "marca",
+            "grupo": "identificacao",
+            "rotulo": "Marca",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "sku",
+            "grupo": "identificacao",
+            "rotulo": "SKU",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "gtin",
+            "grupo": "identificacao",
+            "rotulo": "GTIN / código de barras",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "categoria",
+            "grupo": "identificacao",
+            "rotulo": "Categoria",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "preco",
+            "grupo": "oferta",
+            "rotulo": "Preço",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "disponibilidade",
+            "grupo": "oferta",
+            "rotulo": "Disponibilidade",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:material",
+            "grupo": "atributos",
+            "rotulo": "Material ou composição",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:dimensoes",
+            "grupo": "atributos",
+            "rotulo": "Dimensões",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:peso",
+            "grupo": "atributos",
+            "rotulo": "Peso",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:variacoes",
+            "grupo": "atributos",
+            "rotulo": "Variações (cores e tamanhos)",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:uso",
+            "grupo": "atributos",
+            "rotulo": "Uso",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:publico",
+            "grupo": "atributos",
+            "rotulo": "Público",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:cuidados",
+            "grupo": "atributos",
+            "rotulo": "Cuidados",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:garantia",
+            "grupo": "atributos",
+            "rotulo": "Garantia ou troca",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "titulo",
+            "grupo": "conteudo",
+            "rotulo": "Título descritivo",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "descricao",
+            "grupo": "conteudo",
+            "rotulo": "Descrição organizada",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "faq",
+            "grupo": "conteudo",
+            "rotulo": "FAQ (3+ perguntas)",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "alt",
+            "grupo": "conteudo",
+            "rotulo": "Imagens com texto alternativo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "jsonld",
+            "grupo": "dados_estruturados",
+            "rotulo": "JSON-LD Product",
+            "pontos": 10,
+            "maximo": 10,
+            "situacao": "ok"
+          }
+        ]
+      },
+      "mensagem": "Capitã: nota antes 47/100.",
+      "seq": 10,
+      "t": 4868
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "redator",
+      "sala": "criacao",
+      "mensagem": "Capitã: Redator, para a sala de Criação.",
+      "seq": 11,
+      "t": 4868
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "redator",
+      "tentativa": 1,
+      "mensagem": "Redator: escrevendo a ficha nova.",
+      "seq": 12,
+      "t": 4868
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "redator",
+      "mensagem": "Redator: ficha nova com 2 seções, 3 atributos e 3 perguntas.",
+      "seq": 13,
+      "t": 9738
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "redator",
+      "mensagem": "Imediato: conferindo a entrega do Redator.",
+      "seq": 14,
+      "t": 9738
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "redator",
+      "mensagem": "Imediato: fontes e valores batem com a pesquisa. Aprovado.",
+      "seq": 15,
+      "t": 9739
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "redator",
+      "mensagem": "Capitã: Redator dispensado.",
+      "seq": 16,
+      "t": 9739
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "revisor",
+      "sala": "qualidade",
+      "mensagem": "Capitã: Revisor, para a sala de Qualidade.",
+      "seq": 17,
+      "t": 9739
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "revisor",
+      "tentativa": 1,
+      "mensagem": "Revisor: julgando cada item contra o original.",
+      "seq": 18,
+      "t": 9739
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "revisor",
+      "mensagem": "Revisor: 9/9 itens sustentados.",
+      "seq": 19,
+      "t": 14216
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "revisor",
+      "mensagem": "Imediato: conferindo a entrega do Revisor.",
+      "seq": 20,
+      "t": 14216
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "revisor",
+      "mensagem": "Imediato: todos os itens sustentados. Aprovado.",
+      "seq": 21,
+      "t": 14216
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "revisor",
+      "mensagem": "Capitã: Revisor dispensado.",
+      "seq": 22,
+      "t": 14216
+    },
+    {
+      "tipo": "nota",
+      "qual": "depois",
+      "nota": {
+        "valor": 65,
+        "obtidos": 65,
+        "possiveis": 100,
+        "itens": [
+          {
+            "id": "marca",
+            "grupo": "identificacao",
+            "rotulo": "Marca",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "sku",
+            "grupo": "identificacao",
+            "rotulo": "SKU",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "gtin",
+            "grupo": "identificacao",
+            "rotulo": "GTIN / código de barras",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "categoria",
+            "grupo": "identificacao",
+            "rotulo": "Categoria",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "preco",
+            "grupo": "oferta",
+            "rotulo": "Preço",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "disponibilidade",
+            "grupo": "oferta",
+            "rotulo": "Disponibilidade",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:material",
+            "grupo": "atributos",
+            "rotulo": "Material ou composição",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:dimensoes",
+            "grupo": "atributos",
+            "rotulo": "Dimensões",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:peso",
+            "grupo": "atributos",
+            "rotulo": "Peso",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:variacoes",
+            "grupo": "atributos",
+            "rotulo": "Variações (cores e tamanhos)",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:uso",
+            "grupo": "atributos",
+            "rotulo": "Uso",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:publico",
+            "grupo": "atributos",
+            "rotulo": "Público",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:cuidados",
+            "grupo": "atributos",
+            "rotulo": "Cuidados",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:garantia",
+            "grupo": "atributos",
+            "rotulo": "Garantia ou troca",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "titulo",
+            "grupo": "conteudo",
+            "rotulo": "Título descritivo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "descricao",
+            "grupo": "conteudo",
+            "rotulo": "Descrição organizada",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "faq",
+            "grupo": "conteudo",
+            "rotulo": "FAQ (3+ perguntas)",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "alt",
+            "grupo": "conteudo",
+            "rotulo": "Imagens com texto alternativo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "jsonld",
+            "grupo": "dados_estruturados",
+            "rotulo": "JSON-LD Product",
+            "pontos": 10,
+            "maximo": 10,
+            "situacao": "ok"
+          }
+        ]
+      },
+      "mensagem": "Capitã: nota depois 65/100.",
+      "seq": 23,
+      "t": 14217
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "capita",
+      "mensagem": "Capitã: deixando a Ponte.",
+      "seq": 24,
+      "t": 14217
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "imediato",
+      "mensagem": "Capitã: Imediato dispensado.",
+      "seq": 25,
+      "t": 14217
+    },
+    {
+      "tipo": "missao_concluida",
+      "resultado": {
+        "original": {
+          "fonte": "shopify",
+          "url": "https://www.frostbeardstudio.com/products/winter-witch-8oz-candle",
+          "loja": "www.frostbeardstudio.com",
+          "titulo": "Winter Witch",
+          "descricaoHtml": "<p data-lfile-container=\"b65ebe72-6dfb-4a75-b96a-81d8af5bb8ef\" data-pm-slice=\"1 1 []\">Orange, chamomile, cedar and lavender bring warmth and calm to cold winter nights, when magic stirs in the air and one woman carries fate heavy on her shoulders. Among feuds and war, demons and midnight realms, this herbal aromatherapy bouquet is a respite of calm amongst the madness.</p>\n<p>So curl up with this cozy seasonal scent and let it be the light in the darkness this winter.</p>",
+          "descricaoTexto": "Orange, chamomile, cedar and lavender bring warmth and calm to cold winter nights, when magic stirs in the air and one woman carries fate heavy on her shoulders. Among feuds and war, demons and midnight realms, this herbal aromatherapy bouquet is a respite of calm amongst the madness.\nSo curl up with this cozy seasonal scent and let it be the light in the darkness this winter.",
+          "marca": "Frostbeard Studio",
+          "tipo": "8 oz Jar",
+          "tags": [
+            "8oz",
+            "BLSC",
+            "book lovers soy candle",
+            "candle",
+            "candle-variant",
+            "chamomile",
+            "citrus",
+            "citrusy",
+            "collection-winter",
+            "collection-winter-featured",
+            "featured",
+            "floral",
+            "lavender",
+            "magic",
+            "magical",
+            "magick",
+            "purple",
+            "seasonal",
+            "winter",
+            "wintery",
+            "witch",
+            "witches",
+            "witchey",
+            "witchie",
+            "witchies",
+            "witchy"
+          ],
+          "opcoes": [
+            {
+              "nome": "Size",
+              "valores": [
+                "8 oz Jar"
+              ]
+            }
+          ],
+          "variantes": [
+            {
+              "titulo": "8 oz Jar",
+              "sku": "BLSC-8OZ-WINTERWITCH",
+              "preco": "26.00",
+              "disponivel": null,
+              "codigoBarras": null
+            }
+          ],
+          "imagens": [
+            {
+              "src": "https://cdn.shopify.com/s/files/1/0943/8048/files/winter-witch-8oz-jar-soy-candle_6dd09a2d-3ebb-4b91-bf75-783ec85cf2f6.jpg?v=1749666353",
+              "alt": "Winter Witch  -  8 oz Jar  -  8 oz Jar  -  Frostbeard Studio"
+            }
+          ],
+          "moeda": "USD",
+          "jsonldPaginaValido": true,
+          "naoVerificavel": [],
+          "truncada": false
+        },
+        "pesquisa": {
+          "tipoProduto": "jar candle",
+          "atributos": [
+            {
+              "id": "material",
+              "valor": "orange, chamomile, cedar and lavender",
+              "trecho": "Orange, chamomile, cedar and lavender"
+            },
+            {
+              "id": "dimensoes",
+              "valor": "8 oz Jar",
+              "trecho": "8 oz Jar"
+            },
+            {
+              "id": "variacoes",
+              "valor": "8 oz Jar",
+              "trecho": "Size"
+            }
+          ],
+          "lacunas": [
+            {
+              "id": "peso",
+              "motivo": "A ficha não informa o peso; só a medida 8 oz do frasco, sem dizer que é peso."
+            },
+            {
+              "id": "uso",
+              "motivo": "A ficha não explica como se usa a vela; só descreve o aroma."
+            },
+            {
+              "id": "publico",
+              "motivo": "A ficha não diz para quem é o produto; só a tag 'book lovers soy candle' sugere um perfil."
+            },
+            {
+              "id": "cuidados",
+              "motivo": "A ficha não fala de conservação nem de cuidados com a vela."
+            },
+            {
+              "id": "garantia",
+              "motivo": "A ficha não fala de garantia nem de troca."
+            }
+          ],
+          "naoSeAplica": []
+        },
+        "fichaNova": {
+          "titulo": "Winter Witch jar candle, 8 oz Jar with orange, chamomile, cedar and lavender, Frostbeard Studio",
+          "secoes": [
+            {
+              "id": "s1",
+              "titulo": "Scent",
+              "texto": "Winter Witch, from Frostbeard Studio, is a jar candle with orange, chamomile, cedar and lavender. The description calls it a herbal aromatherapy bouquet and a cozy seasonal scent.",
+              "fontes": [
+                "material"
+              ]
+            },
+            {
+              "id": "s2",
+              "titulo": "Size",
+              "texto": "The candle comes in one size option: an 8 oz Jar.",
+              "fontes": [
+                "dimensoes",
+                "variacoes"
+              ]
+            }
+          ],
+          "atributos": [
+            {
+              "id": "material",
+              "rotulo": "Material or composition",
+              "valor": "orange, chamomile, cedar and lavender"
+            },
+            {
+              "id": "dimensoes",
+              "rotulo": "Dimensions",
+              "valor": "8 oz Jar"
+            },
+            {
+              "id": "variacoes",
+              "rotulo": "Variations (colors and sizes)",
+              "valor": "8 oz Jar"
+            }
+          ],
+          "faq": [
+            {
+              "id": "f1",
+              "pergunta": "What notes does Winter Witch have?",
+              "resposta": "It combines orange, chamomile, cedar and lavender.",
+              "fontes": [
+                "material"
+              ]
+            },
+            {
+              "id": "f2",
+              "pergunta": "What size is the candle?",
+              "resposta": "It comes in an 8 oz Jar.",
+              "fontes": [
+                "dimensoes"
+              ]
+            },
+            {
+              "id": "f3",
+              "pergunta": "Which size options are available?",
+              "resposta": "The only size option is the 8 oz Jar.",
+              "fontes": [
+                "variacoes"
+              ]
+            }
+          ],
+          "aConfirmar": [
+            {
+              "id": "peso",
+              "pergunta": "What is the weight of the candle?"
+            },
+            {
+              "id": "uso",
+              "pergunta": "How should the candle be used?"
+            },
+            {
+              "id": "publico",
+              "pergunta": "Does the tag 'book lovers soy candle' indicate the intended audience for this candle?"
+            },
+            {
+              "id": "cuidados",
+              "pergunta": "What care instructions apply to the candle?"
+            },
+            {
+              "id": "garantia",
+              "pergunta": "What is the warranty or return policy for this candle?"
+            }
+          ]
+        },
+        "jsonld": {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "Winter Witch jar candle, 8 oz Jar with orange, chamomile, cedar and lavender, Frostbeard Studio",
+          "description": "Winter Witch, from Frostbeard Studio, is a jar candle with orange, chamomile, cedar and lavender. The description calls it a herbal aromatherapy bouquet and a cozy seasonal scent.\n\nThe candle comes in one size option: an 8 oz Jar.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Frostbeard Studio"
+          },
+          "sku": "BLSC-8OZ-WINTERWITCH",
+          "image": [
+            "https://cdn.shopify.com/s/files/1/0943/8048/files/winter-witch-8oz-jar-soy-candle_6dd09a2d-3ebb-4b91-bf75-783ec85cf2f6.jpg?v=1749666353"
+          ],
+          "offers": [
+            {
+              "@type": "Offer",
+              "price": "26.00",
+              "priceCurrency": "USD"
+            }
+          ],
+          "additionalProperty": [
+            {
+              "@type": "PropertyValue",
+              "name": "Material or composition",
+              "value": "orange, chamomile, cedar and lavender"
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Dimensions",
+              "value": "8 oz Jar"
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Variations (colors and sizes)",
+              "value": "8 oz Jar"
+            }
+          ]
+        },
+        "imagens": [
+          {
+            "src": "https://cdn.shopify.com/s/files/1/0943/8048/files/winter-witch-8oz-jar-soy-candle_6dd09a2d-3ebb-4b91-bf75-783ec85cf2f6.jpg?v=1749666353",
+            "alt": "Winter Witch jar candle, 8 oz Jar with orange, chamomile, cedar and lavender, Frostbeard Studio"
+          }
+        ],
+        "notaAntes": {
+          "valor": 47,
+          "obtidos": 47,
+          "possiveis": 100,
+          "itens": [
+            {
+              "id": "marca",
+              "grupo": "identificacao",
+              "rotulo": "Marca",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "sku",
+              "grupo": "identificacao",
+              "rotulo": "SKU",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "gtin",
+              "grupo": "identificacao",
+              "rotulo": "GTIN / código de barras",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "categoria",
+              "grupo": "identificacao",
+              "rotulo": "Categoria",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "preco",
+              "grupo": "oferta",
+              "rotulo": "Preço",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "disponibilidade",
+              "grupo": "oferta",
+              "rotulo": "Disponibilidade",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:material",
+              "grupo": "atributos",
+              "rotulo": "Material ou composição",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:dimensoes",
+              "grupo": "atributos",
+              "rotulo": "Dimensões",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:peso",
+              "grupo": "atributos",
+              "rotulo": "Peso",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:variacoes",
+              "grupo": "atributos",
+              "rotulo": "Variações (cores e tamanhos)",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:uso",
+              "grupo": "atributos",
+              "rotulo": "Uso",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:publico",
+              "grupo": "atributos",
+              "rotulo": "Público",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:cuidados",
+              "grupo": "atributos",
+              "rotulo": "Cuidados",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:garantia",
+              "grupo": "atributos",
+              "rotulo": "Garantia ou troca",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "titulo",
+              "grupo": "conteudo",
+              "rotulo": "Título descritivo",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "descricao",
+              "grupo": "conteudo",
+              "rotulo": "Descrição organizada",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "faq",
+              "grupo": "conteudo",
+              "rotulo": "FAQ (3+ perguntas)",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "alt",
+              "grupo": "conteudo",
+              "rotulo": "Imagens com texto alternativo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "jsonld",
+              "grupo": "dados_estruturados",
+              "rotulo": "JSON-LD Product",
+              "pontos": 10,
+              "maximo": 10,
+              "situacao": "ok"
+            }
+          ]
+        },
+        "notaDepois": {
+          "valor": 65,
+          "obtidos": 65,
+          "possiveis": 100,
+          "itens": [
+            {
+              "id": "marca",
+              "grupo": "identificacao",
+              "rotulo": "Marca",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "sku",
+              "grupo": "identificacao",
+              "rotulo": "SKU",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "gtin",
+              "grupo": "identificacao",
+              "rotulo": "GTIN / código de barras",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "categoria",
+              "grupo": "identificacao",
+              "rotulo": "Categoria",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "preco",
+              "grupo": "oferta",
+              "rotulo": "Preço",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "disponibilidade",
+              "grupo": "oferta",
+              "rotulo": "Disponibilidade",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:material",
+              "grupo": "atributos",
+              "rotulo": "Material ou composição",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:dimensoes",
+              "grupo": "atributos",
+              "rotulo": "Dimensões",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:peso",
+              "grupo": "atributos",
+              "rotulo": "Peso",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:variacoes",
+              "grupo": "atributos",
+              "rotulo": "Variações (cores e tamanhos)",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:uso",
+              "grupo": "atributos",
+              "rotulo": "Uso",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:publico",
+              "grupo": "atributos",
+              "rotulo": "Público",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:cuidados",
+              "grupo": "atributos",
+              "rotulo": "Cuidados",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:garantia",
+              "grupo": "atributos",
+              "rotulo": "Garantia ou troca",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "titulo",
+              "grupo": "conteudo",
+              "rotulo": "Título descritivo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "descricao",
+              "grupo": "conteudo",
+              "rotulo": "Descrição organizada",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "faq",
+              "grupo": "conteudo",
+              "rotulo": "FAQ (3+ perguntas)",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "alt",
+              "grupo": "conteudo",
+              "rotulo": "Imagens com texto alternativo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "jsonld",
+              "grupo": "dados_estruturados",
+              "rotulo": "JSON-LD Product",
+              "pontos": 10,
+              "maximo": 10,
+              "situacao": "ok"
+            }
+          ]
+        },
+        "aConfirmar": [
+          {
+            "id": "peso",
+            "pergunta": "What is the weight of the candle?"
+          },
+          {
+            "id": "uso",
+            "pergunta": "How should the candle be used?"
+          },
+          {
+            "id": "publico",
+            "pergunta": "Does the tag 'book lovers soy candle' indicate the intended audience for this candle?"
+          },
+          {
+            "id": "cuidados",
+            "pergunta": "What care instructions apply to the candle?"
+          },
+          {
+            "id": "garantia",
+            "pergunta": "What is the warranty or return policy for this candle?"
+          }
+        ],
+        "devolucoes": 0,
+        "chamadas": [
+          {
+            "agente": "pesquisador",
+            "tentativa": 1,
+            "tokensEntrada": 4062,
+            "tokensSaida": 371,
+            "custoUsd": 0.011834,
+            "ms": 4154
+          },
+          {
+            "agente": "redator",
+            "tentativa": 1,
+            "tokensEntrada": 5458,
+            "tokensSaida": 692,
+            "custoUsd": 0.017836,
+            "ms": 4870
+          },
+          {
+            "agente": "revisor",
+            "tentativa": 1,
+            "tokensEntrada": 4468,
+            "tokensSaida": 600,
+            "custoUsd": 0.014936,
+            "ms": 4476
+          }
+        ],
+        "custoUsd": 0.044606,
+        "duracaoMs": 14217,
+        "motor": "api",
+        "modelo": "claude-sonnet-5-5"
+      },
+      "mensagem": "Capitã: missão concluída. Nota 47 → 65.",
+      "seq": 26,
+      "t": 14217
+    }
+  ]
+}

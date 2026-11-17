@@ -15,8 +15,8 @@ afterEach(() => {
 });
 
 describe('lerArgs', () => {
-  it('--gravar força Opus e exige API', () => {
-    expect(lerArgs(['https://l.com/products/x', '--gravar', 'caneca']).modelo).toBe('claude-opus-5-5');
+  it('--gravar força Sonnet e exige API', () => {
+    expect(lerArgs(['https://l.com/products/x', '--gravar', 'caneca']).modelo).toBe('claude-sonnet-5-5');
     expect(() => lerArgs(['https://l.com/products/x', '--motor', 'assinatura', '--gravar', 'c'])).toThrow('missão gravada só pela API');
   });
 
@@ -32,7 +32,7 @@ describe('lerArgs', () => {
 
   it('aceita --texto, --modelo e --gravar em qualquer ordem', () => {
     expect(lerArgs(['--gravar', 'cafe', '--texto', 'ficha.txt'])).toEqual({
-      arquivoTexto: 'ficha.txt', motor: 'api', modelo: 'claude-opus-5-5', gravar: 'cafe',
+      arquivoTexto: 'ficha.txt', motor: 'api', modelo: 'claude-sonnet-5-5', gravar: 'cafe',
     });
     expect(lerArgs(['--motor', 'assinatura', '--modelo', 'opus', 'https://l.com/products/x']).modelo).toBe('opus');
     expect(lerArgs(['--', 'https://l.com/products/x']).url).toBe('https://l.com/products/x');

@@ -12,10 +12,9 @@ describe('jsonld', () => {
       + `<script type="application/ld+json">{"@type":"Product","name":"B"}`;
     expect(extrairJsonLd(html)).toMatchObject({ blocos: 1, invalidos: 0, produtos: [{ name: 'A' }] });
   });
-  it('lê só os primeiros 500 KB da página', () => {
+  it('acha o bloco no fim de uma página de 2 MB', () => {
     const bloco = `<script type="application/ld+json">{"@type":"Product","name":"A"}</script>`;
-    expect(extrairJsonLd(' '.repeat(500_000 - bloco.length) + bloco).blocos).toBe(1);
-    expect(extrairJsonLd(' '.repeat(500_000) + bloco)).toMatchObject({ blocos: 0, produtos: [] });
+    expect(extrairJsonLd(' '.repeat(2_000_000 - bloco.length) + bloco)).toMatchObject({ blocos: 1, produtos: [{ name: 'A' }] });
   });
   it('lê no máximo 10 blocos', () => {
     const blocos = Array.from({ length: 12 }, (_, i) => `<script type="application/ld+json">{"@type":"Product","name":"P${i}"}</script>`);

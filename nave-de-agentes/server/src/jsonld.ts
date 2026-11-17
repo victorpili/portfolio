@@ -7,8 +7,7 @@ export interface CamposJsonLd {
   imagem: boolean; descricao: boolean; avaliacoes: boolean; categoria: boolean; additionalProperty: number;
 }
 
-/** Da página, só os primeiros 500 KB e os primeiros 10 blocos: o HTML vem de fora e pode ter até 2 MB. */
-const MAX_HTML_PAGINA = 500_000;
+/** Da página, só os primeiros 10 blocos. O HTML vem de fora e tem até 2 MB; a leitura é linear (test/html-hostil.test.ts). */
 const MAX_BLOCOS = 10;
 const TIPO_JSONLD = /\btype\s*=\s*["']application\/ld\+json["']/i;
 
@@ -44,7 +43,7 @@ function achatar(x: unknown, acc: Obj[] = []): Obj[] {
 const ehProduto = (o: Obj) => ([] as unknown[]).concat(o['@type'] || []).some((t) => /^(Product|ProductGroup)$/i.test(String(t)));
 
 export function extrairJsonLd(html: string): { blocos: number; invalidos: number; produtos: Obj[] } {
-  const blocos = blocosJsonLd(html.slice(0, MAX_HTML_PAGINA));
+  const blocos = blocosJsonLd(html);
   let invalidos = 0;
   const achados: Obj[] = [];
   for (const b of blocos) {

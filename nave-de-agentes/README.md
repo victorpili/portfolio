@@ -5,9 +5,7 @@ A Nave de Agentes lê a ficha de um produto Shopify, reescreve só o que tem fon
 
 ![A nave durante uma missão gravada](docs/nave.gif)
 
-**Vídeo de 90 s:** <!-- link do vídeo -->
-
-**Demo no ar:** <!-- link da demo -->
+**Demo no ar:** em breve.
 
 ## Como funciona
 
@@ -21,7 +19,7 @@ Uma tripulação de cinco cuida de cada missão. Três tripulantes são agentes 
 | Redator | Criação | Claude | Escreve a ficha nova: título, seções, atributos, FAQ e perguntas ao lojista |
 | Revisor | Qualidade | Claude | Julga cada item da ficha nova contra o original: sustentado, sem fonte ou contraditório |
 
-Quem não está trabalhando dorme no Dormitório e caminha até a sala quando é convocado.
+Quem não está trabalhando dorme no Dormitório e caminha até a sala quando é convocado. Cada sala tem a cara da sua função: a Pesquisa é um laboratório, a Criação é uma oficina, a Qualidade é uma sala de inspeção e a Ponte é o comando da nave.
 
 ```mermaid
 flowchart TD
@@ -120,7 +118,17 @@ A leitura de URL também tem limites, para o servidor não virar ponte para ende
 
 ### Missão gravada
 
-A demo abre na hora e não gasta nada. Cada missão gravada guarda os eventos de uma missão real, feita com Claude Opus 5.5 pela linha de comando (`pnpm missao <url> --gravar <nome>`). O front a reproduz com o mesmo redutor da missão ao vivo. No replay, cada espera pelo modelo fica comprimida em no máximo 2,5 s, e as caminhadas e conferências rodam no ritmo normal. A missão ao vivo usa Claude Sonnet 5.5.
+A demo abre na hora e não gasta nada. Cada missão gravada guarda os eventos de uma missão real, feita com Claude Sonnet 5.5 pela linha de comando (`pnpm missao <url> --gravar <nome>`), o mesmo modelo da missão ao vivo. O front a reproduz com o mesmo redutor da missão ao vivo. No replay, cada espera pelo modelo fica comprimida em no máximo 2,5 s, e as caminhadas e conferências rodam no ritmo normal.
+
+As três missões gravadas, em lojas reais:
+
+| Produto | Loja | Nota antes → depois | Custo | Duração |
+|---|---|---|---|---|
+| Pano de prato | Fox Blossom | 45 → 75 | US$ 0,05 | 19 s |
+| Vela aromática | Frostbeard Studio | 47 → 65 | US$ 0,04 | 14 s |
+| Tênis infantil | Pampili | 56 → 75 | US$ 0,05 | 15 s |
+
+A nota depois não chega a 100 porque o que não tem fonte no original (peso, cuidados, garantia…) vira pergunta ao lojista e vale zero.
 
 Toda caixa de erro oferece uma missão gravada, para a demo nunca travar na frente de quem está olhando.
 
@@ -137,7 +145,7 @@ Esse motor não mede custo nem reproduz o formato forçado da API. Por isso, ele
 - **Claude:** SDK oficial `@anthropic-ai/sdk`, com `beta.messages.parse` e saída estruturada validada por zod, pensamento adaptativo com esforço `low` e o fallback do lado do servidor (beta): se o modelo recusar, a API tenta um modelo reserva na mesma chamada.
 - **Front:** React 19 e Vite 8, sem biblioteca de jogo. O mapa é HTML e CSS, com sprites em pixel art ampliados com `image-rendering: pixelated`.
 - **Testes:** Vitest. Um motor falso entrega respostas roteirizadas, para testar a Capitã, o Imediato e a nota sem chamar o Claude.
-- **Hospedagem:** servidor no Render, plano grátis ([`render.yaml`](render.yaml)); front estático no Vercel, com `VITE_API_URL`.
+- **Hospedagem:** servidor no Render, plano grátis ([`render.yaml`](render.yaml)); front estático no Vercel ([`vercel.json`](vercel.json)), com `VITE_API_URL`.
 
 ## Construído com Claude Code
 
@@ -176,7 +184,7 @@ Uma missão pela linha de comando, com os eventos no terminal, as notas e o cust
 pnpm missao https://<loja>/products/<handle>
 pnpm missao --texto ficha.txt
 pnpm missao https://<loja>/products/<handle> --motor assinatura   # sem chave, pela assinatura do Claude Code
-pnpm missao https://<loja>/products/<handle> --gravar <nome>      # grava em web/public/missoes (só pela API, com Opus)
+pnpm missao https://<loja>/products/<handle> --gravar <nome>      # grava em web/public/missoes (só pela API, com Sonnet)
 ```
 
 Para testar a nave localmente pela assinatura, sem chave:
