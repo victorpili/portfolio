@@ -185,14 +185,27 @@ describe('executarMissao', () => {
     ]);
   });
 
-  it('Revisor fora do formato duas vezes: sai da ficha tudo o que não é atributo', async () => {
+  it('Revisor fora do formato duas vezes: sai da ficha tudo, e os atributos ficam a confirmar', async () => {
     const { m, ev, r } = await rodar({ pesquisador: [pesquisaBoa], redator: [fichaNovaCaneca], revisor: [{}, {}] });
     expect(m.chamadas.map((c) => c.agente)).toEqual(['pesquisador', 'redator', 'revisor', 'revisor']);
     expect(doTipo(ev, 'imediato_devolveu')).toEqual([expect.objectContaining({
       agente: 'revisor', problemas: [{ item: 'resposta', motivo: 'resposta fora do formato' }],
     })]);
-    expect(doTipo(ev, 'imediato_corrigiu')[0].problemas.map((x) => x.item)).toEqual(['titulo', 's1', 's2', 'f1', 'f2', 'f3']);
-    expect(r!.fichaNova).toMatchObject({ titulo: originalCaneca.titulo, secoes: [], faq: [], atributos: fichaNovaCaneca.atributos });
+    expect(doTipo(ev, 'imediato_corrigiu')[0].problemas.map((x) => x.item)).toEqual([
+      'titulo', 's1', 's2', 'f1', 'f2', 'f3', 'atributo:material', 'atributo:dimensoes', 'atributo:variacoes', 'atributo:uso',
+    ]);
+    expect(r!.fichaNova).toMatchObject({ titulo: originalCaneca.titulo, secoes: [], faq: [], atributos: [] });
+    expect(r!.fichaNova.aConfirmar).toEqual([
+      ...fichaNovaCaneca.aConfirmar,
+      { id: 'material', pergunta: 'Confirme: Material ou composição' },
+      { id: 'dimensoes', pergunta: 'Confirme: Dimensões' },
+      { id: 'variacoes', pergunta: 'Confirme: Variações (cores e tamanhos)' },
+      { id: 'uso', pergunta: 'Confirme: Uso' },
+    ]);
+    // Sem julgamento do Revisor, nenhum atributo conta como fato: nem na nota depois, nem no JSON-LD.
+    const atributosDepois = r!.notaDepois.itens.filter((i) => i.grupo === 'atributos');
+    expect(atributosDepois.map((i) => i.situacao)).toEqual(Array(8).fill('a_confirmar'));
+    expect(r!.jsonld).not.toHaveProperty('additionalProperty');
     expect(r!.chamadas.map((c) => c.agente)).toEqual(['pesquisador', 'redator']);
   });
 

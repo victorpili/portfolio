@@ -179,7 +179,8 @@ class Missao {
           this.devolver('revisor', [FORA_DO_FORMATO], `Imediato: ${FORA_DO_FORMATO.motivo}. Devolvido ao Revisor.`);
           continue;
         }
-        const reprovados = itensDaFicha(ficha).filter((i) => !i.startsWith('atributo:'));
+        // Nada foi julgado: sai tudo, e os atributos vão para "a confirmar" (não contam na nota nem no JSON-LD).
+        const reprovados = itensDaFicha(ficha);
         ficha = removerReprovados(o, ficha, reprovados);
         this.corrigir('redator', reprovados.map((item) => ({ item, motivo: 'item não revisado' })),
           'Imediato: revisão fora do formato. Tirei da ficha o que não foi revisado.');
