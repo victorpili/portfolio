@@ -23,7 +23,7 @@ O código e os dados pertencem ao escritório, por isso o CRM não está aqui, p
 - **Gestão comercial.** Um dashboard do pipeline, com o funil, a qualidade dos contatos, o ciclo de vendas e indicadores por pessoa e por área. Também tem uma base de empresas com filtros, contatos e mailings vinculados às empresas e às pessoas do escritório, e gestão de tarefas.
 - **Controle.** Registro (log) de todas as ações e permissões por área, cargo e pessoa, liberando ver e editar tela a tela.
 
-**Como construí:** com o Claude Code, no VS Code. Os agentes do sistema usam um modelo diferente conforme a complexidade da tarefa: Claude Opus, Claude Haiku ou DeepSeek.
+**Como construí:** desenhei à mão a primeira versão do banco de dados, em PostgreSQL, no DrawDB, para entender bem a estrutura dos dados e como eles se interligam. Nessa etapa, a IA serviu só de mentora, sem fazer o trabalho por mim. A partir desse desenho, construí o sistema com o Claude Code, no VS Code. Os agentes do sistema usam um modelo diferente conforme a complexidade da tarefa: Claude Opus, Claude Haiku ou DeepSeek.
 
 ## O que cada projeto mostra
 
