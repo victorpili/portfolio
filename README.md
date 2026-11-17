@@ -149,7 +149,7 @@ Limites conhecidos:
 
 - Alguém pode ocupar as 3 vagas simultâneas de graça, com URLs que demoram a responder. O gasto continua limitado.
 - O custo exibido no painel não inclui as tentativas que voltaram fora do formato. A linha de comando mostra o total real.
-- A cota fica em memória e zera a cada reinício do servidor.
+- A cota fica em memória e zera a cada reinício do servidor. No plano grátis do Render, o servidor reinicia toda vez que acorda (depois de 15 min parado), então a cota de 5 por dia, na prática, vale por ciclo. O teto que vale mesmo é o saldo pré-pago do workspace, com a recarga automática desligada.
 - A leitura de URL bloqueia endereços internos, mas não protege de DNS rebinding: o endereço é conferido na resolução do DNS, e a conexão resolve de novo.
 - O servidor grátis do Render dorme depois de 15 min sem uso. A página o acorda ao abrir e espera até 1 minuto, com o botão em "aquecendo os motores…". As missões gravadas funcionam enquanto isso.
 
