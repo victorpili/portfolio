@@ -19,7 +19,7 @@ const em = (sala: Sala, sprite: string, x: number, y: number, extra: Partial<Enf
  */
 export const ENFEITES: Enfeite[] = [
   // Pesquisa: laboratório. Estantes de livros, bancada com frascos borbulhando, quadro de dados e globo.
-  em('pesquisa', 'alerta', 6, 0),
+  em('pesquisa', 'alerta', 4, 0),
   em('pesquisa', 'estante-livros', 0, 1),
   em('pesquisa', 'estante-livros', 1, 1),
   em('pesquisa', 'quadro-dados', 2, 1),
