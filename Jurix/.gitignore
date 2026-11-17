@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Demo web (build de GitHub Pages)
+dist-demo
