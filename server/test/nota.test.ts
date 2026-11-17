@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ATRIBUTOS, type AtributoId } from '@nave/shared';
+import { ATRIBUTOS, type AtributoId, type FichaOriginal } from '@nave/shared';
 import { calcularNota, entradaAntes, entradaDepois, type EntradaNota, type SituacaoAtributo } from '../src/nota';
 import { originalCaneca, pesquisaBoa, fichaNovaCaneca } from './fixtures/respostas';
 
@@ -47,5 +47,31 @@ describe('calcularNota', () => {
   it('produto sem imagens: alt vale 0 e conta no total', () => {
     const n = calcularNota(entradaAntes({ ...originalCaneca, imagens: [], naoVerificavel: [] }, pesquisaBoa));
     expect(n.itens.find((i) => i.id === 'alt')).toMatchObject({ pontos: 0, maximo: 5, situacao: 'ausente' });
+  });
+});
+
+describe('título descritivo: o tipo do Pesquisador é conferido no original', () => {
+  const semMarca = { ...originalCaneca, marca: null };
+  /** Pontos do título da ficha nova, com o tipo que o Pesquisador deu. */
+  const pontosTitulo = (o: FichaOriginal, tipoProduto: string, titulo: string) =>
+    calcularNota(entradaDepois(o, { ...pesquisaBoa, tipoProduto }, { ...fichaNovaCaneca, titulo }, {}))
+      .itens.find((i) => i.id === 'titulo')!.pontos;
+
+  it('tipo com menos de 3 caracteres não conta; o título vale só pela marca', () => {
+    expect(pontosTitulo(semMarca, 'C', 'Caneca de cerâmica esmaltada 350 ml')).toBe(0);
+    expect(pontosTitulo(semMarca, ' ca ', 'Caneca de cerâmica esmaltada 350 ml')).toBe(0);
+    expect(pontosTitulo(originalCaneca, 'C', 'Caneca de cerâmica, da Casa Barro')).toBe(5);
+    expect(calcularNota(entradaAntes({ ...semMarca, titulo: 'Caneca Barro de cerâmica 350 ml' }, { ...pesquisaBoa, tipoProduto: 'C' }))
+      .itens.find((i) => i.id === 'titulo')!.pontos).toBe(0);
+  });
+
+  it('tipo que não está no original não conta; o título vale só pela marca', () => {
+    expect(pontosTitulo(semMarca, 'xícara', 'Xícara de cerâmica esmaltada 350 ml')).toBe(0);
+    expect(pontosTitulo(originalCaneca, 'xícara', 'Xícara de cerâmica esmaltada, Casa Barro')).toBe(5);
+  });
+
+  it('tipo que está no original conta, inclusive quando só aparece nas tags', () => {
+    expect(pontosTitulo(semMarca, 'caneca', 'Caneca de cerâmica esmaltada 350 ml')).toBe(5);
+    expect(pontosTitulo({ ...semMarca, tags: ['xícara'] }, 'xícara', 'Xícara de cerâmica esmaltada 350 ml')).toBe(5);
   });
 });

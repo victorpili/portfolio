@@ -1,5 +1,5 @@
 import { ATRIBUTOS, type AtributoId, type FichaNova, type FichaOriginal, type ItemNota, type ItemNotaId, type Nota, type Pesquisa } from '@nave/shared';
-import { normalizar, ondeEsta } from './texto';
+import { contemTrecho, normalizar, ondeEsta } from './texto';
 import { jsonLdProdutoValido } from './jsonld';
 
 export type SituacaoAtributo = 'estruturado' | 'texto' | 'ausente' | 'a_confirmar' | 'nao_se_aplica';
@@ -68,6 +68,14 @@ function identificacao(o: FichaOriginal) {
   };
 }
 
+/**
+ * O tipo do Pesquisador só ajuda o título se tiver 3+ caracteres e estiver no original. As tags valem aqui
+ * (exceção assumida: "caneca" na tag basta). Se não passar, o título só conta pela marca.
+ */
+function tipoConferido(o: FichaOriginal, tipo: string): string {
+  return normalizar(tipo).length >= 3 && contemTrecho(o, tipo) ? tipo : '';
+}
+
 function atributosDe(p: Pesquisa, resolver: (id: AtributoId) => SituacaoAtributo): Record<AtributoId, SituacaoAtributo> {
   return Object.fromEntries(ATRIBUTOS.map((a) => [a.id, p.naoSeAplica.some((x) => x.id === a.id) ? 'nao_se_aplica' : resolver(a.id)])) as Record<AtributoId, SituacaoAtributo>;
 }
@@ -81,7 +89,7 @@ export function entradaAntes(o: FichaOriginal, p: Pesquisa): EntradaNota {
       const a = p.atributos.find((x) => x.id === id);
       return a ? ondeEsta(o, a.trecho) ?? 'ausente' : 'ausente';
     }),
-    titulo: o.titulo, tipoProduto: p.tipoProduto, marcaNome: o.marca,
+    titulo: o.titulo, tipoProduto: tipoConferido(o, p.tipoProduto), marcaNome: o.marca,
     descricaoOrganizada: /<(ul|ol|table)\b/i.test(html) || titulos >= 2,
     faqQtd: 0,
     imagensComAlt: o.imagens.length >= 1 && o.imagens.every((i) => !!i.alt?.trim()),
@@ -95,7 +103,7 @@ export function entradaDepois(o: FichaOriginal, p: Pesquisa, n: FichaNova, jsonl
     ...identificacao(o),
     atributos: atributosDe(p, (id) => n.atributos.some((x) => x.id === id) ? 'estruturado'
       : n.aConfirmar.some((x) => x.id === id) ? 'a_confirmar' : 'ausente'),
-    titulo: n.titulo, tipoProduto: p.tipoProduto, marcaNome: o.marca,
+    titulo: n.titulo, tipoProduto: tipoConferido(o, p.tipoProduto), marcaNome: o.marca,
     descricaoOrganizada: n.secoes.length >= 2,
     faqQtd: n.faq.length,
     imagensComAlt: o.imagens.length >= 1,
