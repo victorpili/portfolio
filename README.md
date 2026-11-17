@@ -4,7 +4,7 @@ Projetos em que uso IA para resolver um problema de negócio de ponta a ponta, d
 
 | Projeto | O que faz | Pasta |
 |---|---|---|
-| **Nave de Agentes** | Uma tripulação de agentes do Claude reescreve fichas de produto Shopify para que assistentes de IA as entendam, e mostra o antes e o depois numa nota de 0 a 100. [Demo no ar](https://portfolio-nave-de-agentes.vercel.app). | [`nave-de-agentes/`](nave-de-agentes/) |
+| **Nave de Agentes** | Uma tripulação de agentes do Claude reescreve fichas de produto Shopify para que assistentes de IA as entendam, e mostra o antes e o depois numa nota de 0 a 100. Construída em 4 dias de trabalho com o Claude Code. [Demo no ar](https://portfolio-nave-de-agentes.vercel.app). | [`nave-de-agentes/`](nave-de-agentes/) |
 | **Jurix** | Sistema de gestão para advogados autônomos, com clientes, processos, contratos, financeiro, agenda e um dashboard com projeção de caixa. Construído do zero em 5 dias com o Claude Code, ele é usado no dia a dia por uma advogada, que estima economizar cerca de 2 horas por dia. [Demo no navegador](https://victorpili.github.io/portfolio/jurix/). | [`Jurix/`](Jurix/) |
 
 Cada pasta é um projeto independente, com o próprio README, instruções para rodar e testes.
