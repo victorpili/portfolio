@@ -1,0 +1,41 @@
+schema: spec-driven
+
+context: |
+  Project: Jurix — desktop management system for autonomous lawyers (Brazilian market).
+
+  Tech stack:
+  - Frontend: React 19 + Vite + TypeScript + Tailwind CSS v4
+  - Desktop shell: Tauri 2 (Rust backend)
+  - Database: SQLite (local), accessed via @tauri-apps/plugin-sql with versioned migrations
+  - Charts: planned (recharts or visx) for dashboard
+  - IDs: UUID v4 generated client-side or via SQL function
+
+  Domain conventions:
+  - All currency values stored as DECIMAL/INTEGER cents (avoid float drift). Display in BRL (R$ 1.234,56).
+  - Brazilian documents: CPF / CNPJ stored as digits only; formatted only at display layer.
+  - CNJ numbers (legal process numbers) stored as digits only; formatted as 0000000-00.0000.0.00.0000.
+  - Dates stored as ISO 8601 (YYYY-MM-DD) or full timestamps in UTC ISO strings; displayed in pt-BR locale.
+  - All tables include `criado_em` (created_at) and `atualizado_em` (updated_at) timestamps where stated.
+  - Soft delete is NOT used by default — modules block deletion when relationships exist (e.g., clients with active contracts).
+
+  UI conventions:
+  - Clean, professional aesthetic — neutral palette, generous spacing, clear typography. No bright/playful colors.
+  - All forms validate on submit and show inline field errors.
+  - Lists support search, sort, and basic filters.
+
+rules:
+  proposal:
+    - Keep proposals under one page; the Why must fit in 1–2 sentences.
+    - Always list capabilities in kebab-case.
+    - Mark every breaking change with **BREAKING**.
+  specs:
+    - Every requirement must have at least one scenario.
+    - Scenarios MUST use exactly four hashtags (####).
+    - Use SHALL/MUST in requirement text — never "should" or "may".
+    - Field-level rules belong in scenarios, not in the requirement description.
+  design:
+    - Only create design.md when there are non-trivial architectural decisions.
+    - For each decision, briefly note the alternative considered.
+  tasks:
+    - Group by phase (DB → backend → frontend → tests).
+    - Each checkbox must be independently verifiable.
