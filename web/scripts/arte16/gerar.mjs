@@ -7,9 +7,10 @@ import { PISOS } from './pisos.mjs';
 import { ENFEITES_CASA } from './enfeites-casa.mjs';
 import { ENFEITES_TRABALHO } from './enfeites-trabalho.mjs';
 import { MOVEIS } from './moveis.mjs';
+import { NAVE } from './nave.mjs';
 import { TRIPULACAO } from './tripulacao.mjs';
 
-export const SPRITES = { ...PISOS, ...TRIPULACAO, ...MOVEIS, ...ENFEITES_TRABALHO, ...ENFEITES_CASA };
+export const SPRITES = { ...PISOS, ...TRIPULACAO, ...MOVEIS, ...ENFEITES_TRABALHO, ...ENFEITES_CASA, ...NAVE };
 
 const DESTINO = fileURLToPath(new URL('../../public/sprites/', import.meta.url));
 

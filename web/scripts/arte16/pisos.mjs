@@ -3,7 +3,7 @@ import { ACO, AMARELO, CIANO, MADEIRA, ROXO, TEAL, VERDE } from './paleta.mjs';
 import { Tela, sorteio } from './tela.mjs';
 
 /** Placa com bisel: luz em cima e à esquerda, sombra embaixo e à direita. */
-function placa(t, x, y, l, a, [escuro, base, claro]) {
+export function placa(t, x, y, l, a, [escuro, base, claro]) {
   t.ret(x, y, l, a, base);
   t.h(x, y, l, claro).v(x, y, a, claro);
   t.h(x, y + a - 1, l, escuro).v(x + l - 1, y, a, escuro);
@@ -11,12 +11,12 @@ function placa(t, x, y, l, a, [escuro, base, claro]) {
 }
 
 /** Rebite: um ponto claro com sombra embaixo e à direita. */
-function rebite(t, x, y, claro, escuro) {
+export function rebite(t, x, y, claro, escuro) {
   return t.p(x, y, claro).p(x + 1, y + 1, escuro);
 }
 
 /** Pontos soltos de ruído, para o material não parecer chapado. */
-function ruido(t, semente, n, cores, area = [0, 0, 16, 16]) {
+export function ruido(t, semente, n, cores, area = [0, 0, 16, 16]) {
   const r = sorteio(semente);
   const [x0, y0, l, a] = area;
   for (let i = 0; i < n; i++) t.p(x0 + Math.floor(r() * l), y0 + Math.floor(r() * a), cores[Math.floor(r() * cores.length)]);
@@ -131,16 +131,7 @@ function parede({ topo, painel, friso }) {
   return t;
 }
 
-/** Casco da nave por fora: chapas com bisel e rebites. */
-function casco() {
-  const t = placa(new Tela(), 0, 0, 16, 16, [ACO[3], ACO[4], ACO[5]]);
-  placa(t, 0, 8, 16, 8, [ACO[3], '#4a5387', ACO[5]]);
-  for (const [x, y] of [[2, 2], [13, 2], [2, 10], [13, 10]]) rebite(t, x, y, ACO[6], ACO[3]);
-  return ruido(t, 77, 6, [ACO[5], '#434b80'], [1, 1, 14, 14]);
-}
-
 export const PISOS = {
-  casco,
   piso,
   'piso-ponte': pisoPonte,
   'piso-corredor': pisoCorredor,

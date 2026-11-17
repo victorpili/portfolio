@@ -96,37 +96,33 @@ body {
   width: 100%;
 }
 
-/* Motores, na popa (esquerda). */
+/* Motores, na popa (esquerda): bocal e chama em sprite, 2 quadros que se alternam. */
 .nave__motor {
-  flex: 0 0 4cqw;
+  flex: 0 0 6cqw;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 30%;
+  gap: 34%;
 }
 
-/* Cada motor: bocal colado no casco e chama em 3 degraus de cor. */
 .nave__motor::before,
 .nave__motor::after {
   content: '';
   display: block;
-  height: 10%;
-  background:
-    linear-gradient(90deg, transparent 44%, #fff1b8 44% 62%, transparent 62%) center / 100% 34% no-repeat,
-    linear-gradient(90deg, transparent 24%, #ffb347 24% 62%, transparent 62%) center / 100% 66% no-repeat,
-    linear-gradient(90deg, transparent 6%, #ff5f3d 6% 62%, transparent 62%) center / 100% 100% no-repeat,
-    linear-gradient(90deg, transparent 62%, var(--casco-escuro) 62%) center / 100% 100% no-repeat;
-  transform-origin: 100% 50%;
-  animation: chama 360ms steps(1, end) infinite;
+  aspect-ratio: 2 / 1;
+  background: url('/sprites/motor-1.png') 0 0 / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 4px rgba(255, 159, 90, 0.55));
+  animation: chama 300ms steps(1, end) infinite;
 }
 
 .nave__motor::after {
-  animation-delay: 190ms;
+  animation-delay: 150ms;
 }
 
 @keyframes chama {
-  0% { transform: none; }
-  50% { transform: scaleX(0.86); }
+  0% { background-image: url('/sprites/motor-1.png'); }
+  50% { background-image: url('/sprites/motor-2.png'); }
 }
 
 /* Bico, na proa (direita): degraus em pixel. */

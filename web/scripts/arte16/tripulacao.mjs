@@ -27,7 +27,7 @@ const CABECA = [
   '....oSssssSo....',
 ];
 
-/** Cabeça de robô: chapa (M claro, n meio, d escuro), visor (V) e olhos acesos (E). */
+/** Cabeça de robô: chapa (M claro, n meio, D escuro), visor (V) e olhos acesos (E). */
 const CABECA_ROBO = [
   '................',
   '................',
@@ -87,7 +87,7 @@ export const TRIPULACAO = {
   }),
 
   // Revisor: cabelo grisalho, óculos e uniforme lavanda.
-  revisor: () => montar(CABECA, { ...PELE_CLARA, ...uniforme(LAVANDA, AMARELO[6]), H: CINZA[6], h: CINZA[4], k: CINZA[7], G: ACO[1] }, {
-    6: '...oGeGGGGeGo...',
+  revisor: () => montar(CABECA, { ...PELE_CLARA, ...uniforme(LAVANDA, AMARELO[6]), H: CINZA[6], h: CINZA[4], k: CINZA[7], G: ACO[2], L: '#dfe6ff' }, {
+    6: '...oGeLGGLeGo...',
   }),
 };
