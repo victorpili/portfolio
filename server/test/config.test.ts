@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { escolherMotor, lerLimite } from '../src/config';
+import { escolherMotor, lerLimite, lerOrigens } from '../src/config';
 import { PRAZO_ASSINATURA_MS } from '../src/motores/assinatura';
 
 describe('escolherMotor', () => {
@@ -31,5 +31,18 @@ describe('lerLimite', () => {
 
   it.each(['abc', '-1', '2.5', '1e3'])('"%s" derruba a subida', (v) => {
     expect(() => lerLimite({ COTA_DIA: v }, 'COTA_DIA', 5)).toThrow(/COTA_DIA/);
+  });
+});
+
+describe('lerOrigens', () => {
+  it('separa por vírgula, apara e tira as barras do fim (o navegador manda a origem sem barra)', () => {
+    expect(lerOrigens({ ORIGEM_PERMITIDA: 'https://nave.exemplo.app/, http://localhost:5173//,, ' }))
+      .toEqual(['https://nave.exemplo.app', 'http://localhost:5173']);
+    expect(lerOrigens({ ORIGEM_PERMITIDA: 'http://localhost:5173' })).toEqual(['http://localhost:5173']);
+  });
+
+  it('sem ORIGEM_PERMITIDA, nenhuma origem', () => {
+    expect(lerOrigens({})).toEqual([]);
+    expect(lerOrigens({ ORIGEM_PERMITIDA: ' / ' })).toEqual([]);
   });
 });

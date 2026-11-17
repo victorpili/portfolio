@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { carregarPrompts } from './agentes';
-import { escolherMotor, lerLimite } from './config';
+import { escolherMotor, lerLimite, lerOrigens } from './config';
 import { criarCota } from './limites';
 import { criarApp } from './rotas';
 
@@ -15,7 +15,7 @@ const app = criarApp({
   motor,
   prompts: carregarPrompts(),
   cota: criarCota({ porDia: lerLimite(process.env, 'COTA_DIA', 5), porVisitante: lerLimite(process.env, 'COTA_VISITANTE', 3) }),
-  origens: (process.env.ORIGEM_PERMITIDA ?? '').split(',').map((o) => o.trim()).filter(Boolean),
+  origens: lerOrigens(process.env),
   prazoMs,
 });
 

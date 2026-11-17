@@ -20,3 +20,14 @@ export function lerLimite(env: Env, nome: string, padrao: number): number {
   if (!/^\d+$/.test(bruto.trim())) throw new Error(`${nome} deve ser um inteiro maior ou igual a 0 (recebi "${bruto}")`);
   return Number(bruto);
 }
+
+function semBarraNoFim(s: string): string {
+  let fim = s.length;
+  while (fim > 0 && s[fim - 1] === '/') fim--;
+  return s.slice(0, fim);
+}
+
+/** Origens do CORS, separadas por vírgula. Sem as barras do fim: o navegador manda a origem sem barra. */
+export function lerOrigens(env: Env): string[] {
+  return (env.ORIGEM_PERMITIDA ?? '').split(',').map((o) => semBarraNoFim(o.trim())).filter(Boolean);
+}
