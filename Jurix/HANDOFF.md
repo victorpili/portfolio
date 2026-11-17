@@ -25,11 +25,11 @@ Este documento descreve a arquitetura, o estado atual e o contexto necessário p
 | Datas | utilitários próprios em `src/lib/format/dates.ts` + `date-fns` (usado pelo dashboard) |
 | Gráficos | `recharts` 3 — só no dashboard, carregado sob demanda via `React.lazy` |
 
-**O projeto está na subpasta `jurix/`** dentro de `D:\Projetos Claude Code\Sistema Financeiro\`.
-Todos os comandos npm rodam de dentro de `jurix/`.
+**O projeto está na pasta `Jurix/`** deste repositório.
+Todos os comandos npm rodam de dentro de `Jurix/`.
 
 ```bash
-cd "D:\Projetos Claude Code\Sistema Financeiro\jurix"
+cd Jurix
 npm install
 npm run tauri dev        # exige Rust instalado (https://rustup.rs/)
 npm run build            # tsc + vite build — NÃO exige Rust
