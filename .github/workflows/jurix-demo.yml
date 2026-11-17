@@ -1,0 +1,64 @@
+# Publica a demo web do Jurix no GitHub Pages (https://victorpili.github.io/portfolio/jurix/).
+# Só roda quando algo em Jurix/ (ou este arquivo) muda, para não reconstruir a cada push da Nave.
+name: Demo do Jurix no Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Jurix/**"
+      - ".github/workflows/jurix-demo.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Jurix
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Jurix/package-lock.json
+
+      - run: npm ci
+      - run: npm run build:demo
+
+      - name: Monta o site (demo em /jurix/, raiz redireciona)
+        run: |
+          mkdir -p ../_site
+          cp -r dist-demo ../_site/jurix
+          cat > ../_site/index.html <<'HTML'
+          <!doctype html>
+          <meta charset="utf-8">
+          <meta http-equiv="refresh" content="0; url=jurix/">
+          <title>Jurix</title>
+          <a href="jurix/">Abrir a demo do Jurix</a>
+          HTML
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}jurix/
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
