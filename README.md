@@ -5,9 +5,7 @@ A Nave de Agentes lê a ficha de um produto Shopify, reescreve só o que tem fon
 
 ![A nave durante uma missão gravada](docs/nave.gif)
 
-**Vídeo de 90 s:** <!-- link do vídeo -->
-
-**Demo no ar:** <!-- link da demo -->
+**Demo no ar:** em breve.
 
 ## Como funciona
 
@@ -21,7 +19,7 @@ Uma tripulação de cinco cuida de cada missão. Três tripulantes são agentes 
 | Redator | Criação | Claude | Escreve a ficha nova: título, seções, atributos, FAQ e perguntas ao lojista |
 | Revisor | Qualidade | Claude | Julga cada item da ficha nova contra o original: sustentado, sem fonte ou contraditório |
 
-Quem não está trabalhando dorme no Dormitório e caminha até a sala quando é convocado.
+Quem não está trabalhando dorme no Dormitório e caminha até a sala quando é convocado. Cada sala tem a cara da sua função: a Pesquisa é um laboratório, a Criação é uma oficina, a Qualidade é uma sala de inspeção e a Ponte é o comando da nave.
 
 ```mermaid
 flowchart TD
@@ -122,6 +120,16 @@ A leitura de URL também tem limites, para o servidor não virar ponte para ende
 
 A demo abre na hora e não gasta nada. Cada missão gravada guarda os eventos de uma missão real, feita com Claude Sonnet 5.5 pela linha de comando (`pnpm missao <url> --gravar <nome>`), o mesmo modelo da missão ao vivo. O front a reproduz com o mesmo redutor da missão ao vivo. No replay, cada espera pelo modelo fica comprimida em no máximo 2,5 s, e as caminhadas e conferências rodam no ritmo normal.
 
+As três missões gravadas, em lojas reais:
+
+| Produto | Loja | Nota antes → depois | Custo | Duração |
+|---|---|---|---|---|
+| Pano de prato | Fox Blossom | 45 → 75 | US$ 0,05 | 19 s |
+| Vela aromática | Frostbeard Studio | 47 → 65 | US$ 0,04 | 14 s |
+| Tênis infantil | Pampili | 56 → 75 | US$ 0,05 | 15 s |
+
+A nota depois não chega a 100 porque o que não tem fonte no original (peso, cuidados, garantia…) vira pergunta ao lojista e vale zero.
+
 Toda caixa de erro oferece uma missão gravada, para a demo nunca travar na frente de quem está olhando.
 
 ### Prompts ajustados pela assinatura
@@ -141,7 +149,7 @@ Esse motor não mede custo nem reproduz o formato forçado da API. Por isso, ele
 
 ## Construído com Claude Code
 
-Construído com Claude Code, de 13 a 17 de novembro de 2026. O método foi um plano escrito antes do código, uma tarefa por subagente e uma revisão de código a cada tarefa.
+Construído com Claude Code, de 13 a 18 de novembro de 2026. O método foi um plano escrito antes do código, uma tarefa por subagente e uma revisão de código a cada tarefa.
 
 ## Limites conhecidos e próximos passos
 
