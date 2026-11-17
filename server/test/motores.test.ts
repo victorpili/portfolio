@@ -7,7 +7,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { Pesquisa } from '@nave/shared';
 import { contarCusto, ErroMotor, ErroSchema, ErroSemCredito, type Chamada, type Motor, type RespostaMotor } from '../src/motores/motor';
 import { motorFalso } from '../src/motores/falso';
-import { custoUsd, motorApi, traduzirErroApi } from '../src/motores/api';
+import { custoUsd, motorApi, PRECOS, traduzirErroApi } from '../src/motores/api';
 import { ambienteSemChave, argsAssinatura, binarioClaude, lerResultado, rodarProcesso, transcrever } from '../src/motores/assinatura';
 import { pesquisaBoa } from './fixtures/respostas';
 
@@ -37,6 +37,10 @@ const mensagem = (texto: string | null, stop_reason = 'end_turn') => ({
 describe('motor da API', () => {
   it('custo do Opus 5.5', () => expect(custoUsd('claude-opus-5-5', { input_tokens: 10000, output_tokens: 5000 })).toBeCloseTo(0.14));
   it('modelo sem preço falha na criação', () => expect(() => motorApi({ modelo: 'x' })).toThrow());
+  it('só Opus e Sonnet têm preço: o Haiku não tem fallback no servidor', () => {
+    expect(Object.keys(PRECOS)).toEqual(['claude-opus-5-5', 'claude-sonnet-5-5']);
+    expect(() => motorApi({ modelo: 'claude-haiku-5-5' })).toThrow('modelo sem preço: claude-haiku-5-5');
+  });
   it('saldo baixo vira ErroSemCredito', () => {
     const e = Object.assign(Object.create(Anthropic.APIError.prototype), { status: 400, message: 'Your credit balance is too low to access the Anthropic API.' });
     expect(traduzirErroApi(e)).toBeInstanceOf(ErroSemCredito);

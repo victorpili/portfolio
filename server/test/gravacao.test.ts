@@ -23,8 +23,8 @@ describe('lerArgs', () => {
   it('padrão: API com o modelo do ao vivo; assinatura com sonnet', () => {
     vi.stubEnv('MODELO_AO_VIVO', undefined);
     expect(lerArgs(['https://l.com/products/x'])).toEqual({ url: 'https://l.com/products/x', motor: 'api', modelo: 'claude-sonnet-5-5' });
-    vi.stubEnv('MODELO_AO_VIVO', 'claude-haiku-5-5');
-    expect(lerArgs(['https://l.com/products/x']).modelo).toBe('claude-haiku-5-5');
+    vi.stubEnv('MODELO_AO_VIVO', 'claude-opus-5-5');
+    expect(lerArgs(['https://l.com/products/x']).modelo).toBe('claude-opus-5-5');
     expect(lerArgs(['https://l.com/products/x', '--motor', 'assinatura'])).toEqual({
       url: 'https://l.com/products/x', motor: 'assinatura', modelo: 'sonnet',
     });

@@ -7,7 +7,6 @@ import { ErroMotor, ErroSchema, ErroSemCredito, type Chamada, type Motor, type R
 export const PRECOS: Record<string, { entrada: number; saida: number }> = {
   'claude-opus-5-5': { entrada: 4, saida: 20 },
   'claude-sonnet-5-5': { entrada: 2, saida: 10 },
-  'claude-haiku-5-5': { entrada: 0.10, saida: 0.50 },
 };
 
 export function custoUsd(modelo: string, usage: { input_tokens: number; output_tokens: number }): number {
