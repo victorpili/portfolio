@@ -1,8 +1,9 @@
-import { existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { Agente, Sala } from '@nave/shared';
-import { ENFEITES } from '../src/decoracao';
+import { ALTOS, ENFEITES } from '../src/decoracao';
 import { POSTOS, SALAS, rota, type Ponto } from '../src/mapa';
 
 const SALA_DE: Record<Agente, Sala> = {
@@ -77,5 +78,24 @@ describe('decoracao', () => {
   it('dois enfeites que não são "sobre" não dividem um tile', () => {
     const vistos = ENFEITES.filter((e) => !e.sobre).map(nome);
     expect(vistos.filter((n, i) => vistos.indexOf(n) !== i)).toEqual([]);
+  });
+
+  it('os móveis altos têm 16×32 px e os outros enfeites, 16×16', () => {
+    const errados = [...new Set(ENFEITES.map((e) => e.sprite))].filter((s) => {
+      const png = readFileSync(fileURLToPath(new URL(`../public/sprites/${s}.png`, import.meta.url)));
+      const [l, a] = [png.readUInt32BE(16), png.readUInt32BE(20)];
+      return l !== 16 || a !== (ALTOS.has(s) ? 32 : 16);
+    });
+    expect(errados).toEqual([]);
+  });
+
+  it('móvel alto fica encostado na parede, no chão, e sobe só por cima dela', () => {
+    const fora = ENFEITES.filter((e) => ALTOS.has(e.sprite) && (e.y !== SALAS[e.sala].y + 1 || e.sobre)).map(nome);
+    expect(fora).toEqual([]);
+  });
+
+  it('os PNGs de public/sprites batem com o gerador (scripts/arte16)', () => {
+    const gerador = fileURLToPath(new URL('../scripts/arte16/gerar.mjs', import.meta.url));
+    expect(() => execFileSync(process.execPath, [gerador, '--conferir'], { stdio: 'pipe' })).not.toThrow();
   });
 });

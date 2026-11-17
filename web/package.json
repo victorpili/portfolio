@@ -7,7 +7,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "arte": "node scripts/arte16/gerar.mjs"
   },
   "dependencies": {
     "@nave/shared": "workspace:*",

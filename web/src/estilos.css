@@ -132,7 +132,11 @@ body {
 /* Bico, na proa (direita): degraus em pixel. */
 .nave__bico {
   flex: 0 0 3.6cqw;
-  background: var(--casco);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.1), transparent 40%, transparent 60%, rgba(5, 6, 18, 0.35)),
+    url('/sprites/casco.png') 0 0 / calc(var(--dente) * 2.6) calc(var(--dente) * 2.6),
+    var(--casco);
+  image-rendering: pixelated;
   clip-path: polygon(
     0 10%, 34% 10%, 34% 22%, 67% 22%, 67% 38%, 100% 38%,
     100% 62%, 67% 62%, 67% 78%, 34% 78%, 34% 90%, 0 90%
@@ -143,9 +147,12 @@ body {
   flex: 1 1 auto;
   min-width: 0;
   padding: var(--dente);
+  /* Chapas com rebites (sprite) e luz de cima: o casco ganha volume. */
   background:
-    repeating-linear-gradient(90deg, transparent 0 calc(var(--dente) * 6), rgba(255, 255, 255, 0.06) 0 calc(var(--dente) * 6 + 2px)),
+    linear-gradient(rgba(255, 255, 255, 0.1), transparent 30%, transparent 70%, rgba(5, 6, 18, 0.35)),
+    url('/sprites/casco.png') 0 0 / calc(var(--dente) * 2.6) calc(var(--dente) * 2.6),
     var(--casco);
+  image-rendering: pixelated;
   clip-path: polygon(
     var(--dente) 0, calc(100% - var(--dente)) 0, calc(100% - var(--dente)) var(--dente), 100% var(--dente),
     100% calc(100% - var(--dente)), calc(100% - var(--dente)) calc(100% - var(--dente)), calc(100% - var(--dente)) 100%,
@@ -170,7 +177,9 @@ body {
   background-image: url('/sprites/piso.png');
   background-size: var(--tile-l) var(--tile-a);
   image-rendering: pixelated;
-  box-shadow: inset 0 0 0 var(--borda) var(--parede-borda);
+  /* Borda da sala e cantos mais escuros: a luz fica no meio, como num quarto iluminado do teto. */
+  --vinheta: inset 0 0 calc(var(--tile-l) * 1.1) rgba(5, 6, 18, 0.55);
+  box-shadow: inset 0 0 0 var(--borda) var(--parede-borda), var(--vinheta);
   transition: box-shadow 600ms ease;
 }
 
@@ -192,12 +201,13 @@ body {
   background-image: url('/sprites/parede.png');
   background-size: var(--tile-l) 100%;
   border-bottom: max(2px, calc(var(--borda) * 0.6)) solid var(--contorno);
-  box-shadow: inset 0 var(--borda) 0 var(--parede-borda);
+  /* Sombra de contato no chão, junto ao rodapé: a parede ganha altura. */
+  box-shadow: inset 0 var(--borda) 0 var(--parede-borda), 0 calc(var(--tile-a) * 0.12) calc(var(--tile-a) * 0.22) rgba(5, 6, 18, 0.55);
 }
 
 .sala__nome {
   position: absolute;
-  z-index: 2;
+  z-index: var(--z-placa, 2); /* ver --z-placa em Nave.tsx */
   left: calc(var(--tile-l) * 0.35);
   top: calc(var(--tile-a) * 0.5);
   transform: translateY(-50%);
@@ -216,7 +226,7 @@ body {
 /* Luz da sala: apagada até a sala concluir. */
 .sala__luz {
   position: absolute;
-  z-index: 2;
+  z-index: var(--z-placa, 2);
   right: calc(var(--tile-l) * 0.35);
   top: calc(var(--tile-a) * 0.32);
   height: calc(var(--tile-a) * 0.36);
@@ -230,8 +240,20 @@ body {
   box-shadow:
     inset 0 0 0 var(--borda) var(--verde),
     inset 0 0 calc(var(--borda) * 6) var(--verde-brilho),
-    0 0 calc(var(--borda) * 4) var(--verde-brilho);
-  z-index: 1;
+    var(--vinheta);
+}
+
+/*
+ * O brilho de fora da sala concluída fica num pseudo-elemento com z-index próprio, por cima do corredor e das
+ * salas vizinhas. Sem z-index na sala, ela não vira contexto de empilhamento e o nome continua por cima dos móveis.
+ */
+.sala--concluida::before {
+  content: '';
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  box-shadow: 0 0 calc(var(--borda) * 4) var(--verde-brilho);
+  pointer-events: none;
 }
 
 .sala--concluida::after {
@@ -305,7 +327,7 @@ body {
   position: absolute;
   background:
     repeating-linear-gradient(90deg, var(--faixa) 0 1.2%, transparent 1.2% 2.4%) 0 50% / 100% max(2px, calc(var(--borda) * 0.6)) no-repeat,
-    url('/sprites/piso.png') 0 0 / calc(100% / var(--colunas)) calc(100% / var(--linhas)),
+    url('/sprites/piso-corredor.png') 0 0 / calc(100% / var(--colunas)) calc(100% / var(--linhas)),
     var(--corredor);
   image-rendering: pixelated;
   opacity: 0.95;
@@ -345,6 +367,7 @@ body {
 .sala--criacao { --piso-fundo: #251b16; background-image: url('/sprites/piso-criacao.png'); }
 .sala--qualidade { --piso-fundo: #1c1733; background-image: url('/sprites/piso-qualidade.png'); }
 .sala--dormitorio { --piso-fundo: #161a36; background-image: url('/sprites/piso-dormitorio.png'); }
+.sala--ponte { --piso-fundo: #0b0d1d; background-image: url('/sprites/piso-ponte.png'); }
 .sala--pesquisa .sala__parede { background-color: #1d3d41; background-image: url('/sprites/parede-pesquisa.png'); }
 .sala--criacao .sala__parede { background-color: #3a2a20; background-image: url('/sprites/parede-criacao.png'); }
 .sala--qualidade .sala__parede { background-color: #2a2350; background-image: url('/sprites/parede-qualidade.png'); }
@@ -397,6 +420,7 @@ body {
 }
 
 .enfeite--virar.enfeite--sobre {
+  transform-origin: 50% 50%; /* gira no lugar; com a origem embaixo, de ponta-cabeça ia parar debaixo da mesa */
   animation: enfeite-virar 4s ease-in-out infinite;
 }
 
@@ -472,8 +496,22 @@ body {
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
-  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.55));
   user-select: none;
+}
+
+/* Sombra no chão, debaixo dos pés. Some quando o tripulante deita. */
+.agente::before {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 0;
+  height: 22%;
+  background: radial-gradient(closest-side, rgba(5, 6, 18, 0.6), rgba(5, 6, 18, 0.35) 60%, transparent);
+}
+
+.agente--dormindo::before {
+  display: none;
 }
 
 /* Andando: 2 quadros de passo (o segundo espelhado e um pixel acima). */
@@ -497,7 +535,7 @@ body {
   50% { transform: rotate(4deg); }
 }
 
-/* Dormindo: deitado na cama, cabeça na cabeceira. A cama é escura; o contorno separa o tripulante dela. */
+/* Dormindo: deitado na cama, cabeça na cabeceira (à esquerda). */
 .agente--dormindo .agente__corpo {
   left: 0;
   bottom: 0;
@@ -507,11 +545,6 @@ body {
   transform: translate(6%, -16%) rotate(-90deg) scale(0.82);
 }
 
-.agente--dormindo .agente__sprite {
-  filter:
-    drop-shadow(1px 0 0 var(--tinta)) drop-shadow(-1px 0 0 var(--tinta))
-    drop-shadow(0 1px 0 var(--tinta)) drop-shadow(0 -1px 0 var(--tinta));
-}
 
 /* Os "z" sobem em diagonal, estreitos: na horizontal, os do Revisor passavam a parede do Dormitório em tela estreita. */
 .agente__zzz {
