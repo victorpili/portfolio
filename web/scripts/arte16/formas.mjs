@@ -12,11 +12,6 @@ export function caixa(t, x, y, l, topo, frente, c) {
   return t;
 }
 
-/** Cores de caixa a partir de uma rampa: o tampo em cima, a frente dois tons abaixo. */
-export function coresDe(r, n = r.length - 2) {
-  return { luz: r[n + 1], topo: r[n], quina: r[n + 1], frente: r[n - 2], sombra: r[n - 3] };
-}
-
 /** Pés de móvel: duas colunas curtas. */
 export function pes(t, x1, x2, y, a, cor) {
   return t.v(x1, y, a, cor).v(x2, y, a, cor);

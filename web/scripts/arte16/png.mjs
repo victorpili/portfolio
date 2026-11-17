@@ -1,5 +1,5 @@
 // Codificador PNG mínimo (RGBA 8 bits, sem entrelaçamento), só com o zlib do Node.
-import { deflateSync } from 'node:zlib';
+import { deflateSync, inflateSync } from 'node:zlib';
 
 const TABELA_CRC = new Uint32Array(256).map((_, n) => {
   let c = n;
@@ -41,4 +41,35 @@ export function codificarPng(largura, altura, rgba) {
     bloco('IDAT', deflateSync(linhas, { level: 9 })),
     bloco('IEND', Buffer.alloc(0)),
   ]);
+}
+
+/**
+ * Lê de volta um PNG RGBA de 8 bits sem filtro, como os que `codificarPng` grava: { largura, altura, rgba }.
+ * Outro formato (outro editor salvou o arquivo) devolve null, e a conferência acusa a diferença.
+ */
+export function pixelsDoPng(buf) {
+  let pos = 8;
+  let largura = 0;
+  let altura = 0;
+  const dados = [];
+  while (pos < buf.length) {
+    const tam = buf.readUInt32BE(pos);
+    const tipo = buf.toString('ascii', pos + 4, pos + 8);
+    const corpo = buf.subarray(pos + 8, pos + 8 + tam);
+    if (tipo === 'IHDR') {
+      largura = corpo.readUInt32BE(0);
+      altura = corpo.readUInt32BE(4);
+      if (corpo[8] !== 8 || corpo[9] !== 6 || corpo[12] !== 0) return null;
+    }
+    if (tipo === 'IDAT') dados.push(corpo);
+    pos += tam + 12;
+  }
+  const linhas = inflateSync(Buffer.concat(dados));
+  const rgba = Buffer.alloc(largura * altura * 4);
+  for (let y = 0; y < altura; y++) {
+    const ini = y * (largura * 4 + 1);
+    if (linhas[ini] !== 0) return null;
+    linhas.copy(rgba, y * largura * 4, ini + 1, ini + 1 + largura * 4);
+  }
+  return { largura, altura, rgba };
 }

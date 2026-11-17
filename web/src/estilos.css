@@ -250,6 +250,11 @@ body {
   inset: 0;
   box-shadow: 0 0 calc(var(--borda) * 4) var(--verde-brilho);
   pointer-events: none;
+  animation: acender 600ms ease;
+}
+
+@keyframes acender {
+  from { opacity: 0; }
 }
 
 .sala--concluida::after {

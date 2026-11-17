@@ -1,8 +1,9 @@
 // Gera os sprites da nave em web/public/sprites. Uso: node scripts/arte16/gerar.mjs [--folha prévia.html] [--so regex]
 // Com --conferir, não grava nada: só diz se os PNGs da pasta batem com o desenho (sai com erro se não baterem).
 // A arte é desenhada aqui, em código: mapas de caracteres para objetos e personagens, procedimento para pisos.
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { pixelsDoPng } from './png.mjs';
 import { PISOS } from './pisos.mjs';
 import { ENFEITES_CASA } from './enfeites-casa.mjs';
 import { ENFEITES_TRABALHO } from './enfeites-trabalho.mjs';
@@ -17,6 +18,14 @@ const DESTINO = fileURLToPath(new URL('../../public/sprites/', import.meta.url))
 /** Desenha todos os sprites: { nome: Buffer do PNG }. */
 export function desenharTudo() {
   return Object.fromEntries(Object.entries(SPRITES).map(([nome, desenhar]) => [nome, desenhar().png()]));
+}
+
+/**
+ * Compara a imagem, não os bytes: o zlib pode comprimir diferente em outra versão do Node e o PNG continuar igual.
+ */
+function mesmosPixels(a, b) {
+  const [pa, pb] = [pixelsDoPng(a), pixelsDoPng(b)];
+  return pa !== null && pb !== null && pa.largura === pb.largura && pa.altura === pb.altura && pa.rgba.equals(pb.rgba);
 }
 
 /** Página de prévia: cada sprite ampliado, e os pisos repetidos 3×3. */
@@ -39,11 +48,14 @@ img,div{image-rendering:pixelated;background-color:#141831}
 </style>${itens.join('')}`;
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+// Rodando direto (e não importado). realpath dos dois lados: link, junção ou maiúscula diferente no Windows não enganam.
+const direto = process.argv[1] && realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1]);
+
+if (direto) {
   const pngs = desenharTudo();
   if (process.argv.includes('--conferir')) {
     const diferentes = Object.entries(pngs)
-      .filter(([nome, buf]) => !existsSync(DESTINO + nome + '.png') || !readFileSync(DESTINO + nome + '.png').equals(buf))
+      .filter(([nome, buf]) => !existsSync(DESTINO + nome + '.png') || !mesmosPixels(readFileSync(DESTINO + nome + '.png'), buf))
       .map(([nome]) => nome);
     if (diferentes.length) {
       console.error('Sprites desatualizados (rode pnpm --filter @nave/web arte): ' + diferentes.join(', '));

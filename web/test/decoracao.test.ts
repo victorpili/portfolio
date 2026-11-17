@@ -96,6 +96,8 @@ describe('decoracao', () => {
 
   it('os PNGs de public/sprites batem com o gerador (scripts/arte16)', () => {
     const gerador = fileURLToPath(new URL('../scripts/arte16/gerar.mjs', import.meta.url));
-    expect(() => execFileSync(process.execPath, [gerador, '--conferir'], { stdio: 'pipe' })).not.toThrow();
-  });
+    // Sai com erro se algum PNG não bater; e o texto prova que a conferência rodou de fato.
+    const saida = execFileSync(process.execPath, [gerador, '--conferir'], { stdio: 'pipe', encoding: 'utf8' });
+    expect(saida).toMatch(/\d+ sprites conferidos/);
+  }, 20_000);
 });
