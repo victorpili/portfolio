@@ -1172,6 +1172,276 @@
   }
 }
 
+/* ---------- Créditos de API: botão no cabeçalho e o painel que ele abre ---------- */
+
+.creditos {
+  margin-top: 16px;
+}
+
+.creditos__botao {
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.creditos__seta {
+  display: inline-block;
+  width: 1ch;
+}
+
+.creditos__botao:focus-visible,
+.creditos__rolagem:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 3px;
+}
+
+.creditos__painel {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--superficie);
+  border: 2px solid var(--casco);
+}
+
+.creditos__painel[hidden] {
+  display: none;
+}
+
+.creditos__titulo {
+  font-size: 14px;
+}
+
+.creditos__explica,
+.creditos__aviso {
+  margin: 0;
+  max-width: 72ch;
+  font-size: 14px;
+  color: var(--texto-suave);
+}
+
+.creditos__numeros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.creditos__numero {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 12px;
+  background: var(--superficie-alta);
+  box-shadow: inset 0 0 0 2px var(--linha-suave);
+}
+
+.creditos__numero dd {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+}
+
+.creditos__numero dd small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+
+.creditos__numero--total dd {
+  font-size: 26px;
+  color: var(--faixa);
+  white-space: nowrap;
+}
+
+.creditos__bloco {
+  min-width: 0;
+  padding: 14px;
+  background: var(--superficie-alta);
+  box-shadow: inset 0 0 0 2px var(--linha-suave);
+}
+
+.creditos__subtitulo {
+  margin-bottom: 12px;
+  font-size: 11px;
+}
+
+.creditos__agentes {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Nome e tarefa | barra da fatia no total | valor. No celular, a barra desce para a linha de baixo. */
+.creditos__agente {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 14px;
+  font-size: 14px;
+}
+
+.creditos__quem {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 6px;
+}
+
+.creditos__quem .tripulante__marca,
+.creditos__tabela .tripulante__marca {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--cor);
+  box-shadow: 0 0 0 1px var(--contorno);
+}
+
+.creditos__nome {
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.creditos__tarefa {
+  color: var(--texto-suave);
+}
+
+.creditos__barra {
+  height: 12px;
+  background: var(--campo);
+  box-shadow: inset 0 0 0 1px var(--linha-suave);
+}
+
+.creditos__barra > span {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--cor);
+  box-shadow: inset 0 -3px 0 rgba(5, 6, 18, 0.35);
+}
+
+.creditos__valor {
+  display: grid;
+  justify-items: end;
+  font-weight: 700;
+  color: var(--texto);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.creditos__valor small,
+.creditos__tentativas,
+.creditos__origem {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--texto-suave);
+}
+
+/* A tabela rola dentro da caixa, nunca a página. */
+.creditos__rolagem {
+  overflow-x: auto;
+}
+
+.creditos__tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.creditos__tabela th,
+.creditos__tabela td {
+  padding: 8px 8px;
+  text-align: right;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.creditos__tabela thead th {
+  padding-top: 0;
+  border-bottom: 2px solid var(--linha-suave);
+}
+
+.creditos__tabela tbody tr + tr > * {
+  border-top: 1px solid var(--linha-suave);
+}
+
+.creditos__tabela th:first-child {
+  min-width: 12rem;
+  text-align: left;
+  white-space: normal;
+}
+
+.creditos__tabela tbody th {
+  font-weight: 400;
+  color: var(--texto);
+}
+
+.creditos__tabela td {
+  color: var(--texto);
+}
+
+.creditos__origem,
+.creditos__tentativas {
+  display: block;
+}
+
+.creditos__vazio {
+  color: var(--texto-suave);
+}
+
+.creditos__total {
+  font-weight: 700;
+}
+
+.creditos__rodape {
+  margin: 0;
+  font-size: 12px;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 559px) {
+  .creditos__painel {
+    padding: 14px 12px;
+  }
+
+  .creditos__bloco {
+    padding: 12px 10px;
+  }
+
+  .creditos__agente {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .creditos__barra {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .creditos__numero--total dd {
+    font-size: 21px;
+  }
+
+  .creditos__tabela {
+    font-size: 13px;
+  }
+
+  .creditos__tabela th,
+  .creditos__tabela td {
+    padding-inline: 5px;
+  }
+
+  .creditos__tabela th:first-child {
+    min-width: 8.5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .terminal__cursor {
     animation: none;

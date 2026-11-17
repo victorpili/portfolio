@@ -2,6 +2,7 @@ import { useEffect, useReducer, useRef, useState } from 'react';
 import type { Agente, CodigoErro, EntradaMissao, Evento, MissaoGravada } from '@nave/shared';
 import { acordar, carregarGravada, carregarIndice, ErroApi, iniciarMissao, lerCota } from './api';
 import { API_URL } from './config';
+import { Creditos, useMissoesAoVivo } from './componentes/Creditos';
 import { Entrada } from './componentes/Entrada';
 import { Nave } from './componentes/Nave';
 import { Painel } from './componentes/Painel';
@@ -138,6 +139,8 @@ export function App() {
     el.scrollIntoView({ behavior: reduzido ? 'auto' : 'smooth', block: 'start' });
   }, [estado.fase]);
 
+  const missoesAoVivo = useMissoesAoVivo(estado.fase === 'concluida' ? estado.resultado : null, missao?.tipo === 'ao_vivo');
+
   const aoVivoEmCurso = pedidoAberto || (missao?.tipo === 'ao_vivo' && estado.fase === 'em_missao');
   const emCurso: TipoMissao | null = aoVivoEmCurso ? 'ao_vivo' : estado.fase === 'em_missao' ? 'gravada' : null;
 
@@ -223,6 +226,7 @@ export function App() {
             </li>
           ))}
         </ul>
+        <Creditos aoVivo={missoesAoVivo} />
       </header>
 
       <div className="console">

@@ -7,6 +7,12 @@ A Nave de Agentes lê a ficha de um produto Shopify, reescreve só o que tem fon
 
 **Demo no ar:** em breve.
 
+## Uma demo de algo maior
+
+Esta nave é uma demo: uma tripulação só, com uma tarefa só, que é preparar fichas de produto da Shopify. O projeto de verdade quer reunir numa única interface agentes que fazem tarefas diferentes, para quem usa acompanhar várias frentes de trabalho ao mesmo tempo, cada uma na sua sala, em vez de abrir uma ferramenta para cada tarefa.
+
+Na versão em desenvolvimento, além dos agentes da Shopify, estão sendo construídos agentes que produzem clipes de vídeo. A demo mostra a base que vale para todos eles: cada agente com uma tarefa clara, código conferindo o que dá para conferir, a tela desenhada a partir dos eventos de cada missão e o gasto de cada agente à vista.
+
 ## Como funciona
 
 Uma tripulação de cinco cuida de cada missão. Três tripulantes são agentes do Claude, e dois são código.
@@ -114,6 +120,16 @@ O Redator não escreve JSON-LD. O código monta o `schema.org/Product` com o tí
 
 Uma missão que falha antes da primeira chamada ao Claude (URL inválida, loja que bloqueou a leitura) não conta na cota.
 
+### Painel de créditos de API
+
+O botão **Créditos de API**, no topo da página, abre e fecha um painel com o gasto:
+
+- **Geral:** o total em dólares, o número de missões, de chamadas ao Claude e de tokens de entrada e de saída.
+- **Por agente:** quanto o Pesquisador, o Redator e o Revisor gastaram, com a tarefa de cada um e a fatia de cada um no total.
+- **Por missão:** uma tabela com o gasto de cada agente em cada missão, marcando quando um agente precisou de 2 tentativas. Passando o mouse, aparecem os tokens.
+
+Entram as missões gravadas e as missões ao vivo feitas no navegador de quem está olhando, guardadas no `localStorage`. A Capitã e o Imediato não aparecem nas contas porque são código e não gastam crédito. O valor é uma estimativa: os tokens de cada chamada vezes o preço de tabela do modelo. As contas ficam em [`creditos-dados.ts`](web/src/creditos-dados.ts), e o painel, em [`Creditos.tsx`](web/src/componentes/Creditos.tsx).
+
 A leitura de URL também tem limites, para o servidor não virar ponte para endereços internos. Ela aceita só `https`, recusa IP, `localhost` e `.local`, recusa faixas privadas, loopback e link-local depois de resolver o DNS e aceita só caminhos de produto (`/products/<handle>`). Ela segue no máximo 2 redirecionamentos, conferindo cada um. Cada leitura tem 8 s e até 2 MB. No 429, tenta 1 vez de novo se a loja pedir até 3 s de espera.
 
 ### Missão gravada
@@ -157,7 +173,7 @@ Construído com Claude Code, de 13 a 17 de novembro de 2026. O método foi um pl
 Limites conhecidos:
 
 - Alguém pode ocupar as 3 vagas simultâneas de graça, com URLs que demoram a responder. O gasto continua limitado.
-- O custo exibido no painel não inclui as tentativas que voltaram fora do formato. A linha de comando mostra o total real.
+- O custo exibido no painel da missão e no painel de créditos não inclui as tentativas que voltaram fora do formato. A linha de comando mostra o total real.
 - A cota fica em memória e zera a cada reinício do servidor. No plano grátis do Render, o servidor reinicia toda vez que acorda (depois de 15 min parado), então a cota de 5 por dia, na prática, vale por ciclo. O teto que vale mesmo é o saldo pré-pago do workspace, com a recarga automática desligada.
 - A leitura de URL bloqueia endereços internos, mas não protege de DNS rebinding: o endereço é conferido na resolução do DNS, e a conexão resolve de novo.
 - O servidor grátis do Render dorme depois de 15 min sem uso. A página o acorda ao abrir e espera até 1 minuto, com o botão em "aquecendo os motores…". As missões gravadas funcionam enquanto isso.
@@ -165,7 +181,8 @@ Limites conhecidos:
 Próximos passos:
 
 - Catálogos de marketplace, além da Shopify.
-- Um banco para guardar as missões. Hoje, o resultado de uma missão ao vivo fica só na tela e no JSON que o painel baixa.
+- Um banco para guardar as missões. Hoje, o resultado de uma missão ao vivo fica só na tela, no JSON que o painel baixa e no painel de créditos do navegador de quem a fez. Com o banco, o painel de créditos mostraria o gasto de todas as missões.
+- Mais tripulações na mesma nave, como a dos clipes de vídeo, cada uma com as suas salas e o seu gasto no painel de créditos.
 
 ## Como rodar localmente
 
