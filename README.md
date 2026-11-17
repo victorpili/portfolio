@@ -166,7 +166,7 @@ Esse motor não mede custo nem reproduz o formato forçado da API. Por isso, ele
 
 ## Construído com Claude Code
 
-Construído com Claude Code, de 13 a 17 de novembro de 2026. O método foi um plano escrito antes do código, uma tarefa por subagente e uma revisão de código a cada tarefa.
+Construído com Claude Code em 4 dias de trabalho, entre 13 e 17 de novembro de 2026. O método foi um plano escrito antes do código, uma tarefa por subagente e uma revisão de código a cada tarefa.
 
 ## Limites conhecidos e próximos passos
 
