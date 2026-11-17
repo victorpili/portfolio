@@ -4,12 +4,12 @@ import type { IndiceMissoes, MissaoGravada } from '@nave/shared';
 
 export interface OpcoesCli { url?: string; arquivoTexto?: string; motor: 'api' | 'assinatura'; modelo: string; gravar?: string }
 
-const MODELO_GRAVACAO = 'claude-opus-5-5';
+const MODELO_GRAVACAO = 'claude-sonnet-5-5';
 const NOME_VALIDO = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 /**
  * Lê `<url>` ou `--texto <arquivo>`, mais `--motor`, `--modelo` e `--gravar <nome>`.
- * A missão gravada é a que o público vê: só pela API e sempre com o Opus.
+ * A missão gravada é a que o público vê: só pela API e sempre com o Sonnet, o mesmo modelo da missão ao vivo.
  */
 export function lerArgs(argv: string[]): OpcoesCli {
   let arquivoTexto: string | undefined;

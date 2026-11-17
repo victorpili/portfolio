@@ -611,9 +611,8 @@ body {
   }
 }
 
-/* Em tela estreita, sem nomes embaixo dos tripulantes (o leitor de tela continua lendo) e balões mais justos. */
+/* Em tela estreita, sem nomes embaixo dos tripulantes (o leitor de tela continua lendo), sem rótulo do corredor e sem enfeites da parede (o nome da sala os cobriria), e balões mais justos. */
 @container nave (max-width: 560px) {
-  /* Em tela estreita, sem nomes dos agentes, rótulo do corredor e enfeites da parede (o nome da sala os cobriria). */
   .agente__nome,
   .corredor::before,
   .enfeite--parede {

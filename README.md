@@ -120,7 +120,7 @@ A leitura de URL também tem limites, para o servidor não virar ponte para ende
 
 ### Missão gravada
 
-A demo abre na hora e não gasta nada. Cada missão gravada guarda os eventos de uma missão real, feita com Claude Opus 5.5 pela linha de comando (`pnpm missao <url> --gravar <nome>`). O front a reproduz com o mesmo redutor da missão ao vivo. No replay, cada espera pelo modelo fica comprimida em no máximo 2,5 s, e as caminhadas e conferências rodam no ritmo normal. A missão ao vivo usa Claude Sonnet 5.5.
+A demo abre na hora e não gasta nada. Cada missão gravada guarda os eventos de uma missão real, feita com Claude Sonnet 5.5 pela linha de comando (`pnpm missao <url> --gravar <nome>`), o mesmo modelo da missão ao vivo. O front a reproduz com o mesmo redutor da missão ao vivo. No replay, cada espera pelo modelo fica comprimida em no máximo 2,5 s, e as caminhadas e conferências rodam no ritmo normal.
 
 Toda caixa de erro oferece uma missão gravada, para a demo nunca travar na frente de quem está olhando.
 
@@ -176,7 +176,7 @@ Uma missão pela linha de comando, com os eventos no terminal, as notas e o cust
 pnpm missao https://<loja>/products/<handle>
 pnpm missao --texto ficha.txt
 pnpm missao https://<loja>/products/<handle> --motor assinatura   # sem chave, pela assinatura do Claude Code
-pnpm missao https://<loja>/products/<handle> --gravar <nome>      # grava em web/public/missoes (só pela API, com Opus)
+pnpm missao https://<loja>/products/<handle> --gravar <nome>      # grava em web/public/missoes (só pela API, com Sonnet)
 ```
 
 Para testar a nave localmente pela assinatura, sem chave:
