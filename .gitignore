@@ -2,3 +2,6 @@ node_modules
 dist
 .env
 *.log
+
+# Controle do trabalho com o Claude Code (planos, relatórios), fora do repositório público
+.superpowers/
