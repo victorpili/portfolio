@@ -1,0 +1,21 @@
+{
+  "product": {
+    "id": 9000000001,
+    "title": "Caneca Barro 350 ml",
+    "handle": "caneca-barro",
+    "vendor": "Casa Barro",
+    "product_type": "Canecas",
+    "tags": "caneca, cozinha",
+    "body_html": "<p>Ideal para café coado.</p><ul><li>Material: cerâmica esmaltada</li><li>Capacidade: 350 ml</li></ul>",
+    "variants": [
+      { "id": 9100000001, "title": "Azul", "sku": "CB-350-AZ", "price": "89.90", "available": true, "barcode": "7891234567895", "option1": "Azul" },
+      { "id": 9100000002, "title": "Verde", "sku": "CB-350-VE", "price": "89.90", "available": false, "barcode": null, "option1": "Verde" }
+    ],
+    "options": [
+      { "name": "Cor", "position": 1, "values": ["Azul", "Verde"] }
+    ],
+    "images": [
+      { "id": 9200000001, "src": "https://loja.com/cdn/caneca-barro.jpg", "alt": null, "width": 800, "height": 800 }
+    ]
+  }
+}
