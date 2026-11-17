@@ -9,6 +9,22 @@ Projetos em que uso IA para resolver um problema de negócio de ponta a ponta, d
 
 Cada pasta é um projeto independente, com o próprio README, instruções para rodar e testes.
 
+## Fora deste repositório: o CRM comercial que estou construindo no trabalho
+
+Meu projeto principal é um CRM comercial para o escritório onde trabalho. Ele reúne num único lugar todo o histórico comercial de cada cliente com o escritório, como fonte única da verdade. Construí o CRM de agosto a novembro de 2026, dedicando cerca de 30% da minha semana, ao lado das minhas outras atribuições. O MVP está na fase final de entrega. Duas áreas técnicas já testam o sistema, e a base tem mais de 2 mil empresas. A avaliação formal ainda não foi feita, mas as primeiras impressões destacam o uso mais simples e a qualidade dos dados.
+
+O código e os dados pertencem ao escritório, por isso o CRM não está aqui, por confidencialidade. Posso apresentá-lo numa conversa.
+
+- **Pipeline comercial.** Cada iniciativa comercial é um card, vinculado à empresa, aos contatos e às pessoas do escritório envolvidas. As tarefas de prospecção são criadas de dentro do próprio card.
+- **Cadastro preenchido por agentes.** O usuário digita só o nome da empresa. Os agentes identificam o CNPJ e pedem confirmação. Depois de confirmado, eles buscam no cartão CNPJ, no site da empresa e em outras fontes os setores de atuação, a faixa de faturamento, o porte, a matriz, se a empresa é familiar etc.
+- **Radar de notícias.** Busca notícias por setor, inclusive em órgãos reguladores, e eventos de cada setor. Analisa e categoriza cada notícia, tira insights comerciais de movimentos do mercado e de novas leis e portarias, e aponta quais clientes podem ser afetados.
+- **Setores e microsetores.** Criei uma classificação própria: 13 setores gerais e 85 microsetores baseados em CNAEs. Cada empresa tem um setor principal e pode ter microsetores de fora dele. Uma transportadora que só atende o agro tem "transporte e logística" como setor principal. Pelos microsetores do agro, o radar avisa que ela pode ser afetada por uma seca que prejudicou as plantações.
+- **Importador de planilhas.** O usuário escolhe o que vai importar (empresas, contatos ou prospecções) e diz em que coluna está cada campo. O sistema liga cada linha às empresas e aos contatos já cadastrados e padroniza os dados. Só grava depois que o usuário confere e confirma.
+- **Gestão comercial.** Um dashboard do pipeline, com o funil, a qualidade dos contatos, o ciclo de vendas e indicadores por pessoa e por área. Também tem uma base de empresas com filtros, contatos e mailings vinculados às empresas e às pessoas do escritório, e gestão de tarefas.
+- **Controle.** Registro (log) de todas as ações e permissões por área, cargo e pessoa, liberando ver e editar tela a tela.
+
+**Como construí:** com o Claude Code, no VS Code. Os agentes do sistema usam um modelo diferente conforme a complexidade da tarefa: Claude Opus, Claude Haiku ou DeepSeek.
+
 ## O que cada projeto mostra
 
 | Capacidade | Onde ver |
