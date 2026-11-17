@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import type { Agente as NomeAgente, Sala } from '@nave/shared';
 import type { EstadoNave } from '../estado';
 import { CORREDOR, GRADE, POSTOS, SALAS, type Ponto, type Retangulo } from '../mapa';
+import { ENFEITES } from '../decoracao';
 import { Agente } from './Agente';
 
 const AGENTES: NomeAgente[] = ['capita', 'imediato', 'pesquisador', 'redator', 'revisor'];
@@ -76,6 +77,23 @@ export function Nave({ estado }: { estado: EstadoNave }) {
               style={{ ...caixa({ ...m, w: 1, h: 1 }), zIndex: 10 + m.y * 10 }}
             />
           ))}
+          {ENFEITES.map((e, i) => {
+            const parede = e.y === SALAS[e.sala].y;
+            const classes = ['enfeite', `enfeite--${e.sprite}`];
+            if (e.sobre) classes.push('enfeite--sobre');
+            if (parede) classes.push('enfeite--parede');
+            if (e.animacao) classes.push(`enfeite--${e.animacao}`);
+            return (
+              <img
+                key={`${e.sprite}-${e.x}-${e.y}-${i}`}
+                className={classes.join(' ')}
+                src={`/sprites/${e.sprite}.png`}
+                alt=""
+                draggable={false}
+                style={{ ...caixa({ ...e, w: 1, h: 1 }), zIndex: 10 + e.y * 10 + (e.sobre ? 1 : 0) + (e.animacao === 'bolhas' ? 1 : 0) }}
+              />
+            );
+          })}
           <ul className="tripulacao" aria-label="Tripulação">
             {AGENTES.map((a) => (
               <Agente key={a} agente={a} estado={estado.agentes[a]} />
