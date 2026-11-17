@@ -5,7 +5,7 @@ A Nave de Agentes lê a ficha de um produto Shopify, reescreve só o que tem fon
 
 ![A nave durante uma missão gravada](docs/nave.gif)
 
-**Demo no ar:** em breve.
+**Demo no ar:** https://portfolio-nave-de-agentes.vercel.app (as missões gravadas abrem na hora; na missão ao vivo, o servidor pode levar até 1 minuto para acordar)
 
 ## Uma demo de algo maior
 
