@@ -72,6 +72,78 @@ describe('normalizarProdutoShopify', () => {
   });
 });
 
+describe('tetos dos campos que vão para os prompts', () => {
+  const x = (n: number, c = 'x') => c.repeat(n);
+  const base = caneca.product;
+  const variante = base.variants[0];
+
+  it('ficha gigante: cada campo fica no teto e a ficha fica truncada', () => {
+    const gigante = {
+      product: {
+        title: x(400, 't'), vendor: x(300, 'm'), product_type: x(300, 'p'),
+        tags: Array.from({ length: 60 }, (_, i) => `tag${i}`.padEnd(150, 'x')),
+        options: Array.from({ length: 12 }, (_, i) => ({
+          name: `Opção ${i}`.padEnd(150, 'o'),
+          values: Array.from({ length: 120 }, (_, j) => `${i}-${j}`.padEnd(150, 'v')),
+        })),
+        variants: Array.from({ length: 45 }, (_, i) => ({ title: `V${i}`.padEnd(300, 'v'), sku: `S${i}`.padEnd(300, 's'), price: x(300, '9') })),
+        body_html: `<p>${x(150_000, 'a')}</p>`,
+      },
+    };
+    const f = normalizarProdutoShopify(gigante, URL_PRODUTO, null);
+    expect(f.truncada).toBe(true);
+    expect(f.titulo).toBe(x(300, 't'));
+    expect(f.marca).toBe(x(200, 'm'));
+    expect(f.tipo).toBe(x(200, 'p'));
+    expect(f.tags).toHaveLength(50);
+    expect(f.tags.every((t) => t.length === 100)).toBe(true);
+    expect(f.tags[49]).toBe('tag49'.padEnd(100, 'x'));
+    expect(f.opcoes).toHaveLength(10);
+    for (const o of f.opcoes) {
+      expect(o.nome).toHaveLength(100);
+      expect(o.valores).toHaveLength(100);
+      expect(o.valores.every((v) => v.length === 100)).toBe(true);
+    }
+    expect(f.variantes).toHaveLength(30);
+    for (const v of f.variantes) {
+      expect([v.titulo.length, v.sku?.length, v.preco?.length]).toEqual([200, 200, 200]);
+    }
+    expect(f.descricaoHtml).toHaveLength(100_000);
+    expect(f.descricaoTexto).toHaveLength(20_000);
+  });
+
+  it.each([
+    ['título', { title: x(301) }],
+    ['marca', { vendor: x(201) }],
+    ['tipo', { product_type: x(201) }],
+    ['51 tags', { tags: Array.from({ length: 51 }, (_, i) => `t${i}`) }],
+    ['tag longa', { tags: [x(101)] }],
+    ['11 opções', { options: Array.from({ length: 11 }, (_, i) => ({ name: `O${i}`, values: ['a'] })) }],
+    ['nome de opção longo', { options: [{ name: x(101), values: ['a'] }] }],
+    ['101 valores', { options: [{ name: 'Cor', values: Array.from({ length: 101 }, (_, i) => `v${i}`) }] }],
+    ['valor longo', { options: [{ name: 'Cor', values: [x(101)] }] }],
+    ['título de variante', { variants: [{ ...variante, title: x(201) }] }],
+    ['SKU', { variants: [{ ...variante, sku: x(201) }] }],
+    ['preço', { variants: [{ ...variante, price: x(201) }] }],
+  ])('%s acima do teto: corta e marca truncada', (_, campo) => {
+    expect(normalizarProdutoShopify({ product: { ...base, ...campo } }, URL_PRODUTO, null).truncada).toBe(true);
+  });
+
+  it('no teto exato, nada é cortado nem marcado', () => {
+    const p = {
+      ...base, title: x(300), vendor: x(200), product_type: x(200),
+      tags: Array.from({ length: 50 }, (_, i) => `${i}`.padEnd(100, 'x')),
+      options: Array.from({ length: 10 }, (_, i) => ({ name: `${i}`.padEnd(100, 'o'), values: Array.from({ length: 100 }, (_, j) => `${j}`.padEnd(100, 'v')) })),
+      variants: Array.from({ length: 30 }, () => ({ ...variante, title: x(200), sku: x(200), price: x(200) })),
+    };
+    const f = normalizarProdutoShopify({ product: p }, URL_PRODUTO, null);
+    expect(f).toMatchObject({ truncada: false, titulo: p.title, marca: p.vendor, tipo: p.product_type, tags: p.tags });
+    expect(f.opcoes).toEqual(p.options.map((o) => ({ nome: o.name, valores: o.values })));
+    expect(f.variantes).toHaveLength(30);
+    expect(f.variantes[29]).toMatchObject({ titulo: x(200), sku: x(200), preco: x(200) });
+  });
+});
+
 describe('fichaDeTexto', () => {
   it('curto falha, válido marca 8 itens não verificáveis', () => {
     expect(() => fichaDeTexto('curto')).toThrow(expect.objectContaining({ codigo: 'texto_invalido' }));

@@ -58,7 +58,7 @@ describe('motor da API', () => {
     expect(r.ms).toBeGreaterThanOrEqual(0);
     const { corpo, cabecalhos } = pedidos[0];
     expect(corpo).toMatchObject({
-      model: 'claude-sonnet-5-5', max_tokens: 16000, system: 'S',
+      model: 'claude-sonnet-5-5', max_tokens: 8000, system: 'S',
       messages: [{ role: 'user', content: 'oi' }],
       thinking: { type: 'adaptive' },
       output_config: { effort: 'low', format: { type: 'json_schema' } },

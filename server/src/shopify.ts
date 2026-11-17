@@ -9,8 +9,19 @@ type Obj = Record<string, any>;
 const MAX_HTML = 100_000;
 const MAX_DESCRICAO = 20_000;
 const MAX_VARIANTES = 30;
+/** Título do texto colado. */
 const MAX_TITULO = 150;
 const MIN_TEXTO = 80;
+// Tetos dos campos da Shopify que vão para os prompts: o que passa é cortado e a ficha fica `truncada`.
+const MAX_TITULO_PRODUTO = 300;
+const MAX_MARCA_TIPO = 200;
+const MAX_TAGS = 50;
+const MAX_OPCOES = 10;
+const MAX_VALORES = 100;
+/** Cada tag, nome de opção e valor de opção. */
+const MAX_ITEM = 100;
+/** Título, SKU e preço de cada variante. */
+const MAX_CAMPO_VARIANTE = 200;
 
 export class ErroEntrada extends Error {
   constructor(public codigo: CodigoErro, mensagem: string) {
@@ -36,17 +47,51 @@ function moedaDoJsonLd(produtos: Obj[]): string | null {
   return textoOuNull(ofertas[0]?.priceCurrency);
 }
 
+/** Corta textos e listas no teto e lembra se cortou alguma coisa. */
+function cortador() {
+  let cortou = false;
+  const texto = (s: string, max: number): string => {
+    if (s.length <= max) return s;
+    cortou = true;
+    return s.slice(0, max);
+  };
+  return {
+    texto,
+    opcional: (s: string | null, max: number): string | null => (s === null ? null : texto(s, max)),
+    lista: <T>(xs: T[], max: number): T[] => {
+      if (xs.length > max) cortou = true;
+      return xs.slice(0, max);
+    },
+    cortou: () => cortou,
+  };
+}
+
 export function normalizarProdutoShopify(json: unknown, url: string, html: string | null): FichaOriginal {
   const p: Obj = (json as Obj)?.product ?? {};
-  const htmlInteiro = typeof p.body_html === 'string' ? p.body_html : '';
-  const bodyHtml = htmlInteiro.slice(0, MAX_HTML);
-  const texto = htmlParaTexto(bodyHtml);
+  const corta = cortador();
+  const bodyHtml = corta.texto(typeof p.body_html === 'string' ? p.body_html : '', MAX_HTML);
+  const descricaoTexto = corta.texto(htmlParaTexto(bodyHtml), MAX_DESCRICAO);
   const todasVariantes = lista(p.variants);
-  const truncada = htmlInteiro.length > MAX_HTML || texto.length > MAX_DESCRICAO || todasVariantes.length > MAX_VARIANTES;
+
+  const titulo = corta.texto(textoOuNull(p.title) ?? '', MAX_TITULO_PRODUTO);
+  const marca = corta.opcional(textoOuNull(p.vendor), MAX_MARCA_TIPO);
+  const tipo = corta.opcional(textoOuNull(p.product_type), MAX_MARCA_TIPO);
+  const todasTags: string[] = (Array.isArray(p.tags) ? p.tags : typeof p.tags === 'string' ? p.tags.split(',') : [])
+    .map((t: unknown) => textoOuNull(t)).filter((t: string | null): t is string => t !== null);
+  const tags = corta.lista(todasTags, MAX_TAGS).map((t) => corta.texto(t, MAX_ITEM));
+  const opcoes = corta.lista(lista(p.options), MAX_OPCOES).map((o) => ({
+    nome: corta.texto(String(o.name ?? ''), MAX_ITEM),
+    valores: corta.lista(Array.isArray(o.values) ? o.values : [], MAX_VALORES).map((v) => corta.texto(String(v), MAX_ITEM)),
+  }));
+  const variantes = corta.lista(todasVariantes, MAX_VARIANTES).map((v) => ({
+    titulo: corta.texto(String(v.title ?? ''), MAX_CAMPO_VARIANTE),
+    sku: corta.opcional(textoOuNull(v.sku), MAX_CAMPO_VARIANTE),
+    preco: corta.opcional(textoOuNull(v.price), MAX_CAMPO_VARIANTE),
+    disponivel: typeof v.available === 'boolean' ? v.available : null,
+    codigoBarras: textoOuNull(v.barcode),
+  }));
 
   const imagens = lista(p.images).filter((i) => textoOuNull(i.src)).map((i) => ({ src: String(i.src), alt: textoOuNull(i.alt) }));
-  const tags = (Array.isArray(p.tags) ? p.tags : typeof p.tags === 'string' ? p.tags.split(',') : [])
-    .map((t: unknown) => textoOuNull(t)).filter((t: string | null): t is string => t !== null);
 
   const naoVerificavel: ItemNotaId[] = [];
   if (!todasVariantes.some((v) => 'barcode' in v)) naoVerificavel.push('gtin');
@@ -66,28 +111,19 @@ export function normalizarProdutoShopify(json: unknown, url: string, html: strin
     fonte: 'shopify',
     url,
     loja,
-    titulo: textoOuNull(p.title) ?? '',
+    titulo,
     descricaoHtml: bodyHtml,
-    descricaoTexto: texto.slice(0, MAX_DESCRICAO),
-    marca: textoOuNull(p.vendor),
-    tipo: textoOuNull(p.product_type),
+    descricaoTexto,
+    marca,
+    tipo,
     tags,
-    opcoes: lista(p.options).map((o) => ({
-      nome: String(o.name ?? ''),
-      valores: (Array.isArray(o.values) ? o.values : []).map(String),
-    })),
-    variantes: todasVariantes.slice(0, MAX_VARIANTES).map((v) => ({
-      titulo: String(v.title ?? ''),
-      sku: textoOuNull(v.sku),
-      preco: textoOuNull(v.price),
-      disponivel: typeof v.available === 'boolean' ? v.available : null,
-      codigoBarras: textoOuNull(v.barcode),
-    })),
+    opcoes,
+    variantes,
     imagens,
     moeda: moedaDoJsonLd(produtosPagina),
     jsonldPaginaValido,
     naoVerificavel,
-    truncada,
+    truncada: corta.cortou(),
   };
 }
 

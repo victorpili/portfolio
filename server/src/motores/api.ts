@@ -60,7 +60,7 @@ export function motorApi(o: { modelo: string; esforco?: 'low' | 'medium' | 'high
         r = await cliente.beta.messages.parse(
           {
             model: o.modelo,
-            max_tokens: 16000,
+            max_tokens: 8000,
             betas: ['server-side-fallback-2026-07-01'],
             fallbacks: 'default',
             system: c.sistema,
