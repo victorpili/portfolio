@@ -8,6 +8,7 @@
   "scripts": {
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck",
+    "dev": "pnpm -r --parallel dev",
     "missao": "pnpm --filter @nave/server missao"
   },
   "devDependencies": {
