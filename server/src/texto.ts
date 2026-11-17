@@ -16,15 +16,17 @@ function decodificar(s: string): string {
     .replace(/&(lt|gt|quot|apos|nbsp|amp);/gi, (_, n: string) => NOMEADAS[n.toLowerCase()]);
 }
 
+// As regexes de tag usam `[^<>]*`, não `[^>]*`: com "<" sem fechamento, `[^>]*` varria até o fim da
+// string a cada "<" (quadrático com HTML hostil). Um "<" solto agora fica no texto.
 export function htmlParaTexto(html: string): string {
-  const semBlocos = html.replace(/<\/?(p|br|li|h[1-6]|tr|div)\b[^>]*>/gi, '\n');
-  return decodificar(semBlocos.replace(/<[^>]*>/g, ''))
+  const semBlocos = html.replace(/<\/?(p|br|li|h[1-6]|tr|div)\b[^<>]*>/gi, '\n');
+  return decodificar(semBlocos.replace(/<[^<>]*>/g, ''))
     .replace(/ /g, ' ')
     .split('\n').map((l) => l.replace(/[ \t]+/g, ' ').trim()).filter(Boolean).join('\n');
 }
 
 export function normalizar(s: string): string {
-  return decodificar(s.replace(/<[^>]*>/g, ''))
+  return decodificar(s.replace(/<[^<>]*>/g, ''))
     .replace(/[“”″]/g, '"')
     .replace(/[‘’]/g, "'")
     .normalize('NFKC')
@@ -38,19 +40,49 @@ function trechoLimpo(trecho: string): string | null {
   return t.length >= 3 ? t : null;
 }
 
+const CELULAS = ['li', 'td', 'th', 'dt', 'dd'];
+
+/**
+ * O conteúdo de cada li/td/th/dt/dd até o primeiro fechamento da mesma tag; a busca segue depois do fechamento.
+ * Faz o que fazia `<(li|…)\b[^>]*>([\s\S]*?)<\/\1\s*>`, mas em tempo linear: se uma tag não fecha a partir de
+ * um ponto, nenhuma abertura dela mais adiante fecha, e o fechamento dela não é procurado de novo.
+ */
 function celulasHtml(html: string): string[] {
-  const re = /<(li|td|th|dt|dd)\b[^>]*>([\s\S]*?)<\/\1\s*>/gi;
-  return [...html.matchAll(re)].map((m) => m[2]);
+  const abre = /<(li|td|th|dt|dd)\b[^<>]*>/gi;
+  const fecha = new Map(CELULAS.map((nome) => [nome, new RegExp(`</${nome}\\s*>`, 'gi')]));
+  const celulas: string[] = [];
+  for (let m = abre.exec(html); m; m = abre.exec(html)) {
+    const nome = m[1].toLowerCase();
+    const re = fecha.get(nome);
+    if (!re) continue; // essa tag já não fecha mais
+    re.lastIndex = abre.lastIndex;
+    const f = re.exec(html);
+    if (!f) {
+      fecha.delete(nome);
+      continue;
+    }
+    celulas.push(html.slice(abre.lastIndex, f.index));
+    abre.lastIndex = re.lastIndex;
+  }
+  return celulas;
 }
 
+/** A ficha original não muda depois de lida: os campos estruturados são calculados uma vez por ficha. */
+const camposPorFicha = new WeakMap<FichaOriginal, string[]>();
+
 function camposEstruturados(f: FichaOriginal): string[] {
-  return [
-    ...(f.tipo ? [f.tipo] : []),
-    ...f.tags,
-    ...f.opcoes.flatMap((o) => [o.nome, ...o.valores]),
-    ...f.variantes.map((v) => v.titulo),
-    ...celulasHtml(f.descricaoHtml),
-  ].map(normalizar);
+  let campos = camposPorFicha.get(f);
+  if (!campos) {
+    campos = [
+      ...(f.tipo ? [f.tipo] : []),
+      ...f.tags,
+      ...f.opcoes.flatMap((o) => [o.nome, ...o.valores]),
+      ...f.variantes.map((v) => v.titulo),
+      ...celulasHtml(f.descricaoHtml),
+    ].map(normalizar);
+    camposPorFicha.set(f, campos);
+  }
+  return campos;
 }
 
 /** `{ tags: false }` ignora as tags: elas são etiquetas internas da loja e não sustentam atributo da pesquisa. */

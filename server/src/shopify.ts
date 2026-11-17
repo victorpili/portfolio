@@ -5,6 +5,8 @@ import { extrairJsonLd, camposProduto } from './jsonld';
 
 type Obj = Record<string, any>;
 
+/** O body_html é cortado antes de qualquer regex. */
+const MAX_HTML = 100_000;
 const MAX_DESCRICAO = 20_000;
 const MAX_VARIANTES = 30;
 const MAX_TITULO = 150;
@@ -36,10 +38,11 @@ function moedaDoJsonLd(produtos: Obj[]): string | null {
 
 export function normalizarProdutoShopify(json: unknown, url: string, html: string | null): FichaOriginal {
   const p: Obj = (json as Obj)?.product ?? {};
-  const bodyHtml = typeof p.body_html === 'string' ? p.body_html : '';
+  const htmlInteiro = typeof p.body_html === 'string' ? p.body_html : '';
+  const bodyHtml = htmlInteiro.slice(0, MAX_HTML);
   const texto = htmlParaTexto(bodyHtml);
   const todasVariantes = lista(p.variants);
-  let truncada = texto.length > MAX_DESCRICAO || todasVariantes.length > MAX_VARIANTES;
+  const truncada = htmlInteiro.length > MAX_HTML || texto.length > MAX_DESCRICAO || todasVariantes.length > MAX_VARIANTES;
 
   const imagens = lista(p.images).filter((i) => textoOuNull(i.src)).map((i) => ({ src: String(i.src), alt: textoOuNull(i.alt) }));
   const tags = (Array.isArray(p.tags) ? p.tags : typeof p.tags === 'string' ? p.tags.split(',') : [])

@@ -41,6 +41,14 @@ describe('normalizarProdutoShopify', () => {
     const f = normalizarProdutoShopify(grande, 'https://l.com/products/x', null);
     expect(f.descricaoTexto.length).toBe(20000); expect(f.variantes.length).toBe(30); expect(f.truncada).toBe(true);
   });
+  it('corta o body_html em 100.000 caracteres antes de ler e marca truncada', () => {
+    const noLimite = normalizarProdutoShopify({ product: { title: 'X', body_html: '<br>'.repeat(25_000) } }, URL_PRODUTO, null);
+    expect(noLimite).toMatchObject({ descricaoTexto: '', truncada: false });
+    expect(noLimite.descricaoHtml).toHaveLength(100_000);
+    const f = normalizarProdutoShopify({ product: { title: 'X', body_html: '<br>'.repeat(25_000) + '<li>Peso: 2 kg</li>' } }, URL_PRODUTO, null);
+    expect(f.descricaoHtml).toHaveLength(100_000);
+    expect(f).toMatchObject({ descricaoTexto: '', truncada: true });
+  });
   it('sem chave barcode nem alt: gtin e alt ficam não verificáveis', () => {
     const p = structuredClone(caneca.product) as any;
     p.variants.forEach((v: any) => delete v.barcode);

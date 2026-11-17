@@ -7,7 +7,30 @@ export interface CamposJsonLd {
   imagem: boolean; descricao: boolean; avaliacoes: boolean; categoria: boolean; additionalProperty: number;
 }
 
-const TAG_JSONLD = /<script\b[^>]*\btype\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+/** Da página, só os primeiros 500 KB e os primeiros 10 blocos: o HTML vem de fora e pode ter até 2 MB. */
+const MAX_HTML_PAGINA = 500_000;
+const MAX_BLOCOS = 10;
+const TIPO_JSONLD = /\btype\s*=\s*["']application\/ld\+json["']/i;
+
+/**
+ * O conteúdo de cada `<script type="application/ld+json">` até o primeiro `</script>`. Faz o que fazia
+ * `<script\b[^>]*\btype…[^>]*>([\s\S]*?)<\/script>`, mas em tempo linear: sem `</script>` a partir de uma
+ * abertura, nenhuma abertura adiante fecha, e a busca para.
+ */
+function blocosJsonLd(html: string): string[] {
+  const abre = /<script\b[^<>]*>/gi;
+  const fecha = /<\/script>/gi;
+  const blocos: string[] = [];
+  for (let m = abre.exec(html); m && blocos.length < MAX_BLOCOS; m = abre.exec(html)) {
+    if (!TIPO_JSONLD.test(m[0])) continue;
+    fecha.lastIndex = abre.lastIndex;
+    const f = fecha.exec(html);
+    if (!f) break;
+    blocos.push(html.slice(abre.lastIndex, f.index));
+    abre.lastIndex = fecha.lastIndex;
+  }
+  return blocos;
+}
 
 function achatar(x: unknown, acc: Obj[] = []): Obj[] {
   if (Array.isArray(x)) x.forEach((i) => achatar(i, acc));
@@ -21,18 +44,17 @@ function achatar(x: unknown, acc: Obj[] = []): Obj[] {
 const ehProduto = (o: Obj) => ([] as unknown[]).concat(o['@type'] || []).some((t) => /^(Product|ProductGroup)$/i.test(String(t)));
 
 export function extrairJsonLd(html: string): { blocos: number; invalidos: number; produtos: Obj[] } {
-  let blocos = 0;
+  const blocos = blocosJsonLd(html.slice(0, MAX_HTML_PAGINA));
   let invalidos = 0;
   const achados: Obj[] = [];
-  for (const m of html.matchAll(TAG_JSONLD)) {
-    blocos++;
+  for (const b of blocos) {
     try {
-      achatar(JSON.parse(m[1].trim()), achados);
+      achatar(JSON.parse(b.trim()), achados);
     } catch {
       invalidos++;
     }
   }
-  return { blocos, invalidos, produtos: achados.filter(ehProduto) };
+  return { blocos: blocos.length, invalidos, produtos: achados.filter(ehProduto) };
 }
 
 // Dados de página são externos: listas podem trazer null, números ou strings no lugar de objetos.

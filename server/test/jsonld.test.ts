@@ -7,6 +7,22 @@ describe('jsonld', () => {
     const html = `<script type="application/ld+json">{"@graph":[{"@type":"Product","name":"A"}]}</script><script type="application/ld+json">{quebrado</script>`;
     expect(extrairJsonLd(html)).toMatchObject({ blocos: 2, invalidos: 1, produtos: [{ name: 'A' }] });
   });
+  it('acha o bloco depois de outros scripts e com </SCRIPT> maiúsculo; abertura sem fechamento não conta', () => {
+    const html = `<script src="a.js"></script><SCRIPT data-x="1" type='application/ld+json' id="p">{"@type":"Product","name":"A"}</SCRIPT>`
+      + `<script type="application/ld+json">{"@type":"Product","name":"B"}`;
+    expect(extrairJsonLd(html)).toMatchObject({ blocos: 1, invalidos: 0, produtos: [{ name: 'A' }] });
+  });
+  it('lê só os primeiros 500 KB da página', () => {
+    const bloco = `<script type="application/ld+json">{"@type":"Product","name":"A"}</script>`;
+    expect(extrairJsonLd(' '.repeat(500_000 - bloco.length) + bloco).blocos).toBe(1);
+    expect(extrairJsonLd(' '.repeat(500_000) + bloco)).toMatchObject({ blocos: 0, produtos: [] });
+  });
+  it('lê no máximo 10 blocos', () => {
+    const blocos = Array.from({ length: 12 }, (_, i) => `<script type="application/ld+json">{"@type":"Product","name":"P${i}"}</script>`);
+    const r = extrairJsonLd(blocos.join('\n'));
+    expect(r.blocos).toBe(10);
+    expect(r.produtos.map((p) => p.name)).toEqual(Array.from({ length: 10 }, (_, i) => `P${i}`));
+  });
   it('camposProduto lê marca, preço, gtin e additionalProperty, tolerando lixo', () => {
     const c = camposProduto({ brand: { name: 'X' }, offers: [null, 3, { price: '1', availability: 'x', gtin13: '1' }], additionalProperty: [{}, {}] });
     expect(c).toMatchObject({ marca: true, preco: true, disponibilidade: true, gtin: true, sku: false, additionalProperty: 2 });

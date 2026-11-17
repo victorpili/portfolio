@@ -65,4 +65,29 @@ describe('ondeEsta', () => {
     expect(ondeEsta(f, 'panelas')).toBe('estruturado');
     expect(ondeEsta(f, 'inox')).toBe('estruturado');
   });
+  it('célula sem fechamento não conta; o fechamento aceita maiúsculas e espaço; outra tag continua valendo', () => {
+    const f = fichaCom({
+      descricaoHtml: '<ul><li>Peso: 2 kg<li>Cor: azul</ul><table><tr><TD class="x">Aço inox</td ><td>Vidro</TD></tr></table>',
+      descricaoTexto: 'Peso: 2 kg\nCor: azul\nAço inox\nVidro',
+    });
+    expect(ondeEsta(f, 'Peso: 2 kg')).toBe('texto');
+    expect(ondeEsta(f, 'aço inox')).toBe('estruturado');
+    expect(ondeEsta(f, 'vidro')).toBe('estruturado');
+  });
+  it('a célula vai até o primeiro fechamento da mesma tag, e a busca segue depois dele', () => {
+    const f = fichaCom({
+      descricaoHtml: '<li>Material: <b>couro</b><li>Cor: preta</li><dd>Tamanho M</dd>',
+      descricaoTexto: 'Material: couro\nCor: preta\nTamanho M',
+    });
+    expect(ondeEsta(f, 'couro')).toBe('estruturado');
+    expect(ondeEsta(f, 'cor: preta')).toBe('estruturado');
+    expect(ondeEsta(f, 'tamanho m')).toBe('estruturado');
+  });
+});
+
+describe('tags com "<" solto', () => {
+  it('"<" sem fechamento fica no texto; tags normais continuam saindo', () => {
+    expect(htmlParaTexto('<p>5 < 10 e <b>aço</b></p>')).toBe('5 < 10 e aço');
+    expect(normalizar('<<b>Aço</b>')).toBe('<aço');
+  });
 });
