@@ -1,0 +1,1135 @@
+{
+  "nome": "fox-blossom",
+  "titulo": "Red Grid Tea Towel",
+  "loja": "www.foxblossom.com",
+  "gravadaEm": "2026-11-17T04:56:54.568Z",
+  "modelo": "claude-sonnet-5-5",
+  "eventos": [
+    {
+      "tipo": "missao_iniciada",
+      "mensagem": "Capitã: missão recebida.",
+      "seq": 1,
+      "t": 0
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "capita",
+      "sala": "ponte",
+      "mensagem": "Capitã: assumindo a Ponte.",
+      "seq": 2,
+      "t": 1
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "imediato",
+      "sala": "ponte",
+      "mensagem": "Capitã: Imediato, para a Ponte.",
+      "seq": 3,
+      "t": 1
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "pesquisador",
+      "sala": "pesquisa",
+      "mensagem": "Capitã: Pesquisador, para a sala de Pesquisa.",
+      "seq": 4,
+      "t": 831
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "pesquisador",
+      "tentativa": 1,
+      "mensagem": "Pesquisador: lendo a ficha original.",
+      "seq": 5,
+      "t": 832
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "pesquisador",
+      "mensagem": "Pesquisador: 5 atributos, 3 lacunas.",
+      "seq": 6,
+      "t": 5427
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "pesquisador",
+      "mensagem": "Imediato: conferindo a entrega do Pesquisador.",
+      "seq": 7,
+      "t": 5427
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "pesquisador",
+      "mensagem": "Imediato: todos os trechos estão no original. Aprovado.",
+      "seq": 8,
+      "t": 5431
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "pesquisador",
+      "mensagem": "Capitã: Pesquisador dispensado.",
+      "seq": 9,
+      "t": 5432
+    },
+    {
+      "tipo": "nota",
+      "qual": "antes",
+      "nota": {
+        "valor": 45,
+        "obtidos": 45,
+        "possiveis": 100,
+        "itens": [
+          {
+            "id": "marca",
+            "grupo": "identificacao",
+            "rotulo": "Marca",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "sku",
+            "grupo": "identificacao",
+            "rotulo": "SKU",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "gtin",
+            "grupo": "identificacao",
+            "rotulo": "GTIN / código de barras",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "categoria",
+            "grupo": "identificacao",
+            "rotulo": "Categoria",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "preco",
+            "grupo": "oferta",
+            "rotulo": "Preço",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "disponibilidade",
+            "grupo": "oferta",
+            "rotulo": "Disponibilidade",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:material",
+            "grupo": "atributos",
+            "rotulo": "Material ou composição",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:dimensoes",
+            "grupo": "atributos",
+            "rotulo": "Dimensões",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:peso",
+            "grupo": "atributos",
+            "rotulo": "Peso",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:variacoes",
+            "grupo": "atributos",
+            "rotulo": "Variações (cores e tamanhos)",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:uso",
+            "grupo": "atributos",
+            "rotulo": "Uso",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:publico",
+            "grupo": "atributos",
+            "rotulo": "Público",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:cuidados",
+            "grupo": "atributos",
+            "rotulo": "Cuidados",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:garantia",
+            "grupo": "atributos",
+            "rotulo": "Garantia ou troca",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "titulo",
+            "grupo": "conteudo",
+            "rotulo": "Título descritivo",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "descricao",
+            "grupo": "conteudo",
+            "rotulo": "Descrição organizada",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "faq",
+            "grupo": "conteudo",
+            "rotulo": "FAQ (3+ perguntas)",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "alt",
+            "grupo": "conteudo",
+            "rotulo": "Imagens com texto alternativo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "jsonld",
+            "grupo": "dados_estruturados",
+            "rotulo": "JSON-LD Product",
+            "pontos": 10,
+            "maximo": 10,
+            "situacao": "ok"
+          }
+        ]
+      },
+      "mensagem": "Capitã: nota antes 45/100.",
+      "seq": 10,
+      "t": 5440
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "redator",
+      "sala": "criacao",
+      "mensagem": "Capitã: Redator, para a sala de Criação.",
+      "seq": 11,
+      "t": 5441
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "redator",
+      "tentativa": 1,
+      "mensagem": "Redator: escrevendo a ficha nova.",
+      "seq": 12,
+      "t": 5441
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "redator",
+      "mensagem": "Redator: ficha nova com 3 seções, 5 atributos e 5 perguntas.",
+      "seq": 13,
+      "t": 12387
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "redator",
+      "mensagem": "Imediato: conferindo a entrega do Redator.",
+      "seq": 14,
+      "t": 12387
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "redator",
+      "mensagem": "Imediato: fontes e valores batem com a pesquisa. Aprovado.",
+      "seq": 15,
+      "t": 12387
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "redator",
+      "mensagem": "Capitã: Redator dispensado.",
+      "seq": 16,
+      "t": 12387
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "revisor",
+      "sala": "qualidade",
+      "mensagem": "Capitã: Revisor, para a sala de Qualidade.",
+      "seq": 17,
+      "t": 12387
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "revisor",
+      "tentativa": 1,
+      "mensagem": "Revisor: julgando cada item contra o original.",
+      "seq": 18,
+      "t": 12387
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "revisor",
+      "mensagem": "Revisor: 14/14 itens sustentados.",
+      "seq": 19,
+      "t": 18988
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "revisor",
+      "mensagem": "Imediato: conferindo a entrega do Revisor.",
+      "seq": 20,
+      "t": 18988
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "revisor",
+      "mensagem": "Imediato: todos os itens sustentados. Aprovado.",
+      "seq": 21,
+      "t": 18990
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "revisor",
+      "mensagem": "Capitã: Revisor dispensado.",
+      "seq": 22,
+      "t": 18990
+    },
+    {
+      "tipo": "nota",
+      "qual": "depois",
+      "nota": {
+        "valor": 75,
+        "obtidos": 75,
+        "possiveis": 100,
+        "itens": [
+          {
+            "id": "marca",
+            "grupo": "identificacao",
+            "rotulo": "Marca",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "sku",
+            "grupo": "identificacao",
+            "rotulo": "SKU",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "gtin",
+            "grupo": "identificacao",
+            "rotulo": "GTIN / código de barras",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "categoria",
+            "grupo": "identificacao",
+            "rotulo": "Categoria",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "preco",
+            "grupo": "oferta",
+            "rotulo": "Preço",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "disponibilidade",
+            "grupo": "oferta",
+            "rotulo": "Disponibilidade",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:material",
+            "grupo": "atributos",
+            "rotulo": "Material ou composição",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:dimensoes",
+            "grupo": "atributos",
+            "rotulo": "Dimensões",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:peso",
+            "grupo": "atributos",
+            "rotulo": "Peso",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:variacoes",
+            "grupo": "atributos",
+            "rotulo": "Variações (cores e tamanhos)",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:uso",
+            "grupo": "atributos",
+            "rotulo": "Uso",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:publico",
+            "grupo": "atributos",
+            "rotulo": "Público",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:cuidados",
+            "grupo": "atributos",
+            "rotulo": "Cuidados",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:garantia",
+            "grupo": "atributos",
+            "rotulo": "Garantia ou troca",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "titulo",
+            "grupo": "conteudo",
+            "rotulo": "Título descritivo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "descricao",
+            "grupo": "conteudo",
+            "rotulo": "Descrição organizada",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "faq",
+            "grupo": "conteudo",
+            "rotulo": "FAQ (3+ perguntas)",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "alt",
+            "grupo": "conteudo",
+            "rotulo": "Imagens com texto alternativo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "jsonld",
+            "grupo": "dados_estruturados",
+            "rotulo": "JSON-LD Product",
+            "pontos": 10,
+            "maximo": 10,
+            "situacao": "ok"
+          }
+        ]
+      },
+      "mensagem": "Capitã: nota depois 75/100.",
+      "seq": 23,
+      "t": 18990
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "capita",
+      "mensagem": "Capitã: deixando a Ponte.",
+      "seq": 24,
+      "t": 18990
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "imediato",
+      "mensagem": "Capitã: Imediato dispensado.",
+      "seq": 25,
+      "t": 18990
+    },
+    {
+      "tipo": "missao_concluida",
+      "resultado": {
+        "original": {
+          "fonte": "shopify",
+          "url": "https://www.foxblossom.com/products/red-grid-tea-towel",
+          "loja": "www.foxblossom.com",
+          "titulo": "Red Grid Tea Towel",
+          "descricaoHtml": "<p class=\"font-claude-response-body break-words whitespace-normal\">This cotton tea towel brings the kind of understated detail that elevates a kitchen without trying, white ground, red grid pattern, clean and simple. At 15x25\", it's the right size for actually drying things, draping over an oven handle, or tucking into a gift box where texture and tone matter.</p>\n<p class=\"font-claude-response-body break-words whitespace-normal\">The kind of thing people don't buy for themselves but always love receiving.</p>\n<p class=\"font-claude-response-body break-words whitespace-normal\"><strong>What's Included:</strong> Cotton Tea Towel · 15x25\" · White with red grid pattern</p>\n<p class=\"font-claude-response-body break-words whitespace-normal\"><strong>Perfect For:</strong> Housewarming gift boxes, kitchen-themed bundles, host gifts, and anyone who appreciates the small things done well.</p>\n<p class=\"font-claude-response-body break-words whitespace-normal\"><strong>Pairs Well With:</strong> <a class=\"underline underline underline-offset-2 decoration-1 decoration-current/40 hover:decoration-current focus:decoration-current\" href=\"https://www.foxblossom.com/collections/foods-and-treats\">Rustic Bakery Flatbread Sourdough</a> · <a href=\"https://www.foxblossom.com/products/raw-clover-honey?_pos=3&amp;_psq=raw&amp;_ss=e&amp;_v=1.0\">Raw Clover Honey</a> · <a href=\"https://www.foxblossom.com/products/olive-wood-curved-spoon?_pos=1&amp;_sid=591cf4e97&amp;_ss=r\">Olive Wood Curved Spoon</a></p>",
+          "descricaoTexto": "This cotton tea towel brings the kind of understated detail that elevates a kitchen without trying, white ground, red grid pattern, clean and simple. At 15x25\", it's the right size for actually drying things, draping over an oven handle, or tucking into a gift box where texture and tone matter.\nThe kind of thing people don't buy for themselves but always love receiving.\nWhat's Included: Cotton Tea Towel · 15x25\" · White with red grid pattern\nPerfect For: Housewarming gift boxes, kitchen-themed bundles, host gifts, and anyone who appreciates the small things done well.\nPairs Well With: Rustic Bakery Flatbread Sourdough · Raw Clover Honey · Olive Wood Curved Spoon",
+          "marca": "Foxblossom",
+          "tipo": "Home Goods",
+          "tags": [
+            "cotton tea towel",
+            "marketplace",
+            "red grid tea towel"
+          ],
+          "opcoes": [
+            {
+              "nome": "Title",
+              "valores": [
+                "Default Title"
+              ]
+            }
+          ],
+          "variantes": [
+            {
+              "titulo": "Default Title",
+              "sku": "FB-TT-REDGRID-1525",
+              "preco": "10.00",
+              "disponivel": null,
+              "codigoBarras": null
+            }
+          ],
+          "imagens": [
+            {
+              "src": "https://cdn.shopify.com/s/files/1/1065/7268/files/red-grid-tea-towel.jpg?v=1781884525",
+              "alt": "Red and white grid pattern tea towel draped over oven handle."
+            }
+          ],
+          "moeda": "USD",
+          "jsonldPaginaValido": true,
+          "naoVerificavel": [],
+          "truncada": false
+        },
+        "pesquisa": {
+          "tipoProduto": "tea towel",
+          "atributos": [
+            {
+              "id": "material",
+              "valor": "cotton",
+              "trecho": "This cotton tea towel brings"
+            },
+            {
+              "id": "dimensoes",
+              "valor": "15x25\"",
+              "trecho": "At 15x25\", it's the right size"
+            },
+            {
+              "id": "variacoes",
+              "valor": "white with red grid pattern",
+              "trecho": "White with red grid pattern"
+            },
+            {
+              "id": "uso",
+              "valor": "drying things, draping over an oven handle, tucking into a gift box",
+              "trecho": "actually drying things, draping over an oven handle, or tucking into a gift box"
+            },
+            {
+              "id": "publico",
+              "valor": "housewarming gift boxes, kitchen-themed bundles, host gifts, and anyone who appreciates the small things done well",
+              "trecho": "Housewarming gift boxes, kitchen-themed bundles, host gifts, and anyone who appreciates the small things done well"
+            }
+          ],
+          "lacunas": [
+            {
+              "id": "peso",
+              "motivo": "A ficha não informa o peso."
+            },
+            {
+              "id": "cuidados",
+              "motivo": "A ficha não fala de lavagem nem de conservação."
+            },
+            {
+              "id": "garantia",
+              "motivo": "A ficha não fala de garantia nem de troca."
+            }
+          ],
+          "naoSeAplica": []
+        },
+        "fichaNova": {
+          "titulo": "Red Grid Tea Towel in cotton, white with red grid pattern, 15x25\", Foxblossom",
+          "secoes": [
+            {
+              "id": "s1",
+              "titulo": "Material and design",
+              "texto": "The Foxblossom Red Grid Tea Towel is a cotton tea towel with a white ground and a red grid pattern. It measures 15x25\".",
+              "fontes": [
+                "material",
+                "dimensoes",
+                "variacoes"
+              ]
+            },
+            {
+              "id": "s2",
+              "titulo": "Uses",
+              "texto": "This tea towel can be used for drying things, draping over an oven handle, or tucking into a gift box.",
+              "fontes": [
+                "uso"
+              ]
+            },
+            {
+              "id": "s3",
+              "titulo": "Who it is for",
+              "texto": "It is suited to housewarming gift boxes, kitchen-themed bundles, host gifts, and anyone who appreciates the small things done well.",
+              "fontes": [
+                "publico"
+              ]
+            }
+          ],
+          "atributos": [
+            {
+              "id": "material",
+              "rotulo": "Material or composition",
+              "valor": "cotton"
+            },
+            {
+              "id": "dimensoes",
+              "rotulo": "Dimensions",
+              "valor": "15x25\""
+            },
+            {
+              "id": "variacoes",
+              "rotulo": "Variations (colors and sizes)",
+              "valor": "white with red grid pattern"
+            },
+            {
+              "id": "uso",
+              "rotulo": "Use",
+              "valor": "drying things, draping over an oven handle, tucking into a gift box"
+            },
+            {
+              "id": "publico",
+              "rotulo": "Audience",
+              "valor": "housewarming gift boxes, kitchen-themed bundles, host gifts, and anyone who appreciates the small things done well"
+            }
+          ],
+          "faq": [
+            {
+              "id": "f1",
+              "pergunta": "What is the tea towel made of?",
+              "resposta": "It is made of cotton.",
+              "fontes": [
+                "material"
+              ]
+            },
+            {
+              "id": "f2",
+              "pergunta": "What size is the tea towel?",
+              "resposta": "It measures 15x25\".",
+              "fontes": [
+                "dimensoes"
+              ]
+            },
+            {
+              "id": "f3",
+              "pergunta": "What does the tea towel look like?",
+              "resposta": "It is white with a red grid pattern.",
+              "fontes": [
+                "variacoes"
+              ]
+            },
+            {
+              "id": "f4",
+              "pergunta": "What can I use it for?",
+              "resposta": "You can use it for drying things, draping over an oven handle, or tucking into a gift box.",
+              "fontes": [
+                "uso"
+              ]
+            },
+            {
+              "id": "f5",
+              "pergunta": "Is it suitable as a gift?",
+              "resposta": "It is suited to housewarming gift boxes, kitchen-themed bundles and host gifts.",
+              "fontes": [
+                "publico"
+              ]
+            }
+          ],
+          "aConfirmar": [
+            {
+              "id": "peso",
+              "pergunta": "What is the weight of the tea towel?"
+            },
+            {
+              "id": "cuidados",
+              "pergunta": "How should the tea towel be washed and cared for?"
+            },
+            {
+              "id": "garantia",
+              "pergunta": "Is there a warranty or return policy for the tea towel?"
+            }
+          ]
+        },
+        "jsonld": {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "Red Grid Tea Towel in cotton, white with red grid pattern, 15x25\", Foxblossom",
+          "description": "The Foxblossom Red Grid Tea Towel is a cotton tea towel with a white ground and a red grid pattern. It measures 15x25\".\n\nThis tea towel can be used for drying things, draping over an oven handle, or tucking into a gift box.\n\nIt is suited to housewarming gift boxes, kitchen-themed bundles, host gifts, and anyone who appreciates the small things done well.",
+          "brand": {
+            "@type": "Brand",
+            "name": "Foxblossom"
+          },
+          "sku": "FB-TT-REDGRID-1525",
+          "image": [
+            "https://cdn.shopify.com/s/files/1/1065/7268/files/red-grid-tea-towel.jpg?v=1781884525"
+          ],
+          "offers": [
+            {
+              "@type": "Offer",
+              "price": "10.00",
+              "priceCurrency": "USD"
+            }
+          ],
+          "additionalProperty": [
+            {
+              "@type": "PropertyValue",
+              "name": "Material or composition",
+              "value": "cotton"
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Dimensions",
+              "value": "15x25\""
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Variations (colors and sizes)",
+              "value": "white with red grid pattern"
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Use",
+              "value": "drying things, draping over an oven handle, tucking into a gift box"
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Audience",
+              "value": "housewarming gift boxes, kitchen-themed bundles, host gifts, and anyone who appreciates the small things done well"
+            }
+          ]
+        },
+        "imagens": [
+          {
+            "src": "https://cdn.shopify.com/s/files/1/1065/7268/files/red-grid-tea-towel.jpg?v=1781884525",
+            "alt": "Red Grid Tea Towel in cotton, white with red grid pattern, 15x25\", Foxblossom"
+          }
+        ],
+        "notaAntes": {
+          "valor": 45,
+          "obtidos": 45,
+          "possiveis": 100,
+          "itens": [
+            {
+              "id": "marca",
+              "grupo": "identificacao",
+              "rotulo": "Marca",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "sku",
+              "grupo": "identificacao",
+              "rotulo": "SKU",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "gtin",
+              "grupo": "identificacao",
+              "rotulo": "GTIN / código de barras",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "categoria",
+              "grupo": "identificacao",
+              "rotulo": "Categoria",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "preco",
+              "grupo": "oferta",
+              "rotulo": "Preço",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "disponibilidade",
+              "grupo": "oferta",
+              "rotulo": "Disponibilidade",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:material",
+              "grupo": "atributos",
+              "rotulo": "Material ou composição",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:dimensoes",
+              "grupo": "atributos",
+              "rotulo": "Dimensões",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:peso",
+              "grupo": "atributos",
+              "rotulo": "Peso",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:variacoes",
+              "grupo": "atributos",
+              "rotulo": "Variações (cores e tamanhos)",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:uso",
+              "grupo": "atributos",
+              "rotulo": "Uso",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:publico",
+              "grupo": "atributos",
+              "rotulo": "Público",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:cuidados",
+              "grupo": "atributos",
+              "rotulo": "Cuidados",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:garantia",
+              "grupo": "atributos",
+              "rotulo": "Garantia ou troca",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "titulo",
+              "grupo": "conteudo",
+              "rotulo": "Título descritivo",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "descricao",
+              "grupo": "conteudo",
+              "rotulo": "Descrição organizada",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "faq",
+              "grupo": "conteudo",
+              "rotulo": "FAQ (3+ perguntas)",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "alt",
+              "grupo": "conteudo",
+              "rotulo": "Imagens com texto alternativo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "jsonld",
+              "grupo": "dados_estruturados",
+              "rotulo": "JSON-LD Product",
+              "pontos": 10,
+              "maximo": 10,
+              "situacao": "ok"
+            }
+          ]
+        },
+        "notaDepois": {
+          "valor": 75,
+          "obtidos": 75,
+          "possiveis": 100,
+          "itens": [
+            {
+              "id": "marca",
+              "grupo": "identificacao",
+              "rotulo": "Marca",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "sku",
+              "grupo": "identificacao",
+              "rotulo": "SKU",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "gtin",
+              "grupo": "identificacao",
+              "rotulo": "GTIN / código de barras",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "categoria",
+              "grupo": "identificacao",
+              "rotulo": "Categoria",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "preco",
+              "grupo": "oferta",
+              "rotulo": "Preço",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "disponibilidade",
+              "grupo": "oferta",
+              "rotulo": "Disponibilidade",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:material",
+              "grupo": "atributos",
+              "rotulo": "Material ou composição",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:dimensoes",
+              "grupo": "atributos",
+              "rotulo": "Dimensões",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:peso",
+              "grupo": "atributos",
+              "rotulo": "Peso",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:variacoes",
+              "grupo": "atributos",
+              "rotulo": "Variações (cores e tamanhos)",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:uso",
+              "grupo": "atributos",
+              "rotulo": "Uso",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:publico",
+              "grupo": "atributos",
+              "rotulo": "Público",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:cuidados",
+              "grupo": "atributos",
+              "rotulo": "Cuidados",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:garantia",
+              "grupo": "atributos",
+              "rotulo": "Garantia ou troca",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "titulo",
+              "grupo": "conteudo",
+              "rotulo": "Título descritivo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "descricao",
+              "grupo": "conteudo",
+              "rotulo": "Descrição organizada",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "faq",
+              "grupo": "conteudo",
+              "rotulo": "FAQ (3+ perguntas)",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "alt",
+              "grupo": "conteudo",
+              "rotulo": "Imagens com texto alternativo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "jsonld",
+              "grupo": "dados_estruturados",
+              "rotulo": "JSON-LD Product",
+              "pontos": 10,
+              "maximo": 10,
+              "situacao": "ok"
+            }
+          ]
+        },
+        "aConfirmar": [
+          {
+            "id": "peso",
+            "pergunta": "What is the weight of the tea towel?"
+          },
+          {
+            "id": "cuidados",
+            "pergunta": "How should the tea towel be washed and cared for?"
+          },
+          {
+            "id": "garantia",
+            "pergunta": "Is there a warranty or return policy for the tea towel?"
+          }
+        ],
+        "devolucoes": 0,
+        "chamadas": [
+          {
+            "agente": "pesquisador",
+            "tentativa": 1,
+            "tokensEntrada": 4011,
+            "tokensSaida": 411,
+            "custoUsd": 0.012132,
+            "ms": 4593
+          },
+          {
+            "agente": "redator",
+            "tentativa": 1,
+            "tokensEntrada": 5453,
+            "tokensSaida": 915,
+            "custoUsd": 0.020056,
+            "ms": 6945
+          },
+          {
+            "agente": "revisor",
+            "tentativa": 1,
+            "tokensEntrada": 4781,
+            "tokensSaida": 937,
+            "custoUsd": 0.018932,
+            "ms": 6601
+          }
+        ],
+        "custoUsd": 0.05112,
+        "duracaoMs": 18991,
+        "motor": "api",
+        "modelo": "claude-sonnet-5-5"
+      },
+      "mensagem": "Capitã: missão concluída. Nota 45 → 75.",
+      "seq": 26,
+      "t": 18991
+    }
+  ]
+}

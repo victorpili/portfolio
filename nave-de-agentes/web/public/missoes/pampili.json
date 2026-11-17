@@ -1,0 +1,1287 @@
+{
+  "nome": "pampili",
+  "titulo": "Tênis Infantil Pampili New Flat Branco",
+  "loja": "pampili.com.br",
+  "gravadaEm": "2026-11-17T04:57:38.349Z",
+  "modelo": "claude-sonnet-5-5",
+  "eventos": [
+    {
+      "tipo": "missao_iniciada",
+      "mensagem": "Capitã: missão recebida.",
+      "seq": 1,
+      "t": 1
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "capita",
+      "sala": "ponte",
+      "mensagem": "Capitã: assumindo a Ponte.",
+      "seq": 2,
+      "t": 1
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "imediato",
+      "sala": "ponte",
+      "mensagem": "Capitã: Imediato, para a Ponte.",
+      "seq": 3,
+      "t": 1
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "pesquisador",
+      "sala": "pesquisa",
+      "mensagem": "Capitã: Pesquisador, para a sala de Pesquisa.",
+      "seq": 4,
+      "t": 768
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "pesquisador",
+      "tentativa": 1,
+      "mensagem": "Pesquisador: lendo a ficha original.",
+      "seq": 5,
+      "t": 769
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "pesquisador",
+      "mensagem": "Pesquisador: 4 atributos, 4 lacunas.",
+      "seq": 6,
+      "t": 4260
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "pesquisador",
+      "mensagem": "Imediato: conferindo a entrega do Pesquisador.",
+      "seq": 7,
+      "t": 4260
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "pesquisador",
+      "mensagem": "Imediato: todos os trechos estão no original. Aprovado.",
+      "seq": 8,
+      "t": 4261
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "pesquisador",
+      "mensagem": "Capitã: Pesquisador dispensado.",
+      "seq": 9,
+      "t": 4261
+    },
+    {
+      "tipo": "nota",
+      "qual": "antes",
+      "nota": {
+        "valor": 56,
+        "obtidos": 56,
+        "possiveis": 100,
+        "itens": [
+          {
+            "id": "marca",
+            "grupo": "identificacao",
+            "rotulo": "Marca",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "sku",
+            "grupo": "identificacao",
+            "rotulo": "SKU",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "gtin",
+            "grupo": "identificacao",
+            "rotulo": "GTIN / código de barras",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "categoria",
+            "grupo": "identificacao",
+            "rotulo": "Categoria",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "preco",
+            "grupo": "oferta",
+            "rotulo": "Preço",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "disponibilidade",
+            "grupo": "oferta",
+            "rotulo": "Disponibilidade",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:material",
+            "grupo": "atributos",
+            "rotulo": "Material ou composição",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:dimensoes",
+            "grupo": "atributos",
+            "rotulo": "Dimensões",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:peso",
+            "grupo": "atributos",
+            "rotulo": "Peso",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:variacoes",
+            "grupo": "atributos",
+            "rotulo": "Variações (cores e tamanhos)",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:uso",
+            "grupo": "atributos",
+            "rotulo": "Uso",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:publico",
+            "grupo": "atributos",
+            "rotulo": "Público",
+            "pontos": 2,
+            "maximo": 5,
+            "situacao": "parcial"
+          },
+          {
+            "id": "atributo:cuidados",
+            "grupo": "atributos",
+            "rotulo": "Cuidados",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:garantia",
+            "grupo": "atributos",
+            "rotulo": "Garantia ou troca",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "titulo",
+            "grupo": "conteudo",
+            "rotulo": "Título descritivo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "descricao",
+            "grupo": "conteudo",
+            "rotulo": "Descrição organizada",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "faq",
+            "grupo": "conteudo",
+            "rotulo": "FAQ (3+ perguntas)",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "alt",
+            "grupo": "conteudo",
+            "rotulo": "Imagens com texto alternativo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "jsonld",
+            "grupo": "dados_estruturados",
+            "rotulo": "JSON-LD Product",
+            "pontos": 10,
+            "maximo": 10,
+            "situacao": "ok"
+          }
+        ]
+      },
+      "mensagem": "Capitã: nota antes 56/100.",
+      "seq": 10,
+      "t": 4263
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "redator",
+      "sala": "criacao",
+      "mensagem": "Capitã: Redator, para a sala de Criação.",
+      "seq": 11,
+      "t": 4263
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "redator",
+      "tentativa": 1,
+      "mensagem": "Redator: escrevendo a ficha nova.",
+      "seq": 12,
+      "t": 4263
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "redator",
+      "mensagem": "Redator: ficha nova com 3 seções, 4 atributos e 4 perguntas.",
+      "seq": 13,
+      "t": 9726
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "redator",
+      "mensagem": "Imediato: conferindo a entrega do Redator.",
+      "seq": 14,
+      "t": 9726
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "redator",
+      "mensagem": "Imediato: fontes e valores batem com a pesquisa. Aprovado.",
+      "seq": 15,
+      "t": 9727
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "redator",
+      "mensagem": "Capitã: Redator dispensado.",
+      "seq": 16,
+      "t": 9727
+    },
+    {
+      "tipo": "agente_convocado",
+      "agente": "revisor",
+      "sala": "qualidade",
+      "mensagem": "Capitã: Revisor, para a sala de Qualidade.",
+      "seq": 17,
+      "t": 9727
+    },
+    {
+      "tipo": "agente_trabalhando",
+      "agente": "revisor",
+      "tentativa": 1,
+      "mensagem": "Revisor: julgando cada item contra o original.",
+      "seq": 18,
+      "t": 9727
+    },
+    {
+      "tipo": "agente_entregou",
+      "agente": "revisor",
+      "mensagem": "Revisor: 12/12 itens sustentados.",
+      "seq": 19,
+      "t": 15144
+    },
+    {
+      "tipo": "imediato_conferindo",
+      "agente": "revisor",
+      "mensagem": "Imediato: conferindo a entrega do Revisor.",
+      "seq": 20,
+      "t": 15145
+    },
+    {
+      "tipo": "imediato_aprovou",
+      "agente": "revisor",
+      "mensagem": "Imediato: todos os itens sustentados. Aprovado.",
+      "seq": 21,
+      "t": 15148
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "revisor",
+      "mensagem": "Capitã: Revisor dispensado.",
+      "seq": 22,
+      "t": 15148
+    },
+    {
+      "tipo": "nota",
+      "qual": "depois",
+      "nota": {
+        "valor": 75,
+        "obtidos": 75,
+        "possiveis": 100,
+        "itens": [
+          {
+            "id": "marca",
+            "grupo": "identificacao",
+            "rotulo": "Marca",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "sku",
+            "grupo": "identificacao",
+            "rotulo": "SKU",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "gtin",
+            "grupo": "identificacao",
+            "rotulo": "GTIN / código de barras",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "categoria",
+            "grupo": "identificacao",
+            "rotulo": "Categoria",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "preco",
+            "grupo": "oferta",
+            "rotulo": "Preço",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "disponibilidade",
+            "grupo": "oferta",
+            "rotulo": "Disponibilidade",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "ausente"
+          },
+          {
+            "id": "atributo:material",
+            "grupo": "atributos",
+            "rotulo": "Material ou composição",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:dimensoes",
+            "grupo": "atributos",
+            "rotulo": "Dimensões",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:peso",
+            "grupo": "atributos",
+            "rotulo": "Peso",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:variacoes",
+            "grupo": "atributos",
+            "rotulo": "Variações (cores e tamanhos)",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:uso",
+            "grupo": "atributos",
+            "rotulo": "Uso",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:publico",
+            "grupo": "atributos",
+            "rotulo": "Público",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "atributo:cuidados",
+            "grupo": "atributos",
+            "rotulo": "Cuidados",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "atributo:garantia",
+            "grupo": "atributos",
+            "rotulo": "Garantia ou troca",
+            "pontos": 0,
+            "maximo": 5,
+            "situacao": "a_confirmar"
+          },
+          {
+            "id": "titulo",
+            "grupo": "conteudo",
+            "rotulo": "Título descritivo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "descricao",
+            "grupo": "conteudo",
+            "rotulo": "Descrição organizada",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "faq",
+            "grupo": "conteudo",
+            "rotulo": "FAQ (3+ perguntas)",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "alt",
+            "grupo": "conteudo",
+            "rotulo": "Imagens com texto alternativo",
+            "pontos": 5,
+            "maximo": 5,
+            "situacao": "ok"
+          },
+          {
+            "id": "jsonld",
+            "grupo": "dados_estruturados",
+            "rotulo": "JSON-LD Product",
+            "pontos": 10,
+            "maximo": 10,
+            "situacao": "ok"
+          }
+        ]
+      },
+      "mensagem": "Capitã: nota depois 75/100.",
+      "seq": 23,
+      "t": 15149
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "capita",
+      "mensagem": "Capitã: deixando a Ponte.",
+      "seq": 24,
+      "t": 15149
+    },
+    {
+      "tipo": "agente_dispensado",
+      "agente": "imediato",
+      "mensagem": "Capitã: Imediato dispensado.",
+      "seq": 25,
+      "t": 15149
+    },
+    {
+      "tipo": "missao_concluida",
+      "resultado": {
+        "original": {
+          "fonte": "shopify",
+          "url": "https://pampili.com.br/products/tenis-infantil-pampili-new-flat-branco",
+          "loja": "pampili.com.br",
+          "titulo": "Tênis Infantil Pampili New Flat Branco",
+          "descricaoHtml": "<p><span>O tênis infantil Pampili New Flat branco traz a delicadeza do acabamento perolado em um modelo que une o estilo esportivo ao charme dos detalhes! Produzido em material sintético, apresenta um laço frontal que acrescenta um toque especial ao visual, perfeito para meninas que adoram criar combinações do seu jeito.</span></p>\n<p><span>Leve e flexível, possui palmilha anatômica para maior conforto e solado flat emborrachado TR antiderrapante, que oferece estabilidade aos passos. O fechamento por tira aderente facilita o calce, garantindo praticidade para acompanhar a rotina.</span></p>\n<p><strong><span>Aposte!</span></strong><span> Combine com </span><span style=\"color: rgb(255, 0, 255);\"><a href=\"https://pampili.com.br/collections/roupa-infantil-feminina\" target=\"_blank\" style=\"color: rgb(255, 0, 255);\" rel=\"noopener\">roupas</a>, <a href=\"https://pampili.com.br/collections/bolsas-e-mochilas-kids\" target=\"_blank\" style=\"color: rgb(255, 0, 255);\" rel=\"noopener\">bolsas</a></span><span> e </span><span style=\"color: rgb(255, 0, 255);\"><a href=\"https://pampili.com.br/collections/acessorios-mundo-da-menina\" target=\"_blank\" style=\"color: rgb(255, 0, 255);\" rel=\"noopener\">acessórios</a></span><span> Pampili para criar looks que misturam delicadeza e atitude!</span></p>",
+          "descricaoTexto": "O tênis infantil Pampili New Flat branco traz a delicadeza do acabamento perolado em um modelo que une o estilo esportivo ao charme dos detalhes! Produzido em material sintético, apresenta um laço frontal que acrescenta um toque especial ao visual, perfeito para meninas que adoram criar combinações do seu jeito.\nLeve e flexível, possui palmilha anatômica para maior conforto e solado flat emborrachado TR antiderrapante, que oferece estabilidade aos passos. O fechamento por tira aderente facilita o calce, garantindo praticidade para acompanhar a rotina.\nAposte! Combine com roupas, bolsas e acessórios Pampili para criar looks que misturam delicadeza e atitude!",
+          "marca": "PAMPILI",
+          "tipo": "CALCADOS",
+          "tags": [
+            "787 TENIS NEW FLAT",
+            "_COR_787001000",
+            "Branco",
+            "CALCADOS",
+            "COR-OFICIAL",
+            "ECV",
+            "KIDS",
+            "MARKETPLACE",
+            "mini/pampili/tweenie",
+            "PAMPILI",
+            "PAMPILI  ALTO VERAO 2026",
+            "PAMPILI VERAO 2026",
+            "TENIS",
+            "TODOS"
+          ],
+          "opcoes": [
+            {
+              "nome": "Tamanho",
+              "valores": [
+                "28",
+                "29",
+                "30",
+                "31",
+                "32",
+                "33",
+                "34",
+                "35",
+                "36",
+                "37"
+              ]
+            }
+          ],
+          "variantes": [
+            {
+              "titulo": "28",
+              "sku": "787.001.000-89-28",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589730510"
+            },
+            {
+              "titulo": "29",
+              "sku": "787.001.000-89-29",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589730527"
+            },
+            {
+              "titulo": "30",
+              "sku": "787.001.000-89-30",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589730534"
+            },
+            {
+              "titulo": "31",
+              "sku": "787.001.000-89-31",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589730589"
+            },
+            {
+              "titulo": "32",
+              "sku": "787.001.000-89-32",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589730558"
+            },
+            {
+              "titulo": "33",
+              "sku": "787.001.000-89-33",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589730565"
+            },
+            {
+              "titulo": "34",
+              "sku": "787.001.000-89-34",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589730572"
+            },
+            {
+              "titulo": "35",
+              "sku": "787.001.000-89-35",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589730541"
+            },
+            {
+              "titulo": "36",
+              "sku": "787.001.000-89-36",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589740533"
+            },
+            {
+              "titulo": "37",
+              "sku": "787.001.000-89-37",
+              "preco": "259.90",
+              "disponivel": null,
+              "codigoBarras": "7890589740526"
+            }
+          ],
+          "imagens": [
+            {
+              "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_3.jpg?v=1793273569",
+              "alt": "787.001.000-BRANCO_3.jpg"
+            },
+            {
+              "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_1.jpg?v=1793273565",
+              "alt": "787.001.000-BRANCO_1.jpg"
+            },
+            {
+              "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_4.jpg?v=1793273572",
+              "alt": "787.001.000-BRANCO_4.jpg"
+            },
+            {
+              "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_5.jpg?v=1793273573",
+              "alt": "787.001.000-BRANCO_5.jpg"
+            },
+            {
+              "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_6.jpg?v=1793273574",
+              "alt": "787.001.000-BRANCO_6.jpg"
+            },
+            {
+              "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_2.jpg?v=1793273568",
+              "alt": "787.001.000-BRANCO_2.jpg"
+            }
+          ],
+          "moeda": null,
+          "jsonldPaginaValido": true,
+          "naoVerificavel": [],
+          "truncada": false
+        },
+        "pesquisa": {
+          "tipoProduto": "tênis",
+          "atributos": [
+            {
+              "id": "material",
+              "valor": "material sintético",
+              "trecho": "Produzido em material sintético"
+            },
+            {
+              "id": "variacoes",
+              "valor": "tamanhos 28, 29, 30, 31, 32, 33, 34, 35, 36 e 37; cor branco",
+              "trecho": "Tamanho"
+            },
+            {
+              "id": "uso",
+              "valor": "tênis com fechamento por tira aderente, palmilha anatômica e solado antiderrapante",
+              "trecho": "O fechamento por tira aderente facilita o calce"
+            },
+            {
+              "id": "publico",
+              "valor": "meninas",
+              "trecho": "perfeito para meninas que adoram criar combinações do seu jeito"
+            }
+          ],
+          "lacunas": [
+            {
+              "id": "dimensoes",
+              "motivo": "A ficha só lista a numeração dos tamanhos, sem medidas do produto."
+            },
+            {
+              "id": "peso",
+              "motivo": "A ficha não informa o peso."
+            },
+            {
+              "id": "cuidados",
+              "motivo": "A ficha não fala de limpeza nem de conservação."
+            },
+            {
+              "id": "garantia",
+              "motivo": "A ficha não fala de garantia nem de troca."
+            }
+          ],
+          "naoSeAplica": []
+        },
+        "fichaNova": {
+          "titulo": "Tênis infantil Pampili New Flat branco em material sintético, com tira aderente",
+          "secoes": [
+            {
+              "id": "s1",
+              "titulo": "Material e acabamento",
+              "texto": "O tênis infantil Pampili New Flat branco é produzido em material sintético. Tem acabamento perolado e um laço frontal.",
+              "fontes": [
+                "material"
+              ]
+            },
+            {
+              "id": "s2",
+              "titulo": "Conforto e fechamento",
+              "texto": "O tênis é leve e flexível, com palmilha anatômica e solado flat emborrachado TR antiderrapante. O fechamento por tira aderente facilita o calce.",
+              "fontes": [
+                "uso"
+              ]
+            },
+            {
+              "id": "s3",
+              "titulo": "Tamanhos, cor e público",
+              "texto": "Disponível em branco, nos tamanhos 28, 29, 30, 31, 32, 33, 34, 35, 36 e 37. O modelo é voltado para meninas.",
+              "fontes": [
+                "variacoes",
+                "publico"
+              ]
+            }
+          ],
+          "atributos": [
+            {
+              "id": "material",
+              "rotulo": "Material ou composição",
+              "valor": "material sintético"
+            },
+            {
+              "id": "variacoes",
+              "rotulo": "Variações (cores e tamanhos)",
+              "valor": "tamanhos 28, 29, 30, 31, 32, 33, 34, 35, 36 e 37; cor branco"
+            },
+            {
+              "id": "uso",
+              "rotulo": "Uso",
+              "valor": "tênis com fechamento por tira aderente, palmilha anatômica e solado antiderrapante"
+            },
+            {
+              "id": "publico",
+              "rotulo": "Público",
+              "valor": "meninas"
+            }
+          ],
+          "faq": [
+            {
+              "id": "f1",
+              "pergunta": "De que material é o tênis?",
+              "resposta": "É produzido em material sintético.",
+              "fontes": [
+                "material"
+              ]
+            },
+            {
+              "id": "f2",
+              "pergunta": "Quais tamanhos e cor estão disponíveis?",
+              "resposta": "Cor branca, nos tamanhos 28 a 37.",
+              "fontes": [
+                "variacoes"
+              ]
+            },
+            {
+              "id": "f3",
+              "pergunta": "Como é o fechamento do tênis?",
+              "resposta": "O fechamento é por tira aderente, que facilita o calce.",
+              "fontes": [
+                "uso"
+              ]
+            },
+            {
+              "id": "f4",
+              "pergunta": "Para quem é este tênis?",
+              "resposta": "É um tênis infantil voltado para meninas.",
+              "fontes": [
+                "publico"
+              ]
+            }
+          ],
+          "aConfirmar": [
+            {
+              "id": "dimensoes",
+              "pergunta": "Quais são as medidas do tênis em cada tamanho?"
+            },
+            {
+              "id": "peso",
+              "pergunta": "Qual é o peso do tênis?"
+            },
+            {
+              "id": "cuidados",
+              "pergunta": "Quais são os cuidados de limpeza e conservação do tênis?"
+            },
+            {
+              "id": "garantia",
+              "pergunta": "Qual é a garantia ou a política de troca do tênis?"
+            }
+          ]
+        },
+        "jsonld": {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "Tênis infantil Pampili New Flat branco em material sintético, com tira aderente",
+          "description": "O tênis infantil Pampili New Flat branco é produzido em material sintético. Tem acabamento perolado e um laço frontal.\n\nO tênis é leve e flexível, com palmilha anatômica e solado flat emborrachado TR antiderrapante. O fechamento por tira aderente facilita o calce.\n\nDisponível em branco, nos tamanhos 28, 29, 30, 31, 32, 33, 34, 35, 36 e 37. O modelo é voltado para meninas.",
+          "brand": {
+            "@type": "Brand",
+            "name": "PAMPILI"
+          },
+          "sku": "787.001.000-89-28",
+          "gtin": "7890589730510",
+          "image": [
+            "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_3.jpg?v=1793273569",
+            "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_1.jpg?v=1793273565",
+            "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_4.jpg?v=1793273572",
+            "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_5.jpg?v=1793273573",
+            "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_6.jpg?v=1793273574",
+            "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_2.jpg?v=1793273568"
+          ],
+          "offers": [
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            },
+            {
+              "@type": "Offer",
+              "price": "259.90"
+            }
+          ],
+          "additionalProperty": [
+            {
+              "@type": "PropertyValue",
+              "name": "Material ou composição",
+              "value": "material sintético"
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Variações (cores e tamanhos)",
+              "value": "tamanhos 28, 29, 30, 31, 32, 33, 34, 35, 36 e 37; cor branco"
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Uso",
+              "value": "tênis com fechamento por tira aderente, palmilha anatômica e solado antiderrapante"
+            },
+            {
+              "@type": "PropertyValue",
+              "name": "Público",
+              "value": "meninas"
+            }
+          ]
+        },
+        "imagens": [
+          {
+            "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_3.jpg?v=1793273569",
+            "alt": "Tênis infantil Pampili New Flat branco em material sintético, com tira aderente"
+          },
+          {
+            "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_1.jpg?v=1793273565",
+            "alt": "Tênis infantil Pampili New Flat branco em material sintético, com tira aderente — imagem 2"
+          },
+          {
+            "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_4.jpg?v=1793273572",
+            "alt": "Tênis infantil Pampili New Flat branco em material sintético, com tira aderente — imagem 3"
+          },
+          {
+            "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_5.jpg?v=1793273573",
+            "alt": "Tênis infantil Pampili New Flat branco em material sintético, com tira aderente — imagem 4"
+          },
+          {
+            "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_6.jpg?v=1793273574",
+            "alt": "Tênis infantil Pampili New Flat branco em material sintético, com tira aderente — imagem 5"
+          },
+          {
+            "src": "https://cdn.shopify.com/s/files/1/0286/7209/8435/files/78700100089_2.jpg?v=1793273568",
+            "alt": "Tênis infantil Pampili New Flat branco em material sintético, com tira aderente — imagem 6"
+          }
+        ],
+        "notaAntes": {
+          "valor": 56,
+          "obtidos": 56,
+          "possiveis": 100,
+          "itens": [
+            {
+              "id": "marca",
+              "grupo": "identificacao",
+              "rotulo": "Marca",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "sku",
+              "grupo": "identificacao",
+              "rotulo": "SKU",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "gtin",
+              "grupo": "identificacao",
+              "rotulo": "GTIN / código de barras",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "categoria",
+              "grupo": "identificacao",
+              "rotulo": "Categoria",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "preco",
+              "grupo": "oferta",
+              "rotulo": "Preço",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "disponibilidade",
+              "grupo": "oferta",
+              "rotulo": "Disponibilidade",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:material",
+              "grupo": "atributos",
+              "rotulo": "Material ou composição",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:dimensoes",
+              "grupo": "atributos",
+              "rotulo": "Dimensões",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:peso",
+              "grupo": "atributos",
+              "rotulo": "Peso",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:variacoes",
+              "grupo": "atributos",
+              "rotulo": "Variações (cores e tamanhos)",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:uso",
+              "grupo": "atributos",
+              "rotulo": "Uso",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:publico",
+              "grupo": "atributos",
+              "rotulo": "Público",
+              "pontos": 2,
+              "maximo": 5,
+              "situacao": "parcial"
+            },
+            {
+              "id": "atributo:cuidados",
+              "grupo": "atributos",
+              "rotulo": "Cuidados",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:garantia",
+              "grupo": "atributos",
+              "rotulo": "Garantia ou troca",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "titulo",
+              "grupo": "conteudo",
+              "rotulo": "Título descritivo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "descricao",
+              "grupo": "conteudo",
+              "rotulo": "Descrição organizada",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "faq",
+              "grupo": "conteudo",
+              "rotulo": "FAQ (3+ perguntas)",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "alt",
+              "grupo": "conteudo",
+              "rotulo": "Imagens com texto alternativo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "jsonld",
+              "grupo": "dados_estruturados",
+              "rotulo": "JSON-LD Product",
+              "pontos": 10,
+              "maximo": 10,
+              "situacao": "ok"
+            }
+          ]
+        },
+        "notaDepois": {
+          "valor": 75,
+          "obtidos": 75,
+          "possiveis": 100,
+          "itens": [
+            {
+              "id": "marca",
+              "grupo": "identificacao",
+              "rotulo": "Marca",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "sku",
+              "grupo": "identificacao",
+              "rotulo": "SKU",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "gtin",
+              "grupo": "identificacao",
+              "rotulo": "GTIN / código de barras",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "categoria",
+              "grupo": "identificacao",
+              "rotulo": "Categoria",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "preco",
+              "grupo": "oferta",
+              "rotulo": "Preço",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "disponibilidade",
+              "grupo": "oferta",
+              "rotulo": "Disponibilidade",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "ausente"
+            },
+            {
+              "id": "atributo:material",
+              "grupo": "atributos",
+              "rotulo": "Material ou composição",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:dimensoes",
+              "grupo": "atributos",
+              "rotulo": "Dimensões",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:peso",
+              "grupo": "atributos",
+              "rotulo": "Peso",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:variacoes",
+              "grupo": "atributos",
+              "rotulo": "Variações (cores e tamanhos)",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:uso",
+              "grupo": "atributos",
+              "rotulo": "Uso",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:publico",
+              "grupo": "atributos",
+              "rotulo": "Público",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "atributo:cuidados",
+              "grupo": "atributos",
+              "rotulo": "Cuidados",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "atributo:garantia",
+              "grupo": "atributos",
+              "rotulo": "Garantia ou troca",
+              "pontos": 0,
+              "maximo": 5,
+              "situacao": "a_confirmar"
+            },
+            {
+              "id": "titulo",
+              "grupo": "conteudo",
+              "rotulo": "Título descritivo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "descricao",
+              "grupo": "conteudo",
+              "rotulo": "Descrição organizada",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "faq",
+              "grupo": "conteudo",
+              "rotulo": "FAQ (3+ perguntas)",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "alt",
+              "grupo": "conteudo",
+              "rotulo": "Imagens com texto alternativo",
+              "pontos": 5,
+              "maximo": 5,
+              "situacao": "ok"
+            },
+            {
+              "id": "jsonld",
+              "grupo": "dados_estruturados",
+              "rotulo": "JSON-LD Product",
+              "pontos": 10,
+              "maximo": 10,
+              "situacao": "ok"
+            }
+          ]
+        },
+        "aConfirmar": [
+          {
+            "id": "dimensoes",
+            "pergunta": "Quais são as medidas do tênis em cada tamanho?"
+          },
+          {
+            "id": "peso",
+            "pergunta": "Qual é o peso do tênis?"
+          },
+          {
+            "id": "cuidados",
+            "pergunta": "Quais são os cuidados de limpeza e conservação do tênis?"
+          },
+          {
+            "id": "garantia",
+            "pergunta": "Qual é a garantia ou a política de troca do tênis?"
+          }
+        ],
+        "devolucoes": 0,
+        "chamadas": [
+          {
+            "agente": "pesquisador",
+            "tentativa": 1,
+            "tokensEntrada": 4594,
+            "tokensSaida": 393,
+            "custoUsd": 0.013118,
+            "ms": 3491
+          },
+          {
+            "agente": "redator",
+            "tentativa": 1,
+            "tokensEntrada": 6015,
+            "tokensSaida": 925,
+            "custoUsd": 0.02128,
+            "ms": 5463
+          },
+          {
+            "agente": "revisor",
+            "tentativa": 1,
+            "tokensEntrada": 5313,
+            "tokensSaida": 827,
+            "custoUsd": 0.018896,
+            "ms": 5417
+          }
+        ],
+        "custoUsd": 0.053293999999999994,
+        "duracaoMs": 15149,
+        "motor": "api",
+        "modelo": "claude-sonnet-5-5"
+      },
+      "mensagem": "Capitã: missão concluída. Nota 56 → 75.",
+      "seq": 26,
+      "t": 15149
+    }
+  ]
+}

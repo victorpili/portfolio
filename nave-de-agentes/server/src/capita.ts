@@ -88,7 +88,7 @@ class Missao {
 
     const ler = this.deps.lerProduto ?? ((url: string) => lerProduto(url));
     const o = 'url' in entrada ? await ler(entrada.url) : fichaDeTexto(entrada.texto);
-    if (o.truncada) this.emit({ tipo: 'aviso', mensagem: 'Capitã: ficha longa; usei os primeiros 20.000 caracteres e 30 variantes.' });
+    if (o.truncada) this.emit({ tipo: 'aviso', mensagem: 'Capitã: ficha longa; cortei os campos que passavam do limite.' });
 
     const pesquisa = await this.ciclo<Pesquisa>({
       agente: 'pesquisador',
