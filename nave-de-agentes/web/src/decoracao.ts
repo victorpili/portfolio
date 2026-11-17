@@ -11,6 +11,14 @@ export type AnimacaoEnfeite = 'bolhas' | 'girar' | 'brilho' | 'piscar' | 'virar'
  */
 export type Enfeite = Ponto & { sala: Sala; sprite: string; sobre?: boolean; animacao?: AnimacaoEnfeite };
 
+/**
+ * Sprites de 16×32: móveis altos que ficam em pé encostados na parede (na primeira linha depois dela)
+ * e sobem um tile por cima dela, como numa vista 3/4.
+ */
+export const ALTOS: ReadonlySet<string> = new Set([
+  'estante-livros', 'quadro-dados', 'quadro-ideias', 'arquivo-alto', 'quadro-qualidade', 'armario',
+]);
+
 const em = (sala: Sala, sprite: string, x: number, y: number, extra: Partial<Enfeite> = {}): Enfeite => ({ sala, sprite, x, y, ...extra });
 
 /**

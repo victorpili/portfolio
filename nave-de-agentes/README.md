@@ -19,7 +19,7 @@ Uma tripulação de cinco cuida de cada missão. Três tripulantes são agentes 
 | Redator | Criação | Claude | Escreve a ficha nova: título, seções, atributos, FAQ e perguntas ao lojista |
 | Revisor | Qualidade | Claude | Julga cada item da ficha nova contra o original: sustentado, sem fonte ou contraditório |
 
-Quem não está trabalhando dorme no Dormitório e caminha até a sala quando é convocado. Cada sala tem a cara da sua função: a Pesquisa é um laboratório, a Criação é uma oficina, a Qualidade é uma sala de inspeção e a Ponte é o comando da nave.
+Quem não está trabalhando dorme no Dormitório e caminha até a sala quando é convocado. Cada sala tem a cara da sua função: a Pesquisa é um laboratório, a Criação é uma oficina, a Qualidade é uma sala de inspeção e a Ponte é o comando da nave. No desenho, a Capitã e o Imediato, que são código, são robôs; os três agentes do Claude são gente.
 
 ```mermaid
 flowchart TD
@@ -144,6 +144,7 @@ Esse motor não mede custo nem reproduz o formato forçado da API. Por isso, ele
 - **Servidor:** Express 5, com os eventos da missão em SSE e um batimento a cada 15 s.
 - **Claude:** SDK oficial `@anthropic-ai/sdk`, com `beta.messages.parse` e saída estruturada validada por zod, pensamento adaptativo com esforço `low` e o fallback do lado do servidor (beta): se o modelo recusar, a API tenta um modelo reserva na mesma chamada.
 - **Front:** React 19 e Vite 8, sem biblioteca de jogo. O mapa é HTML e CSS, com sprites em pixel art ampliados com `image-rendering: pixelated`.
+- **Arte:** pixel art no estilo 16 bits, desenhada em código em [`web/scripts/arte16`](web/scripts/arte16): personagens e objetos em mapas de caracteres, pisos por procedimento, contorno e sombra calculados, PNG escrito com o zlib do Node. `pnpm --filter @nave/web arte` gera os sprites de novo, e um teste confere que os PNGs da pasta batem com o código.
 - **Testes:** Vitest. Um motor falso entrega respostas roteirizadas, para testar a Capitã, o Imediato e a nota sem chamar o Claude.
 - **Hospedagem:** servidor no Render, plano grátis ([`render.yaml`](render.yaml)); front estático no Vercel ([`vercel.json`](vercel.json)), com `VITE_API_URL`.
 
@@ -206,5 +207,5 @@ Variáveis do servidor (`.env`): `ANTHROPIC_API_KEY`, `MODELO_AO_VIVO` (padrão 
 
 ## Créditos
 
-- Sprites: [1-Bit Pack, da Kenney](https://kenney.nl/assets/1-bit-pack) (CC0), recortados e recoloridos. Veja [`web/public/sprites/CREDITOS.md`](web/public/sprites/CREDITOS.md).
+- Sprites: desenhados para este projeto, em código ([`web/scripts/arte16`](web/scripts/arte16)). Veja [`web/public/sprites/CREDITOS.md`](web/public/sprites/CREDITOS.md).
 - Fonte dos títulos: [Press Start 2P](https://fonts.google.com/specimen/Press+Start+2P) (Google Fonts, licença OFL).

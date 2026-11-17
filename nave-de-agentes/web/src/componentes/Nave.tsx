@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 import type { Agente as NomeAgente, Sala } from '@nave/shared';
 import type { EstadoNave } from '../estado';
 import { CORREDOR, GRADE, POSTOS, SALAS, type Ponto, type Retangulo } from '../mapa';
-import { ENFEITES } from '../decoracao';
+import { ALTOS, ENFEITES } from '../decoracao';
 import { Agente } from './Agente';
 
 const AGENTES: NomeAgente[] = ['capita', 'imediato', 'pesquisador', 'redator', 'revisor'];
@@ -39,10 +39,19 @@ function tileNaSala(p: Ponto, s: Retangulo): CSSProperties {
   return { left: pct(p.x - s.x, s.w), top: pct(p.y - s.y, s.h), width: pct(1, s.w), height: pct(1, s.h) };
 }
 
+/**
+ * O nome e a luz da sala ficam na parede. Numa sala com móvel alto (que sobe por cima da parede), eles ficam
+ * logo acima desse móvel; nas outras, embaixo de tudo, para não esconder quem passa pela porta.
+ */
+const Z_PLACA = Object.fromEntries(ORDEM_SALAS.map((sala) => {
+  const temAlto = ENFEITES.some((e) => e.sala === sala && ALTOS.has(e.sprite));
+  return [sala, temAlto ? 10 + (SALAS[sala].y + 1) * 10 + 5 : 2];
+})) as Record<Sala, number>;
+
 function SalaDaNave({ sala, concluida }: { sala: Sala; concluida: boolean }) {
   const s = SALAS[sala];
   const portaEmCima = s.porta.y === s.y;
-  const estilo = { ...caixa(s), '--colunas': s.w, '--linhas': s.h } as CSSProperties;
+  const estilo = { ...caixa(s), '--colunas': s.w, '--linhas': s.h, '--z-placa': Z_PLACA[sala] } as CSSProperties;
   return (
     <section className={`sala sala--${sala}${concluida ? ' sala--concluida' : ''}`} style={estilo}>
       <div className="sala__parede" aria-hidden="true" />
@@ -79,9 +88,11 @@ export function Nave({ estado }: { estado: EstadoNave }) {
           ))}
           {ENFEITES.map((e, i) => {
             const parede = e.y === SALAS[e.sala].y;
+            const alto = ALTOS.has(e.sprite);
             const classes = ['enfeite', `enfeite--${e.sprite}`];
             if (e.sobre) classes.push('enfeite--sobre');
             if (parede) classes.push('enfeite--parede');
+            if (alto) classes.push('enfeite--alto');
             if (e.animacao) classes.push(`enfeite--${e.animacao}`);
             return (
               <img
@@ -90,7 +101,7 @@ export function Nave({ estado }: { estado: EstadoNave }) {
                 src={`/sprites/${e.sprite}.png`}
                 alt=""
                 draggable={false}
-                style={{ ...caixa({ ...e, w: 1, h: 1 }), zIndex: 10 + e.y * 10 + (e.sobre ? 1 : 0) + (e.animacao === 'bolhas' ? 1 : 0) }}
+                style={{ ...caixa({ x: e.x, y: alto ? e.y - 1 : e.y, w: 1, h: alto ? 2 : 1 }), zIndex: 10 + e.y * 10 + (e.sobre ? 1 : 0) + (e.animacao === 'bolhas' ? 1 : 0) }}
               />
             );
           })}
