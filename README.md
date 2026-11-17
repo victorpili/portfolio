@@ -145,7 +145,7 @@ Esse motor não mede custo nem reproduz o formato forçado da API. Por isso, ele
 - **Claude:** SDK oficial `@anthropic-ai/sdk`, com `beta.messages.parse` e saída estruturada validada por zod, pensamento adaptativo com esforço `low` e o fallback do lado do servidor (beta): se o modelo recusar, a API tenta um modelo reserva na mesma chamada.
 - **Front:** React 19 e Vite 8, sem biblioteca de jogo. O mapa é HTML e CSS, com sprites em pixel art ampliados com `image-rendering: pixelated`.
 - **Testes:** Vitest. Um motor falso entrega respostas roteirizadas, para testar a Capitã, o Imediato e a nota sem chamar o Claude.
-- **Hospedagem:** servidor no Render, plano grátis ([`render.yaml`](render.yaml)); front estático no Vercel, com `VITE_API_URL`.
+- **Hospedagem:** servidor no Render, plano grátis ([`render.yaml`](render.yaml)); front estático no Vercel ([`vercel.json`](vercel.json)), com `VITE_API_URL`.
 
 ## Construído com Claude Code
 
